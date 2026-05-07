@@ -86,6 +86,32 @@ Workshop 現場可連 NCHU vLLM 端點（`infra/serve-*.sh` 提供 Gemma 4 / Qwe
 
 搭配素材：`haiku-alignment-report.pptx`、`haiku-alignment-animation.html`（可作為 §4 成本中 Haiku alignment 的延伸閱讀）。
 
+## 工作流：教材 vs TA agent 拆兩個 worktree
+
+為避免 Claude 對話 context 把「教材製作」與「TA agent 開發」混在一起，本 repo **同一份 git 倉、兩條 branch、兩個實體 worktree**：
+
+| 用途 | Branch | 實體路徑 |
+|------|--------|---------|
+| 教材製作（投影片 / md / mini-project / 動畫）| `main` | `/user_data/claude_projects/nchu-mcp-workshop-2026/` |
+| Course TA agent（線上服務、安全防護、prompt 調校）| `course-ta-agent` | `/user_data/claude_projects/nchu-mcp-workshop-2026-agent/` |
+
+**啟動 Claude session 時依照當下要做的事 cd 到對應目錄，自然就只看到該 scope 的歷史**：
+- 改投影片 / 寫 Lab 手冊 / 改 mini-project：`cd /user_data/claude_projects/nchu-mcp-workshop-2026 && claude`
+- 改 TA agent 程式碼 / 調 prompt / 重啟服務：`cd /user_data/claude_projects/nchu-mcp-workshop-2026-agent && claude`
+
+兩 branch 初期內容相同，commit 各自累積後自然分流。當投影片有更新、想讓 TA agent 也吃到新內容：
+
+```bash
+# 在 agent worktree 內：
+cd /user_data/claude_projects/nchu-mcp-workshop-2026-agent
+git merge main                              # 拉最新投影片進 agent branch
+uv run --with python-pptx python3 tools/extract-pptx-to-md.py   # 重新抽 md
+git commit -am "data: refresh course content from main"
+# 重啟 agent 讓 FastMCP 讀新 data/
+```
+
+線上服務的 systemd / nohup 起點也指向 `nchu-mcp-workshop-2026-agent/` 那個 worktree。
+
 ## 教材風格規範
 
 - 配色：Ocean Gradient — Navy `#1E2761` / Deep Blue `#065A82` / Teal `#1C7293`；橘色 accent `#E8793A`
