@@ -1,0 +1,184 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 980" font-family="'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#E8793A"/>
+    </marker>
+    <marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#5A6678"/>
+    </marker>
+    <linearGradient id="header-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1E2761"/>
+      <stop offset="100%" stop-color="#1C7293"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="980" fill="#F4F6FB"/>
+
+  <!-- Title -->
+  <text x="640" y="44" font-size="28" font-weight="800" fill="#1E2761" text-anchor="middle">mini-project 架構</text>
+  <text x="640" y="70" font-size="14" fill="#5A6678" text-anchor="middle">三層架構 · 兩條 LLM 路線（Anthropic / OpenAI 兼容）· ~300 行程式碼</text>
+
+  <!-- ════ Layer 1: Frontend ════ -->
+  <g>
+    <rect x="440" y="100" width="400" height="84" rx="10" fill="#FAF7F2" stroke="#1E2761" stroke-width="2"/>
+    <rect x="440" y="100" width="400" height="28" rx="10" fill="#1E2761"/>
+    <rect x="440" y="118" width="400" height="10" fill="#1E2761"/>
+    <text x="640" y="120" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">Layer 1 · 前端</text>
+    <text x="640" y="152" font-size="15" font-weight="700" fill="#1E2761" text-anchor="middle">web/index.html</text>
+    <text x="640" y="172" font-size="11" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">vanilla HTML + JS · ~85 行 · chat box + fetch</text>
+  </g>
+
+  <!-- Arrow Layer 1 → Layer 2 -->
+  <line x1="640" y1="184" x2="640" y2="222" stroke="#E8793A" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="650" y="208" font-size="11" fill="#E8793A" font-family="'JetBrains Mono', Consolas, monospace">POST /chat { messages }</text>
+
+  <!-- ════ Layer 2: Backend ════ -->
+  <g>
+    <rect x="60" y="232" width="860" height="380" rx="12" fill="#FAF7F2" stroke="#065A82" stroke-width="2"/>
+    <rect x="60" y="232" width="860" height="28" rx="12" fill="url(#header-grad)"/>
+    <rect x="60" y="250" width="860" height="10" fill="#1C7293"/>
+    <text x="490" y="252" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">Layer 2 · 後端 (backend-node/, Node.js)</text>
+
+    <!-- server.js -->
+    <g>
+      <rect x="80" y="280" width="820" height="62" rx="8" fill="#FFFFFF" stroke="#1C7293" stroke-width="1.5"/>
+      <text x="490" y="306" font-size="14" font-weight="700" fill="#065A82" text-anchor="middle">server.js</text>
+      <text x="490" y="326" font-size="11" fill="#5A6678" text-anchor="middle">Express · 啟動讀 config.json → 連 MCP servers · 依 LLM_PROVIDER 選 client</text>
+    </g>
+
+    <!-- llm-client.js (Anthropic) -->
+    <g>
+      <rect x="80" y="362" width="400" height="100" rx="8" fill="#FFFFFF" stroke="#065A82" stroke-width="1.5"/>
+      <rect x="80" y="362" width="400" height="22" rx="8" fill="#065A82"/>
+      <rect x="80" y="376" width="400" height="8" fill="#065A82"/>
+      <text x="280" y="378" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">☁  Anthropic 路線</text>
+      <text x="280" y="406" font-size="14" font-weight="700" fill="#1E2761" text-anchor="middle">llm-client.js</text>
+      <text x="280" y="426" font-size="10.5" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">20 行 agent loop</text>
+      <text x="280" y="444" font-size="10.5" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">stop_reason → tool_use / end_turn</text>
+    </g>
+
+    <!-- llm-client-openai.js (OpenAI compat) -->
+    <g>
+      <rect x="500" y="362" width="400" height="100" rx="8" fill="#FFFFFF" stroke="#1C7293" stroke-width="1.5"/>
+      <rect x="500" y="362" width="400" height="22" rx="8" fill="#1C7293"/>
+      <rect x="500" y="376" width="400" height="8" fill="#1C7293"/>
+      <text x="700" y="378" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">⚙  OpenAI 兼容路線</text>
+      <text x="700" y="406" font-size="14" font-weight="700" fill="#1E2761" text-anchor="middle">llm-client-openai.js</text>
+      <text x="700" y="426" font-size="10.5" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">vLLM / Ollama / 真 OpenAI</text>
+      <text x="700" y="444" font-size="10.5" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">+ Gemma 4 thinking-marker strip</text>
+    </g>
+
+    <!-- mcp-client.js -->
+    <g>
+      <rect x="80" y="482" width="820" height="110" rx="8" fill="#FFFFFF" stroke="#1E2761" stroke-width="1.5"/>
+      <rect x="80" y="482" width="820" height="22" rx="8" fill="#1E2761"/>
+      <rect x="80" y="496" width="820" height="8" fill="#1E2761"/>
+      <text x="490" y="498" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">官方 MCP SDK 包裝</text>
+      <text x="490" y="528" font-size="14" font-weight="700" fill="#1E2761" text-anchor="middle">mcp-client.js</text>
+      <text x="490" y="552" font-size="10.5" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">connect()  ·  getAnthropicTools()  ·  getOpenAITools()  ·  callTool(name, args)</text>
+      <text x="490" y="574" font-size="10.5" fill="#E8793A" text-anchor="middle" font-style="italic">同一份 inputSchema，兩種外殼 ← N+M 痛點解法的活範例</text>
+    </g>
+
+    <!-- inner arrows: server → both clients → mcp-client -->
+    <line x1="380" y1="342" x2="280" y2="360" stroke="#5A6678" stroke-width="1.2" marker-end="url(#arrow-grey)" stroke-dasharray="3,3"/>
+    <line x1="600" y1="342" x2="700" y2="360" stroke="#5A6678" stroke-width="1.2" marker-end="url(#arrow-grey)" stroke-dasharray="3,3"/>
+    <line x1="280" y1="462" x2="280" y2="480" stroke="#5A6678" stroke-width="1.2" marker-end="url(#arrow-grey)" stroke-dasharray="3,3"/>
+    <line x1="700" y1="462" x2="700" y2="480" stroke="#5A6678" stroke-width="1.2" marker-end="url(#arrow-grey)" stroke-dasharray="3,3"/>
+  </g>
+
+  <!-- ════ External LLM endpoints (right of Layer 2) ════ -->
+  <g>
+    <rect x="950" y="362" width="300" height="50" rx="6" fill="#1E2761"/>
+    <text x="1100" y="382" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">☁  Anthropic API</text>
+    <text x="1100" y="400" font-size="10.5" fill="#E8EDF3" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">Claude Haiku 4.5 · Sonnet 4.5</text>
+  </g>
+  <g>
+    <rect x="950" y="430" width="300" height="50" rx="6" fill="#1C7293"/>
+    <text x="1100" y="450" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">⚙  Local 兼容端點</text>
+    <text x="1100" y="468" font-size="10.5" fill="#E8EDF3" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">vLLM (Gemma 4 31B) · Ollama · 真 OpenAI</text>
+  </g>
+
+  <!-- Arrows from clients → external APIs (cross Layer 2 boundary) -->
+  <path d="M 480 412 L 920 387" stroke="#E8793A" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 900 412 L 950 455" stroke="#E8793A" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- Arrow Layer 2 → Layer 3 -->
+  <line x1="490" y1="612" x2="490" y2="650" stroke="#E8793A" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="500" y="634" font-size="11" fill="#E8793A" font-family="'JetBrains Mono', Consolas, monospace">stdio JSON-RPC · child process</text>
+
+  <!-- ════ Layer 3: MCP servers ════ -->
+  <g>
+    <rect x="60" y="660" width="860" height="220" rx="12" fill="#FAF7F2" stroke="#1C7293" stroke-width="2"/>
+    <rect x="60" y="660" width="860" height="28" rx="12" fill="url(#header-grad)"/>
+    <rect x="60" y="678" width="860" height="10" fill="#1C7293"/>
+    <text x="490" y="680" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">Layer 3 · MCP servers (mcp-server-py/, Python FastMCP)</text>
+
+    <!-- hello_tool.py -->
+    <g>
+      <rect x="80" y="710" width="200" height="120" rx="8" fill="#FFFFFF" stroke="#1C7293" stroke-width="1.5"/>
+      <text x="180" y="734" font-size="13" font-weight="700" fill="#065A82" text-anchor="middle">hello_tool.py</text>
+      <text x="180" y="754" font-size="10" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">get_english_center_info</text>
+      <text x="180" y="780" font-size="10" fill="#E8793A" text-anchor="middle" font-style="italic" font-weight="700">L1 範本（必做）</text>
+      <line x1="100" y1="792" x2="260" y2="792" stroke="#E2E8F0" stroke-width="1"/>
+      <text x="180" y="810" font-size="10" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">→ data/english_center.json</text>
+    </g>
+
+    <!-- teachers_tool.py -->
+    <g>
+      <rect x="290" y="710" width="200" height="120" rx="8" fill="#FFFFFF" stroke="#1C7293" stroke-width="1.5"/>
+      <text x="390" y="734" font-size="13" font-weight="700" fill="#065A82" text-anchor="middle">teachers_tool.py</text>
+      <text x="390" y="754" font-size="10" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">search_teachers</text>
+      <text x="390" y="770" font-size="10" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">get_teacher_detail</text>
+      <text x="390" y="794" font-size="10" fill="#E8793A" text-anchor="middle" font-style="italic" font-weight="700">L2 完整版</text>
+      <line x1="310" y1="802" x2="470" y2="802" stroke="#E2E8F0" stroke-width="1"/>
+      <text x="390" y="820" font-size="10" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">→ data/teachers.json</text>
+    </g>
+
+    <!-- weather_tool.py -->
+    <g>
+      <rect x="500" y="710" width="200" height="120" rx="8" fill="#FFFFFF" stroke="#1C7293" stroke-width="1.5"/>
+      <text x="600" y="734" font-size="13" font-weight="700" fill="#065A82" text-anchor="middle">weather_tool.py</text>
+      <text x="600" y="754" font-size="10" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">get_weather</text>
+      <text x="600" y="780" font-size="10" fill="#5A6678" text-anchor="middle" font-style="italic">外部 HTTPS API 範例</text>
+      <line x1="520" y1="792" x2="680" y2="792" stroke="#E2E8F0" stroke-width="1"/>
+      <text x="600" y="810" font-size="10" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">→ wttr.in API</text>
+    </g>
+
+    <!-- arxiv_tool.py (unregistered, dashed) -->
+    <g>
+      <rect x="710" y="710" width="200" height="120" rx="8" fill="#FFF8F1" stroke="#E8793A" stroke-width="1.8" stroke-dasharray="6,4"/>
+      <text x="810" y="734" font-size="13" font-weight="700" fill="#E8793A" text-anchor="middle">arxiv_tool.py</text>
+      <text x="810" y="754" font-size="10" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">search_arxiv</text>
+      <text x="810" y="780" font-size="10" fill="#E8793A" text-anchor="middle" font-style="italic" font-weight="700">L3 練習</text>
+      <line x1="730" y1="792" x2="890" y2="792" stroke="#FFE0CC" stroke-width="1"/>
+      <text x="810" y="810" font-size="10" fill="#5A6678" text-anchor="middle">寫好但</text>
+      <text x="810" y="824" font-size="10" fill="#5A6678" text-anchor="middle">未在 config.json 註冊</text>
+    </g>
+
+    <text x="490" y="864" font-size="10.5" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace" font-style="italic">共用：FastMCP("server_name") + @mcp.tool() decorator + stdio transport · ~30 行/工具</text>
+  </g>
+
+  <!-- ════ config.json + .env (right side under Layer 2) ════ -->
+  <g>
+    <rect x="950" y="660" width="300" height="100" rx="8" fill="#FFFFFF" stroke="#1E2761" stroke-width="1.5"/>
+    <text x="1100" y="682" font-size="13" font-weight="700" fill="#1E2761" text-anchor="middle">config.json</text>
+    <text x="1100" y="700" font-size="10" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">"mcpServers": {</text>
+    <text x="1100" y="716" font-size="10" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">  hello, teachers, weather</text>
+    <text x="1100" y="732" font-size="10" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">}</text>
+    <text x="1100" y="752" font-size="10" fill="#E8793A" text-anchor="middle" font-style="italic">arxiv 故意未註冊（L3 練）</text>
+  </g>
+
+  <g>
+    <rect x="950" y="780" width="300" height="100" rx="8" fill="#FFFFFF" stroke="#1E2761" stroke-width="1.5"/>
+    <text x="1100" y="802" font-size="13" font-weight="700" fill="#1E2761" text-anchor="middle">.env</text>
+    <text x="1100" y="822" font-size="10" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">LLM_PROVIDER=anthropic | openai</text>
+    <text x="1100" y="840" font-size="10" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">ANTHROPIC_API_KEY=sk-ant-...</text>
+    <text x="1100" y="856" font-size="10" fill="#5A6678" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">OPENAI_BASE_URL=...</text>
+    <text x="1100" y="874" font-size="10" fill="#E8793A" text-anchor="middle" font-style="italic">一行切換路線</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="640" y="930" font-size="11.5" fill="#5A6678" text-anchor="middle" font-style="italic">三層共 ~300 行 · NCHU MCP Workshop 2026 · Segment 4 hands-on 主場</text>
+  <text x="640" y="948" font-size="10" fill="#9AA4B5" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace">github.com/UDICatNCHU/nchu-mcp-workshop-2026</text>
+</svg>
