@@ -14,3 +14,7 @@
 # Scratch / 暫存
 _scratch/
 *.tmp
+
+# Manim render intermediates
+__pycache__/
+media/
