@@ -47,6 +47,7 @@ RED     = RGBColor(0xD9, 0x53, 0x4F)
 LIGHT_ORANGE = RGBColor(0xFC, 0xE5, 0xD1)   # faded fill for orange box + text
 LIGHT_GREEN  = RGBColor(0xDB, 0xEE, 0xDB)
 LIGHT_BLUE   = RGBColor(0xDD, 0xE7, 0xF9)
+PAGE_BG = RGBColor(0xEF, 0xF2, 0xF7)        # light blue page background (matches kept slides)
 WHITE   = RGBColor(0xFF, 0xFF, 0xFF)
 DARK    = RGBColor(0x1A, 0x1A, 0x1A)
 MUTED   = RGBColor(0x6B, 0x6B, 0x6B)
@@ -163,6 +164,21 @@ def _blank_slide(prs, bg=WHITE):
     return s
 
 
+def _chrome_slide(prs):
+    """Standard content slide chrome: light-blue background + top orange strip.
+    Matches the visual frame of the original kept slides so new + old read as
+    one deck."""
+    s = _blank_slide(prs, PAGE_BG)
+    _add_rect(s, 0, 0, 13.333, 0.10, ORANGE)
+    return s
+
+
+def _apply_chrome(slide):
+    """Apply the standard chrome (bg + top strip) to an existing/cleared slide."""
+    _add_rect(slide, 0, 0, 13.333, 7.5, PAGE_BG)
+    _add_rect(slide, 0, 0, 13.333, 0.10, ORANGE)
+
+
 def _process_box(slide, x, y, w, h, header_color, header_label, body_label,
                  sonnet=False):
     """Draw a Parent/Child Process box matching the video's v3 aesthetic.
@@ -266,22 +282,25 @@ def _pipe_pair(slide, x1, y1, x2, y2, color=MUTED, gap=0.18):
 
 # ── New slide content ───────────────────────────────────────────────
 def build_slide_section_divider(prs, number, title, subtitle):
-    """Section divider with big number on left."""
-    s = _blank_slide(prs, NAVY)
-    _add_text(s, 0.75, 1.5, 4, 4.5, number,
-              font=FONT_TITLE, size=240, color=ORANGE, bold=True,
-              anchor=MSO_ANCHOR.MIDDLE)
-    _add_text(s, 5.5, 2.8, 7.5, 1.5, title,
-              font=FONT_TITLE, size=54, color=WHITE, bold=True)
-    _add_rect(s, 5.5, 4.0, 2.5, 0.04, ORANGE)
-    _add_text(s, 5.5, 4.2, 7.5, 1.0, subtitle,
-              font=FONT_BODY, size=22, color=SOFT)
+    """Section divider — compact style (matches original kept dividers).
+    Teal bg + thin orange top strip + small number top-left + title below."""
+    s = _blank_slide(prs, TEAL)
+    _add_rect(s, 0, 0, 13.333, 0.10, ORANGE)
+    # Number (orange, small upper-left)
+    _add_text(s, 0.85, 2.0, 4.0, 1.0, number,
+              font=FONT_TITLE, size=46, color=ORANGE, bold=True)
+    # Title (white, large, below number; full width avoids overflow)
+    _add_text(s, 0.85, 2.95, 12, 1.0, title,
+              font=FONT_TITLE, size=42, color=WHITE, bold=True)
+    # Subtitle (soft, below title)
+    _add_text(s, 0.85, 4.05, 12, 0.7, subtitle,
+              font=FONT_BODY, size=20, color=SOFT)
     return s
 
 
 def build_slide_scenario(prs):
     """Scenario: user query → LLM tool decision."""
-    s = _blank_slide(prs, WHITE)
+    s = _chrome_slide(prs)
     # Title
     _add_text(s, 0.75, 0.4, 12, 0.7, "場景:使用者問了一個問題,LLM 決定要呼叫工具",
               font=FONT_TITLE, size=26, color=NAVY, bold=True)
@@ -328,7 +347,7 @@ def build_slide_scenario(prs):
 
 def build_slide_act1(prs):
     """Act 1: Parent / Child boxes + LLM Sonnet badge + pipes."""
-    s = _blank_slide(prs, WHITE)
+    s = _chrome_slide(prs)
     _add_text(s, 0.75, 0.4, 12, 0.7, "Act 1 — Parent 開出 Child",
               font=FONT_TITLE, size=28, color=NAVY, bold=True)
     _add_rect(s, 0.75, 1.20, 3, 0.04, ORANGE)
@@ -365,7 +384,7 @@ def build_slide_act1(prs):
 
 def build_slide_act2(prs):
     """Act 2: 兩階段握手 with checkbox visualization."""
-    s = _blank_slide(prs, WHITE)
+    s = _chrome_slide(prs)
     _add_text(s, 0.75, 0.4, 12, 0.7, "Act 2 — 兩階段握手",
               font=FONT_TITLE, size=28, color=NAVY, bold=True)
     _add_rect(s, 0.75, 1.20, 3, 0.04, ORANGE)
@@ -429,7 +448,7 @@ def build_slide_act2(prs):
 
 def build_slide_act3(prs):
     """Act 3: tool call + waiting list + result back."""
-    s = _blank_slide(prs, WHITE)
+    s = _chrome_slide(prs)
     _add_text(s, 0.75, 0.4, 12, 0.7, "Act 3 — 工具呼叫",
               font=FONT_TITLE, size=28, color=NAVY, bold=True)
     _add_rect(s, 0.75, 1.20, 3, 0.04, ORANGE)
@@ -516,21 +535,20 @@ def build_slide_video_cue(prs):
 
 
 def build_appendix_divider(prs):
-    s = _blank_slide(prs, NAVY)
-    _add_text(s, 0.75, 1.8, 4, 2.5, "附錄",
-              font=FONT_TITLE, size=180, color=ORANGE, bold=True,
-              anchor=MSO_ANCHOR.MIDDLE)
-    _add_text(s, 5.5, 2.8, 7.5, 1.5,
-              "Appendix",
-              font=FONT_TITLE, size=54, color=WHITE, bold=True)
-    _add_rect(s, 5.5, 4.0, 2.5, 0.04, ORANGE)
-    _add_multi(s, 5.5, 4.2, 7.5, 2.5, [
+    """Appendix divider — same compact style as other section dividers."""
+    s = _blank_slide(prs, TEAL)
+    _add_rect(s, 0, 0, 13.333, 0.10, ORANGE)
+    _add_text(s, 0.85, 2.0, 4.0, 1.0, "附錄",
+              font=FONT_TITLE, size=46, color=ORANGE, bold=True)
+    _add_text(s, 0.85, 2.95, 12, 1.0, "Appendix",
+              font=FONT_TITLE, size=42, color=WHITE, bold=True)
+    _add_multi(s, 0.85, 4.05, 12, 2.2, [
         {"text": "給技術 curious 老師的細節",
-         "font": FONT_BODY, "size": 24, "color": SOFT, "space_after": 12},
+         "font": FONT_BODY, "size": 20, "color": SOFT, "space_after": 10},
         {"text": "• REST vs JSON-RPC 比較",
-         "font": FONT_BODY, "size": 20, "color": SOFT, "space_after": 6},
-        {"text": "• JSON-RPC 三種訊息類型(Request / Response / Notification)",
-         "font": FONT_BODY, "size": 20, "color": SOFT, "space_after": 0},
+         "font": FONT_BODY, "size": 17, "color": SOFT, "space_after": 4},
+        {"text": "• JSON-RPC 三種訊息類型 (Request / Response / Notification)",
+         "font": FONT_BODY, "size": 17, "color": SOFT, "space_after": 0},
     ])
     return s
 
@@ -579,7 +597,7 @@ def _clear_slide_shapes(slide):
 def rebuild_slide_2(slide):
     """Rebuild slide 2 outline to reflect new structure."""
     _clear_slide_shapes(slide)
-    _add_rect(slide, 0, 0, 13.333, 7.5, WHITE)
+    _apply_chrome(slide)
     _add_text(slide, 0.75, 0.5, 12, 0.8, "本講大綱",
               font=FONT_TITLE, size=36, color=NAVY, bold=True)
     _add_rect(slide, 0.75, 1.40, 3, 0.04, ORANGE)
@@ -633,7 +651,7 @@ def _code_block(slide, x, y, w, h, lines, size=11, padding=0.18):
 # ── Section 01 (new): Function Calling 怎麼運作 ──────────────────
 def build_fc_setup(prs):
     """Setup slide: one concrete example + the core punchline."""
-    s = _blank_slide(prs, WHITE)
+    s = _chrome_slide(prs)
     _add_text(s, 0.75, 0.4, 12, 0.7,
               "用一個具體例子搞懂",
               font=FONT_TITLE, size=28, color=NAVY, bold=True)
@@ -670,7 +688,7 @@ def build_fc_setup(prs):
 
 def build_fc_stage12(prs):
     """Stage 1+2: developer prepares schema + sends API call."""
-    s = _blank_slide(prs, WHITE)
+    s = _chrome_slide(prs)
     _add_text(s, 0.75, 0.4, 12, 0.7,
               "Stage 1+2 — 開發者準備工具描述,送出 API call",
               font=FONT_TITLE, size=24, color=NAVY, bold=True)
@@ -679,7 +697,7 @@ def build_fc_stage12(prs):
     code_lines = [
         ("# 開發者寫的 Python", MUTED),
         ("tools = [{",                                                CODE_FG),
-        ('  "name": "execute_bash",',                                 ORANGE),
+        ('  "name": "execute_bash",',                                 GREEN),
         ('  "description": "Execute a bash command. Returns stdout.",', GREEN),
         ('  "input_schema": {',                                       CODE_FG),
         ('    "type": "object",',                                     CODE_FG),
@@ -728,7 +746,7 @@ def build_fc_stage12(prs):
 
 def build_fc_stage3(prs):
     """Stage 3: LLM returns JSON — the KEY teaching moment."""
-    s = _blank_slide(prs, WHITE)
+    s = _chrome_slide(prs)
     _add_text(s, 0.75, 0.4, 12, 0.7,
               "Stage 3 — LLM 回了一段 JSON",
               font=FONT_TITLE, size=26, color=NAVY, bold=True)
@@ -784,7 +802,7 @@ def build_fc_stage3(prs):
 
 def build_fc_stage4(prs):
     """Stage 4: Harness actually executes — the 'eval LLM output' moment."""
-    s = _blank_slide(prs, WHITE)
+    s = _chrome_slide(prs)
     _add_text(s, 0.75, 0.4, 12, 0.7,
               "Stage 4 — Harness 真的執行",
               font=FONT_TITLE, size=26, color=NAVY, bold=True)
@@ -796,14 +814,14 @@ def build_fc_stage4(prs):
         ('    if block.type == "tool_use":',          CODE_FG),
         ('        cmd = block.input["command"]',      CODE_FG),
         ("",                                          CODE_FG),
-        ("        # 這一行才是「真的下去執行」",       ORANGE),
+        ("        # 這一行才是「真的下去執行」",       MUTED),
         ("        result = subprocess.run(",          ORANGE),
-        ("            cmd,",                          ORANGE),
+        ("            cmd,",                          CODE_FG),
         ("            shell=True,         ← LLM 字串 → /bin/bash", ORANGE),
-        ("            capture_output=True,",          ORANGE),
-        ("            text=True,",                    ORANGE),
-        ("            timeout=30,",                   ORANGE),
-        ("        )",                                 ORANGE),
+        ("            capture_output=True,",          CODE_FG),
+        ("            text=True,",                    CODE_FG),
+        ("            timeout=30,",                   CODE_FG),
+        ("        )",                                 CODE_FG),
         ('        tool_output = result.stdout.strip()    # "42"', CODE_FG),
     ]
     _code_block(s, 0.75, 1.55, 8.2, 3.7, code_lines)
@@ -852,7 +870,7 @@ def build_fc_stage4(prs):
 
 def build_fc_stage56(prs):
     """Stage 5+6: tool_result fed back, LLM produces final answer."""
-    s = _blank_slide(prs, WHITE)
+    s = _chrome_slide(prs)
     _add_text(s, 0.75, 0.4, 12, 0.7,
               "Stage 5+6 — 結果塞回,LLM 給最終答案",
               font=FONT_TITLE, size=24, color=NAVY, bold=True)
@@ -909,7 +927,7 @@ def build_fc_stage56(prs):
 
 def build_fc_takeaway(prs):
     """Takeaway: LLM ↔ Harness responsibility split + transition to MCP."""
-    s = _blank_slide(prs, WHITE)
+    s = _chrome_slide(prs)
     _add_text(s, 0.75, 0.4, 12, 0.7,
               "重點:LLM ↔ Harness 職責分工",
               font=FONT_TITLE, size=28, color=NAVY, bold=True)
@@ -981,7 +999,7 @@ def _replace_exact_text(slide, old, new):
 def rebuild_architecture_slide(slide):
     """Replace the old HTML-demo cue with a static 4-layer diagram."""
     _clear_slide_shapes(slide)
-    _add_rect(slide, 0, 0, 13.333, 7.5, WHITE)
+    _apply_chrome(slide)
     _add_text(slide, 0.75, 0.4, 12, 0.7,
               "MCP 整體架構:四層分工",
               font=FONT_TITLE, size=28, color=NAVY, bold=True)
@@ -1036,7 +1054,7 @@ def rebuild_architecture_slide(slide):
 def rebuild_recap(slide):
     """Rebuild final recap slide with refreshed vocab."""
     _clear_slide_shapes(slide)
-    _add_rect(slide, 0, 0, 13.333, 7.5, WHITE)
+    _apply_chrome(slide)
     _add_text(slide, 0.75, 0.5, 12, 0.8, "本講重點回顧",
               font=FONT_TITLE, size=36, color=NAVY, bold=True)
     _add_rect(slide, 0.75, 1.40, 3, 0.04, ORANGE)
