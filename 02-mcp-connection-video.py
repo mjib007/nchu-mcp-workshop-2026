@@ -17,14 +17,17 @@ Render:
 from manim import *
 import numpy as np
 
-# Ocean Gradient palette (per repo style guide)
-BG          = "#0a0a10"   # 3B1B-style near-black (was Ocean Navy #1E2761)
+# Violet-primary palette (aligned with 2026 slide deck + V3 video)
+BG          = "#0a0a10"   # 3B1B-style near-black
 DEEP_BLUE   = "#065A82"
 TEAL        = "#2DB5C9"   # was #1C7293 — pushed toward cyan for box-vs-box contrast
 INK         = "#FFFFFF"
 NEUTRAL     = "#B4BED2"
-BLUE        = "#5B8DE8"   # was #4A90D9 — warmer, brighter
-ORANGE      = "#E8793A"
+BLUE        = "#5B8DE8"   # Subject / user / secondary entity
+VIOLET      = "#7B5CF5"   # LLM main subject (aligned w/ V1, V3, slide deck)
+VIOLET_SOFT = "#9D85F7"
+VIOLET_DEEP = "#5B3ED9"
+ORANGE      = "#E8793A"   # tool call / accumulator / breakthrough
 GREEN       = "#5CB85C"
 RED         = "#D9534F"
 DIM         = "#3A4A6A"
@@ -42,7 +45,7 @@ config.pixel_height = 1080
 
 class MCPConnection(Scene):
     SUBTITLE_MAX_WIDTH = 14.0
-    TOTAL_SECONDS = 137.0
+    TOTAL_SECONDS = 131.3   # measured: ~2:11 after R3 pacing cuts
 
     TITLE     = "MCP 握手"
     SUBTITLE  = "Parent / Child Process 怎麼開始講話"
@@ -270,7 +273,8 @@ class MCPConnection(Scene):
                   run_time=0.6)
         self.wait(2.5)
 
-        # LLM thinking box (left side, orange)
+        # LLM thinking box (left side — violet for main subject;
+        # tool-call line stays ORANGE for "action/tool" semantic)
         line1 = Text("嗯…需要查新書資料庫",
                      font=CN_FONT, font_size=22, color=INK)
         line2 = Text("→ 呼叫 search_new_books 工具",
@@ -282,8 +286,8 @@ class MCPConnection(Scene):
         llm_pad_h = llm_text.height + 0.55
         llm_box = RoundedRectangle(
             width=llm_pad_w, height=llm_pad_h, corner_radius=0.20,
-            stroke_color=ORANGE, stroke_width=2.5,
-            fill_color=ORANGE, fill_opacity=0.15,
+            stroke_color=VIOLET, stroke_width=2.5,
+            fill_color=VIOLET, fill_opacity=0.15,
         )
         llm_text.move_to(llm_box.get_center())
         llm_group = VGroup(llm_box, llm_text)
@@ -366,7 +370,8 @@ class MCPConnection(Scene):
         self.play(FadeIn(self.parent_box, shift=RIGHT * 0.3), run_time=0.6)
 
         # Sonnet badge — visual bridge from scenario LLM box to parent_box
-        self.sonnet_badge = self._make_pill("LLM · Sonnet", ORANGE, size=13)
+        # (violet — LLM main-subject color, aligned across all 3 videos)
+        self.sonnet_badge = self._make_pill("LLM · Sonnet", VIOLET, size=13)
         self.sonnet_badge.scale(0.80)
         self.sonnet_badge.move_to(
             self.parent_box.get_corner(DR) + LEFT * 1.00 + UP * 0.32
@@ -501,11 +506,11 @@ class MCPConnection(Scene):
         )
 
         # Highlight that second step is still pending
-        note = Text("但第二步還沒過 → 還沒真正連上",
+        note = Text("還沒拿到工具清單 → LLM 不知道能用哪些工具",
                     font=CN_FONT, font_size=20, color=RED,
                     weight=BOLD).next_to(state_box, RIGHT, buff=0.4)
         self.play(FadeIn(note, shift=LEFT * 0.2), run_time=0.5)
-        self.wait(9.5)
+        self.wait(4.0)
 
         # cleanup snippets before beat 2.3
         self.play(FadeOut(arrow_init), FadeOut(arrow_cap),
@@ -609,8 +614,8 @@ class MCPConnection(Scene):
             stroke_color=ORANGE, stroke_width=2,
             fill_color=ORANGE, fill_opacity=0.20,
         )
-        wait_lbl = Text("等候第 4 個請求 · 30s 內", font=CN_FONT,
-                        font_size=17, color=ORANGE, weight=BOLD)
+        wait_lbl = Text("等候 search_new_books 回應 · 30s 內", font=CN_FONT,
+                        font_size=15, color=ORANGE, weight=BOLD)
         wait_lbl.move_to(wait_box.get_center())
         wait_group = VGroup(wait_box, wait_lbl)
         wait_group.next_to(self.parent_box, DOWN, buff=0.3)
@@ -655,8 +660,8 @@ class MCPConnection(Scene):
             stroke_color=GREEN, stroke_width=2,
             fill_color=GREEN, fill_opacity=0.20,
         )
-        done_lbl = Text("第 4 個請求 ✓ 完成", font=CN_FONT,
-                        font_size=17, color=GREEN, weight=BOLD)
+        done_lbl = Text("search_new_books ✓ 回應完成", font=CN_FONT,
+                        font_size=15, color=GREEN, weight=BOLD)
         done_lbl.move_to(done_box.get_center())
         done_group = VGroup(done_box, done_lbl)
         done_group.move_to(wait_group.get_center())
@@ -694,7 +699,7 @@ class MCPConnection(Scene):
             cleanup.append(self._cur_subtitle)
             self._cur_subtitle = None
         self.play(*[FadeOut(m) for m in cleanup], run_time=0.7)
-        self.advance_progress(116)
+        self.advance_progress(110)
 
     # ============================================================
     # OUTRO — frame closure + three things + closing card

@@ -264,7 +264,7 @@ class FunctionCalling(Scene):
         self.show_subtitle("想想看:這個查詢背後到底發生了什麼?")
 
         # Three pills representing the only fields the LLM sees
-        title = Text("LLM 看到的,只有這三件事", font=CN_FONT, font_size=30,
+        title = Text("LLM 看到的工具菜單只有三件事:名字、用途、要填的欄位", font=CN_FONT, font_size=26,
                      color=INK, weight=BOLD).move_to(UP * 2.6)
         self.play(FadeIn(title, shift=DOWN * 0.2), run_time=0.5)
 
@@ -355,8 +355,12 @@ class FunctionCalling(Scene):
                          font=MONO_FONT, font_size=20,
                          color=INK, weight=BOLD).move_to(flag_box.get_center())
         flag = VGroup(flag_box, flag_text).move_to(UP * 3.55)
+        flag_sub = Text("LLM 自己舉旗:這次我不講話,我要呼叫工具",
+                        font=CN_FONT, font_size=18, color=ORANGE,
+                        slant=ITALIC).next_to(flag, DOWN, buff=0.10)
         self.play(FadeIn(flag, shift=DOWN * 0.15), run_time=0.6)
-        self.wait(0.5)
+        self.play(FadeIn(flag_sub), run_time=0.4)
+        self.wait(0.3)
 
         # Two emissions from LLM
         # 1) Text bubble (left)
@@ -416,7 +420,7 @@ class FunctionCalling(Scene):
         self.play(FadeIn(pl, shift=UP * 0.2), run_time=0.6)
         self.wait(2.5)
 
-        self.play(FadeOut(llm), FadeOut(flag),
+        self.play(FadeOut(llm), FadeOut(flag), FadeOut(flag_sub),
                   FadeOut(text_bubble), FadeOut(tool_card),
                   FadeOut(arr_left), FadeOut(arr_right),
                   FadeOut(pl), FadeOut(badge), run_time=0.5)
@@ -603,13 +607,9 @@ class FunctionCalling(Scene):
                   FadeIn(t1_bub, shift=DOWN * 0.15), run_time=0.5)
         bubbles.append(t1_bub); chips.append(t1_chip)
 
-        # Sidenote about role being "user" under the hood
-        side_note = Text("(API 上 role 其實是 user,但意義是工具回傳)",
-                         font=CN_FONT, font_size=14, color=NEUTRAL,
-                         slant=ITALIC).move_to(
-                             RIGHT * 0.5 + UP * ys[2] + DOWN * 0.65)
-        self.play(FadeIn(side_note), run_time=0.3)
-        self.wait(0.9)
+        # (side_note about role=user removed per R2 pedagogical review —
+        # API correctness yielded confusion for non-CS teachers)
+        self.wait(1.2)
 
         # 4) Assistant final answer (violet + end_turn marker)
         # Punchline bubble: heavier fill + thicker stroke to break the visual flatline
@@ -647,7 +647,7 @@ class FunctionCalling(Scene):
         self.play(FadeIn(bt, shift=UP * 0.2), run_time=0.6)
         self.wait(2.5)
 
-        cleanups = bubbles + chips + [side_note, bt, badge]
+        cleanups = bubbles + chips + [bt, badge]
         self.play(*[FadeOut(m) for m in cleanups], run_time=0.5)
         self.advance_progress(80)
 
@@ -741,7 +741,6 @@ class FunctionCalling(Scene):
         llm_lines = VGroup(
             Text("✓  生成 tool_use JSON",        font=CN_FONT, font_size=22, color=INK),
             Text("✓  讀 schema,生 input JSON",  font=CN_FONT, font_size=22, color=INK),
-            Text("✓  Constrained decoding",      font=CN_FONT, font_size=22, color=INK),
             Text("✗  不知道工具真做什麼",         font=CN_FONT, font_size=22, color=NEUTRAL),
             Text("✗  碰不到 OS、檔案、網路",      font=CN_FONT, font_size=22, color=PINK, weight=BOLD),
         ).arrange(DOWN, buff=0.20, aligned_edge=LEFT)

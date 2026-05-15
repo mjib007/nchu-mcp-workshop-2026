@@ -13,15 +13,18 @@ from manim import *
 import numpy as np
 
 # ============================================================
-# Ocean Gradient design system (per repo style guide)
+# Violet-primary design system (aligned with 2026 slide deck + V3 video)
 # ============================================================
-BG          = "#0a0a10"   # 3B1B-style near-black (was Ocean Navy #1E2761)
-DEEP_BLUE   = "#065A82"   # Deep blue — secondary panels
+BG          = "#0a0a10"   # 3B1B-style near-black
+DEEP_BLUE   = "#065A82"   # Deep blue — secondary panels (legacy, kept)
 TEAL        = "#1C7293"   # Teal — tertiary elements
 INK         = "#FFFFFF"   # Primary text
 NEUTRAL     = "#B4BED2"   # Secondary text, borders
-BLUE        = "#4A90D9"   # Subject / current entity
-ORANGE      = "#E8793A"   # Accent / accumulator / breakthrough
+BLUE        = "#5B8DE8"   # Subject / user / secondary entity (aligned w/ V2, V3)
+VIOLET      = "#7B5CF5"   # LLM main subject (aligned w/ V3, slide deck)
+VIOLET_SOFT = "#9D85F7"
+VIOLET_DEEP = "#5B3ED9"
+ORANGE      = "#E8793A"   # Accent / accumulator / tool call / breakthrough
 GREEN       = "#5CB85C"   # Success / completion
 RED         = "#D9534F"   # Error / warning
 DIM         = "#3A4A6A"   # Dim borders
@@ -43,7 +46,7 @@ config.pixel_height = 1080
 
 class WhyMCP(Scene):
     SUBTITLE_MAX_WIDTH = 14.0
-    TOTAL_SECONDS = 172.6   # measured: ~2:53 actual render time
+    TOTAL_SECONDS = 155.5   # measured: ~2:35 after R3 pacing cuts
 
     TITLE     = "Why MCP"
     SUBTITLE  = "LLM 為何需要一個統一協定"
@@ -192,7 +195,7 @@ class WhyMCP(Scene):
         teacher_label = Text("教師", font=CN_FONT, font_size=22,
                              color=NEUTRAL).next_to(question_box, LEFT, buff=0.3)
 
-        llm_circle = Circle(radius=0.7, color=ORANGE, fill_opacity=0.25,
+        llm_circle = Circle(radius=0.7, color=VIOLET, fill_opacity=0.25,
                             stroke_width=3).move_to(DOWN * 0.3 + LEFT * 5.5)
         llm_label = Text("LLM", font=CN_FONT, font_size=28, color=INK,
                          weight=BOLD).move_to(llm_circle.get_center())
@@ -359,8 +362,8 @@ class WhyMCP(Scene):
         self.show_subtitle("給 LLM 一組「工具」")
         self.play(FadeIn(tu_title, shift=DOWN * 0.2), run_time=0.5)
 
-        # LLM in the middle
-        llm_circle = Circle(radius=1.0, color=ORANGE, fill_opacity=0.20,
+        # LLM in the middle (main subject — violet per design system)
+        llm_circle = Circle(radius=1.0, color=VIOLET, fill_opacity=0.20,
                             stroke_width=3).move_to(ORIGIN)
         llm_lbl = Text("LLM", font=CN_FONT, font_size=34, color=INK,
                        weight=BOLD).move_to(llm_circle.get_center())
@@ -559,7 +562,7 @@ class WhyMCP(Scene):
         contrast = Text("12 → 7（N×M → N+M）", font=CN_FONT, font_size=36,
                         color=GREEN, weight=BOLD).move_to(DOWN * 2.5)
         self.play(FadeIn(contrast, shift=UP * 0.2), run_time=0.5)
-        self.wait(10.0)
+        self.wait(6.0)
 
         # cleanup partial — keep mcp_layer visible for next beat
         decoupling_group = VGroup(title, apps, srcs, left_lines, right_lines,
@@ -615,7 +618,7 @@ class WhyMCP(Scene):
             self.play(FadeIn(r, shift=UP * 0.2), run_time=0.4)
             if i < len(arrows_between):
                 self.play(GrowArrow(arrows_between[i]), run_time=0.25)
-        self.wait(12.0)
+        self.wait(7.0)
 
         # cleanup roles
         roles_group = VGroup(title2, roles, arrows_between)
@@ -646,7 +649,7 @@ class WhyMCP(Scene):
         self.play(FadeIn(usbc_group, shift=RIGHT * 0.3), run_time=0.6)
         self.play(FadeIn(arrow_eq), run_time=0.3)
         self.play(FadeIn(mcp_meta, shift=LEFT * 0.3), run_time=0.6)
-        self.wait(9.0)
+        self.wait(5.0)
 
         # cleanup usbc
         usbc_full = VGroup(usbc_group, arrow_eq, mcp_meta)
@@ -676,13 +679,13 @@ class WhyMCP(Scene):
         self.play(FadeIn(case_title, shift=DOWN * 0.2), run_time=0.5)
         for s in stats:
             self.play(FadeIn(s, shift=UP * 0.2), run_time=0.4)
-        self.wait(10.0)
+        self.wait(6.0)
 
         # cleanup act 3
         act3_group = VGroup(case_title, stats, mcp_layer, mcp_lbl_top,
                             mcp_lbl_bot, act_badge)
         self.end_act(act3_group, run_time=0.7)
-        self.advance_progress(162)
+        self.advance_progress(149)
 
     # ============================================================
     # OUTRO — 三點回顧 (2:54–3:05, 11s)
