@@ -185,7 +185,7 @@ class WhyMCP(Scene):
 
         # Beat 1.1 — Hook: 教師問 LLM，LLM 答不出 (10s)
         question_box = self.make_box("「興大圖書館有哪些 AI 相關的書？」",
-                                     width=8.2, height=1.0,
+                                     width=7.0, height=1.0,
                                      color=BLUE, fill_op=0.18, label_size=26)
         question_box.move_to(UP * 2.2)
 
@@ -193,35 +193,54 @@ class WhyMCP(Scene):
                              color=NEUTRAL).next_to(question_box, LEFT, buff=0.3)
 
         llm_circle = Circle(radius=0.7, color=ORANGE, fill_opacity=0.25,
-                            stroke_width=3).move_to(DOWN * 0.3 + LEFT * 4)
+                            stroke_width=3).move_to(DOWN * 0.3 + LEFT * 5.5)
         llm_label = Text("LLM", font=CN_FONT, font_size=28, color=INK,
                          weight=BOLD).move_to(llm_circle.get_center())
 
-        answer_box = self.make_box("「我不知道，建議您查圖書館網站」",
-                                   width=8.2, height=1.0,
-                                   color=NEUTRAL, fill_op=0.10, label_size=24)
-        answer_box.move_to(DOWN * 0.3 + RIGHT * 1.3)
+        # 編造書名（幻覺）—比「我不知道」更有教學張力
+        answer_lines = VGroup(
+            Text("《AI 概論導讀》", font=CN_FONT, font_size=24,
+                 color=INK, weight=MEDIUM),
+            Text("《機器學習入門》", font=CN_FONT, font_size=24,
+                 color=INK, weight=MEDIUM),
+            Text("《深度學習實作》...", font=CN_FONT, font_size=24,
+                 color=INK, weight=MEDIUM),
+        ).arrange(DOWN, buff=0.18, aligned_edge=LEFT)
+        answer_box_outer = RoundedRectangle(
+            width=6.0, height=answer_lines.height + 0.6,
+            corner_radius=0.15, stroke_color=NEUTRAL, stroke_width=2,
+            fill_color=NEUTRAL, fill_opacity=0.08,
+        )
+        answer_lines.move_to(answer_box_outer.get_center())
+        answer_box = VGroup(answer_box_outer, answer_lines)
+        answer_box.move_to(DOWN * 0.6 + RIGHT * 1.5)
 
-        red_x = Cross(stroke_color=RED, stroke_width=6).scale(0.4).move_to(
+        red_x = Cross(stroke_color=RED, stroke_width=8).scale(0.45).move_to(
             answer_box.get_right() + RIGHT * 0.6
         )
+        hallucination_lbl = Text("← 這些書根本不存在（幻覺）",
+                                 font=CN_FONT, font_size=22,
+                                 color=RED, weight=BOLD)
+        hallucination_lbl.next_to(answer_box, DOWN, buff=0.4)
 
         self.play(FadeIn(act_badge), run_time=0.3)
-        self.show_subtitle("LLM 很強，但有些問題它答不出來")
+        self.show_subtitle("LLM 很強，但有些問題它會「編造」")
         self.play(FadeIn(teacher_label), FadeIn(question_box), run_time=0.7)
         self.wait(3.0)
         self.play(FadeIn(llm_circle), FadeIn(llm_label), run_time=0.5)
         self.play(FadeIn(answer_box), run_time=0.7)
-        self.play(Write(red_x), run_time=0.5)
-        self.wait(5.0)
+        self.play(Write(red_x), run_time=0.4)
+        self.play(FadeIn(hallucination_lbl, shift=UP * 0.15), run_time=0.5)
+        self.wait(4.5)
+        # 一次深出所有 hook 元素（不再 transform LLM 到頂部）
         self.play(FadeOut(question_box), FadeOut(teacher_label),
                   FadeOut(answer_box), FadeOut(red_x),
-                  llm_circle.animate.move_to(UP * 2.0).scale(0.6),
-                  llm_label.animate.move_to(UP * 2.0).scale(0.6),
+                  FadeOut(hallucination_lbl),
+                  FadeOut(llm_circle), FadeOut(llm_label),
                   run_time=0.8)
 
         # Beat 1.2 — 三道紅牆 (15s)
-        self.show_subtitle("LLM 的三道牆")
+        self.show_subtitle("這背後是 LLM 的三道牆")
 
         wall_data = [
             ("知識截止日", "訓練資料\n停在某個日期"),
@@ -285,9 +304,9 @@ class WhyMCP(Scene):
         chunk_box = self.make_box("切片", width=1.5, height=1.0,
                                   color=BLUE, fill_op=0.18, label_size=22)
         embed_box = self.make_box("向量化", width=1.8, height=1.0,
-                                  color=TEAL, fill_op=0.20, label_size=22)
+                                  color=BLUE, fill_op=0.18, label_size=22)
         vdb_box = self.make_box("向量資料庫", width=2.4, height=1.0,
-                                color=TEAL, fill_op=0.20, label_size=22)
+                                color=BLUE, fill_op=0.18, label_size=22)
         topk_box = self.make_box("Top-K 文件", width=2.2, height=1.0,
                                  color=ORANGE, fill_op=0.20, label_size=22)
         llm_box = self.make_box("LLM", width=1.6, height=1.0,
@@ -394,8 +413,8 @@ class WhyMCP(Scene):
         # highlight one path: enroll_course
         self.play(
             tools[1][0].animate.set_stroke(ORANGE, width=4).set_fill(ORANGE, opacity=0.35),
-            tool_lines[1].animate.set_stroke(ORANGE, width=3),
-            ds_lines[1].animate.set_stroke(ORANGE, width=3),
+            tool_lines[1].animate.set_stroke(ORANGE, width=5),
+            ds_lines[1].animate.set_stroke(ORANGE, width=5),
             ds[1][0].animate.set_stroke(ORANGE, width=4).set_fill(ORANGE, opacity=0.35),
             run_time=0.8,
         )
@@ -411,7 +430,7 @@ class WhyMCP(Scene):
                       weight=BOLD)
         pain_q.move_to(DOWN * 3.0)   # 移到畫面底部，避開 check_class 與 教師資料
         self.play(FadeIn(pain_q, shift=UP * 0.15), run_time=0.6)
-        self.show_subtitle("但每個應用 × 每個資料源都要重寫整合")
+        self.show_subtitle("如果學校有 4 個 App、3 個資料源呢？")
         self.wait(7.5)
 
         # cleanup tool use
@@ -557,26 +576,31 @@ class WhyMCP(Scene):
         title2 = Text("MCP 的四個角色",
                       font=CN_FONT, font_size=32,
                       color=INK, weight=BOLD).move_to(UP * 0.7)
-        self.show_subtitle("Host / Client / Server / Tool")
+        self.show_subtitle("四層分工：介面 → 協定 → 工具方 → 能力")
         self.play(FadeIn(title2), run_time=0.5)
 
+        # P1 refine: 每個角色加具體例子，幫教師受眾建立心智模型
         role_data = [
-            ("Host", "使用者介面", BLUE),
-            ("Client", "協定處理層", TEAL),
-            ("Server", "工具提供方", ORANGE),
-            ("Tool", "實際能力", GREEN),
+            ("Host",   "Claude Desktop",   BLUE),
+            ("Client", "Host 內部組件",     TEAL),
+            ("Server", "MCP server",       ORANGE),
+            ("Tool",   "search_books()",   GREEN),
         ]
         roles = VGroup()
         for name, desc, c in role_data:
-            box = RoundedRectangle(width=2.7, height=1.7, corner_radius=0.18,
+            box = RoundedRectangle(width=2.95, height=1.85, corner_radius=0.18,
                                    stroke_color=c, stroke_width=3,
                                    fill_color=c, fill_opacity=0.18)
             n = Text(name, font=CN_FONT, font_size=28, color=INK,
                      weight=BOLD).move_to(box.get_top() + DOWN * 0.55)
-            d = Text(desc, font=CN_FONT, font_size=20, color=NEUTRAL,
-                     weight=MEDIUM).move_to(box.get_center() + DOWN * 0.3)
+            d_lbl = Text("如：", font=CN_FONT, font_size=16, color=NEUTRAL,
+                         weight=MEDIUM)
+            d_val = Text(desc, font=MONO_FONT if "(" in desc else CN_FONT,
+                         font_size=18, color=INK, weight=MEDIUM)
+            d = VGroup(d_lbl, d_val).arrange(RIGHT, buff=0.15)
+            d.move_to(box.get_center() + DOWN * 0.35)
             roles.add(VGroup(box, n, d))
-        roles.arrange(RIGHT, buff=0.35).move_to(DOWN * 1.3)
+        roles.arrange(RIGHT, buff=0.30).move_to(DOWN * 1.4)
 
         arrows_between = VGroup()
         for i in range(len(roles) - 1):
@@ -681,7 +705,7 @@ class WhyMCP(Scene):
             make_point("①", "LLM 三道牆",
                        "知識截止 / 沒有私有資料 / 不能執行動作"),
             make_point("②", "三條延伸",
-                       "RAG 讀文件、Tool Use 呼 API、MCP 統一協定"),
+                       "RAG / Tool Use / MCP 三條路"),
             make_point("③", "MCP 的價值",
                        "N×M → N+M：把整合工作從爆炸變線性"),
         ).arrange(DOWN, buff=0.7, aligned_edge=LEFT).move_to(DOWN * 0.3)
