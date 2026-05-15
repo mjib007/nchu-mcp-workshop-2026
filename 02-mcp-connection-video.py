@@ -45,7 +45,7 @@ config.pixel_height = 1080
 
 class MCPConnection(Scene):
     SUBTITLE_MAX_WIDTH = 14.0
-    TOTAL_SECONDS = 135.1   # ~2:15 after R3-R5 (caption dwell time restored)
+    TOTAL_SECONDS = 137.3   # ~2:17 — content-driven intro adds 2s preview motion
 
     TITLE     = "MCP 握手"
     SUBTITLE  = "Parent / Child Process 怎麼開始講話"
@@ -330,23 +330,52 @@ class MCPConnection(Scene):
         self.advance_progress(17)
 
     # ============================================================
-    # INTRO (4s)
+    # INTRO (5s) — magazine-style cover: undraw illustration + title
     # ============================================================
     def scene_intro(self):
-        title = Text(self.TITLE, font=SERIF_FONT, font_size=120,
-                     color=INK, weight=BOLD).move_to(UP * 0.6)
-        subtitle = Text(self.SUBTITLE, font=CN_FONT, font_size=38,
-                        color=NEUTRAL).move_to(DOWN * 0.9)
-        accent = Line(start=LEFT * 1.5, end=RIGHT * 1.5,
-                      color=ORANGE, stroke_width=3).move_to(DOWN * 0.2)
+        # ── Right side: hero illustration (undraw "building-blocks") ──
+        hero = SVGMobject(
+            "intro-assets/undraw_building-blocks.svg",
+        ).scale_to_fit_height(5.6)
+        hero.move_to(RIGHT * 3.6 + DOWN * 0.1)
 
-        self.play(FadeIn(title, shift=DOWN * 0.2), run_time=0.9)
-        self.play(GrowFromCenter(accent), run_time=0.3)
-        self.play(FadeIn(subtitle, shift=UP * 0.15), run_time=0.5)
-        self.wait(0.6)
-        self.play(FadeOut(title), FadeOut(subtitle), FadeOut(accent),
-                  run_time=0.4)
-        self.advance_progress(3)
+        # ── Left side: title stack ──
+        title_lines = VGroup(
+            Text("MCP", font=SERIF_FONT, font_size=110,
+                 color=INK, weight=BOLD),
+            Text("握手", font=SERIF_FONT, font_size=110,
+                 color=INK, weight=BOLD),
+        ).arrange(DOWN, buff=0.05, aligned_edge=LEFT)
+        kicker = Text("章節 02", font=MONO_FONT, font_size=18,
+                      color=VIOLET, weight=BOLD).next_to(
+                          title_lines, UP, buff=0.30, aligned_edge=LEFT)
+        accent = Line(start=LEFT * 0.0, end=RIGHT * 1.8,
+                      color=VIOLET, stroke_width=5).next_to(
+                          title_lines, DOWN, buff=0.30, aligned_edge=LEFT)
+        sub = Text("Parent / Child Process\n怎麼開始講話",
+                   font=CN_FONT, font_size=26, color=NEUTRAL,
+                   line_spacing=1.1).next_to(
+                       accent, DOWN, buff=0.30, aligned_edge=LEFT)
+        title_stack = VGroup(kicker, title_lines, accent, sub).move_to(
+            LEFT * 4.2 + UP * 0.1)
+
+        # Phase 1: hero fades in with slight scale (0–0.9s)
+        hero.scale(0.95)
+        self.play(FadeIn(hero), run_time=0.9)
+
+        # Phase 2: title stack (kicker → title → accent → sub)
+        self.play(FadeIn(kicker, shift=DOWN * 0.1), run_time=0.3)
+        self.play(FadeIn(title_lines, shift=UP * 0.15), run_time=0.6)
+        self.play(GrowFromEdge(accent, LEFT), run_time=0.3)
+        self.play(FadeIn(sub, shift=UP * 0.10), run_time=0.4)
+
+        # Phase 3: Ken Burns + hold
+        self.play(hero.animate.scale(1.05 / 0.95).shift(LEFT * 0.15),
+                  rate_func=linear, run_time=1.8)
+
+        # Phase 4: fade out
+        self.play(FadeOut(hero), FadeOut(title_stack), run_time=0.5)
+        self.advance_progress(5)
 
     # ============================================================
     # ACT 1 — spawn (35s)

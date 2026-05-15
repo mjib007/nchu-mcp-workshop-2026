@@ -53,7 +53,7 @@ config.pixel_height = 1080
 
 class FunctionCalling(Scene):
     SUBTITLE_MAX_WIDTH = 14.0
-    TOTAL_SECONDS = 85.5   # after R4 intro speedup
+    TOTAL_SECONDS = 88.2   # content-driven intro adds 2.7s preview motion
 
     TITLE     = "Function Calling 怎麼運作"
     SUBTITLE  = "LLM 只吐字串,真的執行的是外面的 harness"
@@ -204,23 +204,52 @@ class FunctionCalling(Scene):
         return VGroup(box, text_group)
 
     # ============================================================
-    # INTRO (4s)
+    # INTRO (5s) — magazine-style cover: undraw illustration + title
     # ============================================================
     def scene_intro(self):
-        title = Text(self.TITLE, font=SERIF_FONT, font_size=88,
-                     color=INK, weight=BOLD).move_to(UP * 0.6)
-        subtitle = Text(self.SUBTITLE, font=CN_FONT, font_size=32,
-                        color=VIOLET_SOFT).move_to(DOWN * 0.6)
-        accent = Line(start=LEFT * 1.5, end=RIGHT * 1.5,
-                      color=VIOLET, stroke_width=4).move_to(DOWN * 0.05)
+        # ── Right side: hero illustration (undraw "chat with AI") ──
+        hero = SVGMobject(
+            "intro-assets/undraw_chat-with-ai.svg",
+        ).scale_to_fit_height(5.6)
+        hero.move_to(RIGHT * 3.6 + DOWN * 0.1)
 
-        self.play(FadeIn(title, shift=DOWN * 0.2), run_time=0.9)
-        self.play(GrowFromCenter(accent), run_time=0.3)
-        self.play(FadeIn(subtitle, shift=UP * 0.15), run_time=0.5)
-        self.wait(0.6)
-        self.play(FadeOut(title), FadeOut(subtitle), FadeOut(accent),
-                  run_time=0.4)
-        self.advance_progress(3)
+        # ── Left side: title stack ──
+        title_lines = VGroup(
+            Text("Function", font=SERIF_FONT, font_size=78,
+                 color=INK, weight=BOLD),
+            Text("Calling", font=SERIF_FONT, font_size=78,
+                 color=INK, weight=BOLD),
+        ).arrange(DOWN, buff=0.05, aligned_edge=LEFT)
+        kicker = Text("章節 03", font=MONO_FONT, font_size=16,
+                      color=VIOLET, weight=BOLD).next_to(
+                          title_lines, UP, buff=0.25, aligned_edge=LEFT)
+        accent = Line(start=LEFT * 0.0, end=RIGHT * 1.8,
+                      color=VIOLET, stroke_width=5).next_to(
+                          title_lines, DOWN, buff=0.30, aligned_edge=LEFT)
+        sub = Text("LLM 只吐字串,真的執行的是\n外面的 harness",
+                   font=CN_FONT, font_size=24, color=NEUTRAL,
+                   line_spacing=1.1).next_to(
+                       accent, DOWN, buff=0.30, aligned_edge=LEFT)
+        title_stack = VGroup(kicker, title_lines, accent, sub).move_to(
+            LEFT * 4.2 + UP * 0.2)
+
+        # Phase 1: hero fades in with slight scale (0–1.2s)
+        hero.scale(0.95)
+        self.play(FadeIn(hero), run_time=0.9)
+
+        # Phase 2: title stack appears in left, kicker → title → accent → sub
+        self.play(FadeIn(kicker, shift=DOWN * 0.1), run_time=0.3)
+        self.play(FadeIn(title_lines, shift=UP * 0.15), run_time=0.6)
+        self.play(GrowFromEdge(accent, LEFT), run_time=0.3)
+        self.play(FadeIn(sub, shift=UP * 0.10), run_time=0.4)
+
+        # Phase 3: slow Ken Burns + hold (2.5–4.5s)
+        self.play(hero.animate.scale(1.05 / 0.95).shift(LEFT * 0.15),
+                  rate_func=linear, run_time=1.8)
+
+        # Phase 4: fade out
+        self.play(FadeOut(hero), FadeOut(title_stack), run_time=0.5)
+        self.advance_progress(5)
 
     # ============================================================
     # SCENARIO (10s)
