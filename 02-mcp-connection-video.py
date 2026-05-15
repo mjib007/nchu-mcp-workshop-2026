@@ -41,7 +41,7 @@ config.pixel_height = 1080
 
 class MCPConnection(Scene):
     SUBTITLE_MAX_WIDTH = 14.0
-    TOTAL_SECONDS = 157.5
+    TOTAL_SECONDS = 129.0
 
     TITLE     = "MCP 握手"
     SUBTITLE  = "父子程序怎麼開始講話"
@@ -63,10 +63,10 @@ class MCPConnection(Scene):
         self.state_conn = None
 
         self.scene_intro()        # 0:00–0:04
-        self.scene_act1()         # 0:04–0:39
-        self.scene_act2()         # 0:39–1:54
-        self.scene_act3()         # 1:54–2:49
-        self.scene_outro()        # 2:49–3:00
+        self.scene_act1()         # 0:04–0:25
+        self.scene_act2()         # 0:25–1:13
+        self.scene_act3()         # 1:13–1:51
+        self.scene_outro()        # 1:51–2:09
 
     # ============================================================
     # Progress bar
@@ -169,6 +169,22 @@ class MCPConnection(Scene):
         return VGroup(box, text)
 
     # ============================================================
+    # Helper: pill capsule (flying token along an arrow)
+    # ============================================================
+    def _make_pill(self, label, color, size=18):
+        txt = Text(label, font=MONO_FONT, font_size=size,
+                   color=INK, weight=BOLD)
+        pad_w = txt.width + 0.5
+        pad_h = txt.height + 0.28
+        pill = RoundedRectangle(
+            width=pad_w, height=pad_h, corner_radius=pad_h / 2,
+            stroke_color=color, stroke_width=2.5,
+            fill_color=color, fill_opacity=0.85,
+        )
+        txt.move_to(pill.get_center())
+        return VGroup(pill, txt)
+
+    # ============================================================
     # Helper: arrow message between parent and child
     # ============================================================
     def message_arrow(self, direction, color, y_offset=0.0):
@@ -259,25 +275,11 @@ class MCPConnection(Scene):
         self.play(Create(self.pipe_top), Create(self.pipe_bot), run_time=0.7)
         self.play(FadeIn(pipe_lbl_top), FadeIn(pipe_lbl_bot), run_time=0.4)
         self.show_subtitle("stdio 用 pipe 串通：父寫 stdin，子回 stdout")
-        self.wait(8.0)
-
-        # Beat 1.3 — env substitution + setupEventHandlers (10s)
-        env_snip = self.make_json_snippet([
-            ('"env": {',                         NEUTRAL),
-            ('  "MODULES_PATH":',                BLUE),
-            ('    "${NCHU_MODULES_PATH}"',       ORANGE),
-            ('}',                                NEUTRAL),
-            ('# → "/opt/nchu-library"',          GREEN),
-        ], width=5.5, size=18)
-        env_snip.move_to(DOWN * 1.5)
-
-        self.play(FadeIn(env_snip, shift=UP * 0.2), run_time=0.6)
-        self.show_subtitle("env 內 ${VAR} 自動替換成真實環境變數")
-        self.wait(10.0)
+        self.wait(7.5)
 
         # cleanup act 1 visuals, keep parent/child + pipes for act 2
         self.play(
-            FadeOut(spawn_call), FadeOut(env_snip),
+            FadeOut(spawn_call),
             FadeOut(pipe_lbl_top), FadeOut(pipe_lbl_bot),
             run_time=0.5,
         )
@@ -285,7 +287,7 @@ class MCPConnection(Scene):
             self.play(FadeOut(self._cur_subtitle), run_time=0.3)
             self._cur_subtitle = None
         self.play(FadeOut(act_badge), run_time=0.3)
-        self.advance_progress(32)
+        self.advance_progress(25)
 
     # ============================================================
     # ACT 2 — handshake (75s)
@@ -321,52 +323,41 @@ class MCPConnection(Scene):
         self.play(FadeIn(self.state_panel), run_time=0.5)
         self.wait(0.3)
 
-        # === Beat 2.1 — send initialize (id:1) (25s) ===
-        self.show_subtitle("等 1 秒 → 送出 initialize (id:1)")
+        # === Beat 2.1 — send initialize (id:1) ===
+        self.show_subtitle("等 1 秒 → 父程序送出 initialize")
 
-        init_snip = self.make_json_snippet([
-            ('{',                                       NEUTRAL),
-            ('  "method": "initialize",',               BLUE),
-            ('  "id": 1,',                              ORANGE),
-            ('  "params": {',                           NEUTRAL),
-            ('    "protocolVersion": "2024-11-05"',     GREEN),
-            ('  }',                                     NEUTRAL),
-            ('}',                                       NEUTRAL),
-        ], width=5.5, size=18)
-        init_snip.move_to(UP * 2.8 + LEFT * 4.5)
-
-        self.play(FadeIn(init_snip, shift=DOWN * 0.2), run_time=0.6)
-        self.wait(4.5)
-
-        # send arrow right
         arrow_init = self.message_arrow('right', ORANGE, y_offset=0.0)
-        arrow_init_lbl = Text("REQUEST  initialize", font=MONO_FONT,
-                              font_size=18, color=ORANGE,
-                              weight=BOLD).next_to(arrow_init, UP, buff=0.1)
-        self.play(GrowArrow(arrow_init), FadeIn(arrow_init_lbl), run_time=0.8)
-        self.wait(5.0)
+        self.play(GrowArrow(arrow_init), run_time=0.5)
 
-        # === Beat 2.2 — child responds (25s) ===
-        self.show_subtitle("子程序回 capabilities → ready=true")
+        init_pill = self._make_pill("initialize · id:1", ORANGE)
+        init_pill.move_to(self.parent_box.get_right() + RIGHT * 0.55)
+        self.play(FadeIn(init_pill, scale=0.6), run_time=0.4)
+        self.wait(2.5)
+        self.play(
+            init_pill.animate.move_to(self.child_box.get_left() + LEFT * 0.55),
+            run_time=1.4,
+        )
+        self.wait(3.0)
+        self.play(FadeOut(init_pill), run_time=0.3)
+        self.wait(1.5)
 
-        # response arrow left
+        # === Beat 2.2 — child responds ===
+        self.show_subtitle("子程序回報能力 → ready=true")
+
         arrow_cap = self.message_arrow('left', GREEN, y_offset=-1.0)
-        arrow_cap_lbl = Text("RESPONSE  capabilities", font=MONO_FONT,
-                             font_size=18, color=GREEN,
-                             weight=BOLD).next_to(arrow_cap, DOWN, buff=0.1)
-        self.play(GrowArrow(arrow_cap), FadeIn(arrow_cap_lbl), run_time=0.8)
+        self.play(GrowArrow(arrow_cap), run_time=0.5)
 
-        cap_snip = self.make_json_snippet([
-            ('{',                                       NEUTRAL),
-            ('  "id": 1,',                              ORANGE),
-            ('  "result": {',                           NEUTRAL),
-            ('    "capabilities": {"tools":{}}',        GREEN),
-            ('  }',                                     NEUTRAL),
-            ('}',                                       NEUTRAL),
-        ], width=5.5, size=18)
-        cap_snip.move_to(UP * 2.8 + RIGHT * 4.5)
-        self.play(FadeIn(cap_snip, shift=DOWN * 0.2), run_time=0.6)
-        self.wait(3.5)
+        cap_pill = self._make_pill("能力清單 · ok", GREEN)
+        cap_pill.move_to(self.child_box.get_left() + LEFT * 0.55 + DOWN * 1.0)
+        self.play(FadeIn(cap_pill, scale=0.6), run_time=0.4)
+        self.play(
+            cap_pill.animate.move_to(
+                self.parent_box.get_right() + RIGHT * 0.55 + DOWN * 1.0
+            ),
+            run_time=1.4,
+        )
+        self.wait(1.5)
+        self.play(FadeOut(cap_pill), run_time=0.3)
 
         # update ready=true
         new_ready = Text("true", font=MONO_FONT, font_size=20,
@@ -383,57 +374,66 @@ class MCPConnection(Scene):
                     font=CN_FONT, font_size=22, color=RED,
                     weight=BOLD).next_to(state_box, RIGHT, buff=0.4)
         self.play(FadeIn(note, shift=LEFT * 0.2), run_time=0.5)
-        self.wait(10.0)
+        self.wait(9.5)
 
         # cleanup snippets before beat 2.3
-        self.play(FadeOut(init_snip), FadeOut(cap_snip),
-                  FadeOut(arrow_init), FadeOut(arrow_init_lbl),
-                  FadeOut(arrow_cap), FadeOut(arrow_cap_lbl),
+        self.play(FadeOut(arrow_init), FadeOut(arrow_cap),
                   FadeOut(note),
-                  run_time=0.6)
+                  run_time=0.5)
 
-        # === Beat 2.3 — notifications/initialized + tools/list (25s) ===
-        self.show_subtitle("送 notifications/initialized（單向，無 id）")
+        # === Beat 2.3 — notify + tools/list (3 arrows shown SEQUENTIALLY) ===
 
-        # notify arrow (no id, grey)
-        arrow_notify = self.message_arrow('right', NEUTRAL, y_offset=0.3)
-        arrow_notify_lbl = Text("NOTIFY  notifications/initialized",
-                                font=MONO_FONT, font_size=18,
-                                color=NEUTRAL,
-                                weight=BOLD).next_to(arrow_notify, UP, buff=0.1)
-        self.play(GrowArrow(arrow_notify), FadeIn(arrow_notify_lbl),
-                  run_time=0.7)
-        self.wait(4.0)
+        # 1. notify arrow (grey)
+        self.show_subtitle("先告知已就緒")
+        arrow_notify = self.message_arrow('right', NEUTRAL, y_offset=0.0)
+        notify_lbl = Text("告知已就緒", font=CN_FONT, font_size=22,
+                          color=NEUTRAL).next_to(arrow_notify, UP, buff=0.15)
+        self.play(GrowArrow(arrow_notify), FadeIn(notify_lbl), run_time=0.6)
+        self.wait(2.5)
+        self.play(FadeOut(arrow_notify), FadeOut(notify_lbl), run_time=0.4)
 
-        # tools/list request (right)
-        self.show_subtitle("送 tools/list (id:3) → 子程序列舉工具")
-        arrow_tl = self.message_arrow('right', ORANGE, y_offset=-0.3)
-        arrow_tl_lbl = Text("REQUEST  tools/list  id:3", font=MONO_FONT,
-                            font_size=18, color=ORANGE,
-                            weight=BOLD).next_to(arrow_tl, UP, buff=0.05)
-        self.play(GrowArrow(arrow_tl), FadeIn(arrow_tl_lbl), run_time=0.7)
-        self.wait(3.5)
+        # 2. ask for tools (orange)
+        self.show_subtitle("再問子程序有哪些工具")
+        arrow_tl = self.message_arrow('right', ORANGE, y_offset=0.0)
+        ask_lbl = Text("要工具清單", font=CN_FONT, font_size=22,
+                       color=ORANGE,
+                       weight=BOLD).next_to(arrow_tl, UP, buff=0.15)
+        self.play(GrowArrow(arrow_tl), FadeIn(ask_lbl), run_time=0.6)
+        self.wait(2.5)
+        self.play(FadeOut(arrow_tl), FadeOut(ask_lbl), run_time=0.4)
 
-        # tools/list response (left, green)
-        arrow_tl_res = self.message_arrow('left', GREEN, y_offset=-1.0)
-        arrow_tl_res_lbl = Text("RESPONSE  8 個工具", font=MONO_FONT,
-                                font_size=18, color=GREEN,
-                                weight=BOLD).next_to(arrow_tl_res, DOWN,
-                                                     buff=0.1)
-        tools_snip = self.make_json_snippet([
-            ('"tools": [',                              NEUTRAL),
-            ('  {"name":"search_new_books"},',          GREEN),
-            ('  {"name":"search_courses"},',            GREEN),
-            ('  ...（共 8 個）',                          NEUTRAL),
-            (']',                                       NEUTRAL),
-        ], width=5.2, size=18)
-        tools_snip.move_to(UP * 2.8 + RIGHT * 4.5)
-        self.play(GrowArrow(arrow_tl_res), FadeIn(arrow_tl_res_lbl),
-                  FadeIn(tools_snip), run_time=0.8)
-        self.wait(3.5)
+        # 3. response: green arrow + 8 dots flying back to parent
+        arrow_tl_res = self.message_arrow('left', GREEN, y_offset=0.0)
+        self.play(GrowArrow(arrow_tl_res), run_time=0.5)
+
+        start_pos = self.child_box.get_left() + LEFT * 0.3
+        tool_dots = VGroup()
+        for _ in range(8):
+            d = Dot(radius=0.10, color=GREEN, fill_opacity=0.9,
+                    stroke_width=0)
+            d.move_to(start_pos)
+            tool_dots.add(d)
+
+        target_y = self.parent_box.get_top()[1] + 0.6
+        target_x_left = self.parent_box.get_left()[0] + 0.3
+        target_x_right = self.parent_box.get_right()[0] - 0.3
+        target_xs = np.linspace(target_x_left, target_x_right, 8)
+
+        self.play(FadeIn(tool_dots, scale=0.5), run_time=0.4)
+        move_anims = [
+            d.animate.move_to(np.array([target_xs[i], target_y, 0]))
+            for i, d in enumerate(tool_dots)
+        ]
+        self.play(LaggedStart(*move_anims, lag_ratio=0.12), run_time=1.8)
+
+        count_lbl = Text("tools: 8", font=MONO_FONT, font_size=22,
+                         color=GREEN, weight=BOLD)
+        count_lbl.next_to(tool_dots, UP, buff=0.18)
+        self.play(FadeIn(count_lbl, shift=DOWN * 0.1), run_time=0.4)
+        self.wait(1.5)
 
         # update isConnected=true
-        self.show_subtitle("收到工具清單後 → isConnected=true 才算真正連上")
+        self.show_subtitle("收到工具清單後 → 才算真正連上")
         new_conn = Text("true", font=MONO_FONT, font_size=20,
                         color=GREEN, weight=BOLD)
         new_conn.next_to(conn_lbl, RIGHT, buff=0.4)
@@ -446,16 +446,15 @@ class MCPConnection(Scene):
         check = Text("✓ 連上", font=CN_FONT, font_size=22, color=GREEN,
                      weight=BOLD).next_to(state_box, RIGHT, buff=0.4)
         self.play(Write(check), run_time=0.4)
-        self.wait(8.5)
+        self.wait(6.0)
 
-        # cleanup act 2 (keep parent/child/pipes/state panel for act 3)
-        self.play(FadeOut(arrow_notify), FadeOut(arrow_notify_lbl),
-                  FadeOut(arrow_tl), FadeOut(arrow_tl_lbl),
-                  FadeOut(arrow_tl_res), FadeOut(arrow_tl_res_lbl),
-                  FadeOut(tools_snip), FadeOut(check),
+        # cleanup act 2 (notify/tl arrows already faded above)
+        self.play(FadeOut(arrow_tl_res),
+                  FadeOut(tool_dots), FadeOut(count_lbl),
+                  FadeOut(check),
                   run_time=0.5)
         self.play(FadeOut(act_badge), run_time=0.3)
-        self.advance_progress(95)
+        self.advance_progress(73)
 
     # ============================================================
     # ACT 3 — tool call (55s)
@@ -464,84 +463,80 @@ class MCPConnection(Scene):
         act_badge = self._make_act_badge("ACT 3")
         self.play(FadeIn(act_badge), run_time=0.3)
 
-        # === Beat 3.1 — executeToolCall + pendingRequests (20s) ===
-        self.show_subtitle("Sonnet 決定呼叫 → executeToolCall()")
+        # === Beat 3.1 — LLM 決定呼叫 + 等候名單 ===
+        self.show_subtitle("Sonnet 決定呼叫工具")
 
-        call_snip = self.make_json_snippet([
-            ('{',                                       NEUTRAL),
-            ('  "method": "tools/call",',               BLUE),
-            ('  "id": 4,',                              ORANGE),
-            ('  "params": {',                           NEUTRAL),
-            ('    "name": "search_new_books",',         GREEN),
-            ('    "arguments": {"query":"新書"}',         GREEN),
-            ('  }',                                     NEUTRAL),
-            ('}',                                       NEUTRAL),
-        ], width=5.8, size=18)
-        call_snip.move_to(UP * 2.8)
-        self.play(FadeIn(call_snip, shift=DOWN * 0.2), run_time=0.6)
-        self.wait(3.5)
+        # Token inside parent representing the function call concept
+        call_pill = self._make_pill('search_new_books("新書")', ORANGE)
+        call_pill.move_to(self.parent_box.get_center())
+        self.play(FadeIn(call_pill, scale=0.7), run_time=0.5)
+        self.play(call_pill.animate.shift(UP * 1.15), run_time=0.4)
+        self.wait(2.5)
 
-        # pendingRequests map — compact label below parent_box (no overlap with call_snip)
-        pmap_box = RoundedRectangle(width=4.0, height=0.85, corner_radius=0.10,
-                                    stroke_color=BLUE, stroke_width=2,
-                                    fill_color=BLUE, fill_opacity=0.15)
-        pmap_box.move_to(self.parent_box.get_bottom() + DOWN * 0.55)
-        pmap_lbl = Text("pendingRequests.set(4, {resolve, 30s})",
-                        font=MONO_FONT, font_size=15,
-                        color=INK).move_to(pmap_box.get_center())
-        if pmap_lbl.width > pmap_box.width - 0.3:
-            pmap_lbl.scale_to_fit_width(pmap_box.width - 0.3)
-        pmap = VGroup(pmap_box, pmap_lbl)
-        self.play(FadeIn(pmap, shift=UP * 0.2), run_time=0.5)
-        self.wait(3.5)
+        # 等候名單 icon — yellow, with id and timeout
+        self.show_subtitle("父程序記下這個請求，等結果回來再回呼")
+        wait_box = RoundedRectangle(
+            width=2.4, height=0.65, corner_radius=0.14,
+            stroke_color=ORANGE, stroke_width=2,
+            fill_color=ORANGE, fill_opacity=0.20,
+        )
+        wait_lbl = Text("等候 id:4 · 30s 內", font=MONO_FONT,
+                        font_size=18, color=ORANGE, weight=BOLD)
+        wait_lbl.move_to(wait_box.get_center())
+        wait_group = VGroup(wait_box, wait_lbl)
+        wait_group.next_to(self.parent_box, DOWN, buff=0.3)
+        self.play(FadeIn(wait_group, shift=UP * 0.15), run_time=0.5)
+        self.wait(2.0)
 
-        # send arrow right (tools/call)
+        # arrow + token flies along it to child
         arrow_call = self.message_arrow('right', ORANGE, y_offset=0.0)
-        arrow_call_lbl = Text("REQUEST  tools/call  id:4", font=MONO_FONT,
-                              font_size=18, color=ORANGE,
-                              weight=BOLD).next_to(arrow_call, UP, buff=0.1)
-        self.play(GrowArrow(arrow_call), FadeIn(arrow_call_lbl), run_time=0.8)
-        self.wait(6.0)
+        self.play(GrowArrow(arrow_call), run_time=0.4)
+        self.play(
+            call_pill.animate.move_to(
+                self.child_box.get_center() + UP * 1.15
+            ),
+            run_time=1.4,
+        )
+        self.wait(2.0)
+        self.play(FadeOut(call_pill), run_time=0.3)
 
-        # === Beat 3.2 — child returns result, resolve callback (20s) ===
-        # Fade out call_snip first so result_snip can take the centre spot
-        self.play(FadeOut(call_snip), run_time=0.4)
-        self.show_subtitle("子程序執行完 → 回傳 result")
+        # === Beat 3.2 — child returns, waiting list resolves ===
+        self.show_subtitle("子程序執行完 → 回傳結果")
 
         arrow_res = self.message_arrow('left', GREEN, y_offset=-1.0)
-        arrow_res_lbl = Text("RESPONSE  result.content", font=MONO_FONT,
-                             font_size=18, color=GREEN,
-                             weight=BOLD).next_to(arrow_res, DOWN, buff=0.1)
-        result_snip = self.make_json_snippet([
-            ('"result": {',                             NEUTRAL),
-            ('  "content": [{',                         NEUTRAL),
-            ('    "type": "text",',                     BLUE),
-            ('    "text": "...10 筆新書"',              GREEN),
-            ('  }]',                                    NEUTRAL),
-            ('}',                                       NEUTRAL),
-        ], width=5.8, size=18)
-        result_snip.move_to(UP * 2.8)
-        self.play(GrowArrow(arrow_res), FadeIn(arrow_res_lbl),
-                  FadeIn(result_snip), run_time=0.8)
-        self.wait(4.5)
+        self.play(GrowArrow(arrow_res), run_time=0.4)
 
-        # resolve callback — from pmap (below parent_box) UP into parent_box
-        self.show_subtitle("clearTimeout → resolve(content) → 結果回 client")
-        resolve_arrow = Arrow(start=pmap_box.get_top() + UP * 0.02,
-                              end=self.parent_box.get_bottom() + DOWN * 0.05,
-                              color=GREEN, stroke_width=4, buff=0.05,
-                              max_tip_length_to_length_ratio=0.20)
-        resolve_lbl = Text("resolve(content)", font=MONO_FONT,
-                           font_size=18, color=GREEN, weight=BOLD)
-        resolve_lbl.next_to(resolve_arrow, RIGHT, buff=0.2)
-        self.play(GrowArrow(resolve_arrow), FadeIn(resolve_lbl), run_time=0.6)
-        self.wait(7.0)
+        result_pill = self._make_pill("結果 · 10 筆新書", GREEN)
+        result_pill.move_to(
+            self.child_box.get_left() + LEFT * 0.55 + DOWN * 1.0
+        )
+        self.play(FadeIn(result_pill, scale=0.7), run_time=0.4)
+        self.play(
+            result_pill.animate.move_to(
+                self.parent_box.get_right() + RIGHT * 0.55 + DOWN * 1.0
+            ),
+            run_time=1.4,
+        )
+        self.wait(1.5)
+
+        # 等候名單 yellow → green ✓
+        self.show_subtitle("找到等候中的請求 → 把結果回給呼叫端")
+        done_box = RoundedRectangle(
+            width=2.4, height=0.65, corner_radius=0.14,
+            stroke_color=GREEN, stroke_width=2,
+            fill_color=GREEN, fill_opacity=0.20,
+        )
+        done_lbl = Text("id:4  ✓ 完成", font=MONO_FONT,
+                        font_size=18, color=GREEN, weight=BOLD)
+        done_lbl.move_to(done_box.get_center())
+        done_group = VGroup(done_box, done_lbl)
+        done_group.move_to(wait_group.get_center())
+        self.play(ReplacementTransform(wait_group, done_group), run_time=0.6)
+        self.wait(3.0)
 
         # cleanup before beat 3.3
-        self.play(FadeOut(call_snip), FadeOut(result_snip),
-                  FadeOut(arrow_call), FadeOut(arrow_call_lbl),
-                  FadeOut(arrow_res), FadeOut(arrow_res_lbl),
-                  FadeOut(pmap), FadeOut(resolve_arrow), FadeOut(resolve_lbl),
+        self.play(FadeOut(result_pill), FadeOut(done_group),
+                  FadeOut(arrow_call), FadeOut(arrow_res),
                   run_time=0.5)
 
         # === Beat 3.3 — recap (15s) ===
@@ -569,7 +564,7 @@ class MCPConnection(Scene):
             cleanup.append(self._cur_subtitle)
             self._cur_subtitle = None
         self.play(*[FadeOut(m) for m in cleanup], run_time=0.7)
-        self.advance_progress(145)
+        self.advance_progress(111)
 
     # ============================================================
     # OUTRO — three points (11s)
