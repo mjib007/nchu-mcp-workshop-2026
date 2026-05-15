@@ -459,11 +459,12 @@
       <span class="status">v3 完成</span>
     </div>
     <span class="h2-accent"></span>
-    <p>用一個具體查詢「幫我查最近圖書館有什麼新書」串連整段：使用者提問 → LLM 決定呼叫工具 → Parent 跟 Child 兩階段握手 → 工具呼叫 → 結果回到使用者。</p>
+    <p>從 function calling 的底層機制談起（LLM 只吐字串，真的執行的是 harness），再用一個具體查詢「幫我查最近圖書館有什麼新書」串連 MCP 的兩階段握手與工具呼叫。</p>
     <ul>
-      <li><strong>01 從一個查詢開始</strong>：場景 → spawn → 兩階段握手 → 工具呼叫</li>
-      <li><strong>02 Tool 註冊與描述</strong>：JSON Schema、description 對 LLM 的重要性</li>
-      <li><strong>03 Client 整合機制</strong>：工具清單如何餵給 LLM</li>
+      <li><strong>01 Function Calling 怎麼運作</strong>：LLM 只吐字串，harness 真的執行；subprocess.run 那道門；安全警告</li>
+      <li><strong>02 從一個查詢開始</strong>：場景 → spawn → 兩階段握手 → 工具呼叫</li>
+      <li><strong>03 Tool 註冊與描述</strong>：JSON Schema、description 對 LLM 的重要性</li>
+      <li><strong>04 Client 整合機制</strong>：工具清單如何餵給 LLM</li>
       <li><strong>附錄</strong>：REST vs JSON-RPC、JSON-RPC 三種訊息類型（給技術 curious 老師）</li>
     </ul>
 
@@ -476,7 +477,7 @@
     <p class="video-caption">Manim 渲染 · 2:17 · scenario + 三幕 + frame closure</p>
 
     <div class="resources">
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/02-how-mcp-works.pptx">投影片 <span class="ext">pptx · 23 張</span></a>
+      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/02-how-mcp-works.pptx">投影片 <span class="ext">pptx · 30 張</span></a>
       <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/02-mcp-connection-video-youtube.md">YouTube 發佈素材 <span class="ext">md</span></a>
       <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/02-mcp-connection-video.py">Manim 原始碼 <span class="ext">py</span></a>
       <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/tools/refresh-02-slides.py">投影片產生器 <span class="ext">py</span></a>

@@ -585,27 +585,386 @@ def rebuild_slide_2(slide):
     _add_rect(slide, 0.75, 1.40, 3, 0.04, ORANGE)
 
     items = [
-        ("01", "從一個查詢開始",
+        ("01", "Function Calling 怎麼運作",
+         "LLM 只吐字串,真的執行的是外面的 harness"),
+        ("02", "從一個查詢開始",
          "場景 → Parent 開出 Child → 兩階段握手 → 工具呼叫"),
-        ("02", "Tool 註冊與描述",
+        ("03", "Tool 註冊與描述",
          "JSON Schema · description 如何影響 LLM 選擇"),
-        ("03", "Client 整合機制",
+        ("04", "Client 整合機制",
          "工具清單如何注入 LLM 的 system prompt"),
         ("附錄", "技術細節(時間夠就講,不夠就跳)",
          "REST vs JSON-RPC · JSON-RPC 三種訊息類型"),
     ]
-    y = 2.0
+    y = 1.7
     for num, title, sub in items:
-        _add_text(slide, 0.8, y, 1.5, 0.7, num,
-                  font=FONT_TITLE, size=42, color=ORANGE, bold=True,
+        _add_text(slide, 0.8, y, 1.7, 0.7, num,
+                  font=FONT_TITLE, size=36, color=ORANGE, bold=True,
                   anchor=MSO_ANCHOR.MIDDLE)
-        _add_text(slide, 2.5, y, 10, 0.6, title,
-                  font=FONT_TITLE, size=26, color=NAVY, bold=True,
+        _add_text(slide, 2.7, y, 10, 0.55, title,
+                  font=FONT_TITLE, size=23, color=NAVY, bold=True,
                   anchor=MSO_ANCHOR.MIDDLE)
-        _add_text(slide, 2.5, y + 0.6, 10, 0.5, sub,
-                  font=FONT_BODY, size=16, color=MUTED,
+        _add_text(slide, 2.7, y + 0.55, 10, 0.45, sub,
+                  font=FONT_BODY, size=15, color=MUTED,
                   anchor=MSO_ANCHOR.MIDDLE)
-        y += 1.30
+        y += 1.05
+
+
+def _code_block(slide, x, y, w, h, lines, size=11, padding=0.18):
+    """Dark code block; `lines` is list[str] or list[(text, color)]."""
+    _add_rect(slide, x, y, w, h, CODE_BG)
+    paragraphs = []
+    for line in lines:
+        if isinstance(line, tuple):
+            text, color = line
+        else:
+            text, color = line, CODE_FG
+        paragraphs.append({
+            "text": text if text else " ",
+            "font": FONT_CODE,
+            "size": size,
+            "color": color,
+            "space_after": 1,
+        })
+    _add_multi(slide, x + 0.25, y + padding, w - 0.45, h - padding * 2,
+               paragraphs)
+
+
+# ── Section 01 (new): Function Calling 怎麼運作 ──────────────────
+def build_fc_setup(prs):
+    """Setup slide: one concrete example + the core punchline."""
+    s = _blank_slide(prs, WHITE)
+    _add_text(s, 0.75, 0.4, 12, 0.7,
+              "用一個具體例子搞懂",
+              font=FONT_TITLE, size=28, color=NAVY, bold=True)
+    _add_rect(s, 0.75, 1.20, 3, 0.04, ORANGE)
+
+    # User query bubble
+    bub_x, bub_y, bub_w, bub_h = 2.5, 1.9, 8.0, 1.0
+    _add_text(s, bub_x, bub_y - 0.45, bub_w, 0.35, "使用者輸入",
+              font=FONT_BODY, size=14, color=MUTED,
+              align=PP_ALIGN.CENTER)
+    _add_rounded(s, bub_x, bub_y, bub_w, bub_h, BLUE,
+                 line_color=BLUE, line_w=2.5)
+    _add_text(s, bub_x, bub_y, bub_w, bub_h,
+              "我家目錄底下有幾個 .py 檔？",
+              font=FONT_BODY, size=24, color=WHITE, bold=True,
+              align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+
+    # Big punchline
+    _add_text(s, 0.75, 3.5, 12, 0.9,
+              "LLM 從頭到尾只做一件事 —— 吐字串",
+              font=FONT_TITLE, size=32, color=ORANGE, bold=True,
+              align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+
+    _add_multi(s, 0.75, 4.9, 12, 2.0, [
+        {"text": "所有「真的執行」的動作 —— 跑 find、發 HTTP request、改檔、開瀏覽器 —— 都發生在 LLM 外面的一段程式裡。",
+         "font": FONT_BODY, "size": 18, "color": DARK,
+         "align": PP_ALIGN.CENTER, "space_after": 14},
+        {"text": "我們叫它 harness  (= agent runtime / agent loop runner)",
+         "font": FONT_BODY, "size": 20, "color": NAVY, "bold": True,
+         "align": PP_ALIGN.CENTER, "space_after": 0},
+    ])
+    return s
+
+
+def build_fc_stage12(prs):
+    """Stage 1+2: developer prepares schema + sends API call."""
+    s = _blank_slide(prs, WHITE)
+    _add_text(s, 0.75, 0.4, 12, 0.7,
+              "Stage 1+2 — 開發者準備工具描述,送出 API call",
+              font=FONT_TITLE, size=24, color=NAVY, bold=True)
+    _add_rect(s, 0.75, 1.20, 3, 0.04, ORANGE)
+
+    code_lines = [
+        ("# 開發者寫的 Python", MUTED),
+        ("tools = [{",                                                CODE_FG),
+        ('  "name": "execute_bash",',                                 ORANGE),
+        ('  "description": "Execute a bash command. Returns stdout.",', GREEN),
+        ('  "input_schema": {',                                       CODE_FG),
+        ('    "type": "object",',                                     CODE_FG),
+        ('    "properties": {',                                       CODE_FG),
+        ('      "command": {"type": "string"}',                       CODE_FG),
+        ("    },",                                                    CODE_FG),
+        ('    "required": ["command"]',                               CODE_FG),
+        ("  }",                                                       CODE_FG),
+        ("}]",                                                        CODE_FG),
+        ("",                                                          CODE_FG),
+        ('messages = [{"role": "user",',                              CODE_FG),
+        ('             "content": "我家目錄底下有幾個 .py 檔？"}]',     CODE_FG),
+        ("",                                                          CODE_FG),
+        ("response = client.messages.create(",                        CODE_FG),
+        ('    model="claude-opus-4-7",',                              CODE_FG),
+        ("    tools=tools,        ← 把工具 schema 一起送",             ORANGE),
+        ("    messages=messages,",                                    CODE_FG),
+        (")",                                                         CODE_FG),
+    ]
+    _code_block(s, 0.75, 1.55, 7.5, 5.3, code_lines)
+
+    _add_multi(s, 8.6, 1.7, 4.5, 5.2, [
+        {"text": "tools 只是一個 dict",
+         "font": FONT_TITLE, "size": 17, "color": NAVY, "bold": True,
+         "space_after": 4},
+        {"text": "SDK 把它序列化成 JSON,塞進 API 的 request body。",
+         "font": FONT_BODY, "size": 14, "color": DARK,
+         "space_after": 16},
+
+        {"text": "LLM 看到的是這段 JSON",
+         "font": FONT_TITLE, "size": 17, "color": NAVY, "bold": True,
+         "space_after": 4},
+        {"text": "翻成 prompt 後 LLM 讀到「有一個叫 execute_bash 的東西,描述是這樣,參數長這樣」。",
+         "font": FONT_BODY, "size": 14, "color": DARK,
+         "space_after": 16},
+
+        {"text": "✗ 沒有綁定真函式指標",
+         "font": FONT_TITLE, "size": 17, "color": RED, "bold": True,
+         "space_after": 4},
+        {"text": "LLM 拿不到 Python 函式 reference,也碰不到 OS。它就是讀了一段文字。",
+         "font": FONT_BODY, "size": 14, "color": DARK,
+         "space_after": 0},
+    ])
+    return s
+
+
+def build_fc_stage3(prs):
+    """Stage 3: LLM returns JSON — the KEY teaching moment."""
+    s = _blank_slide(prs, WHITE)
+    _add_text(s, 0.75, 0.4, 12, 0.7,
+              "Stage 3 — LLM 回了一段 JSON",
+              font=FONT_TITLE, size=26, color=NAVY, bold=True)
+    _add_rect(s, 0.75, 1.20, 3, 0.04, ORANGE)
+
+    json_lines = [
+        ("{",                                                         CODE_FG),
+        ('  "id": "msg_abc123",',                                     CODE_FG),
+        ('  "stop_reason": "tool_use",        ← 旗號:給 harness 看',  ORANGE),
+        ('  "content": [',                                            CODE_FG),
+        ('    {',                                                     CODE_FG),
+        ('      "type": "text",',                                     CODE_FG),
+        ('      "text": "讓我用 find 幫你數一下。"',                   GREEN),
+        ('    },',                                                    CODE_FG),
+        ('    {',                                                     CODE_FG),
+        ('      "type": "tool_use",',                                 CODE_FG),
+        ('      "id": "toolu_01XYZ",',                                CODE_FG),
+        ('      "name": "execute_bash",',                             CODE_FG),
+        ('      "input": {',                                          CODE_FG),
+        ('        "command": "find ~ -name \'*.py\' -type f | wc -l"', GREEN),
+        ('      }',                                                   CODE_FG),
+        ('    }',                                                     CODE_FG),
+        ('  ]',                                                       CODE_FG),
+        ('}',                                                         CODE_FG),
+    ]
+    _code_block(s, 0.75, 1.55, 8.6, 4.3, json_lines)
+
+    _add_multi(s, 9.6, 1.7, 3.6, 4.2, [
+        {"text": "stop_reason: tool_use",
+         "font": FONT_CODE, "size": 14, "color": ORANGE, "bold": True,
+         "space_after": 4},
+        {"text": "「我停下來了,因為產出了一個 tool_use,你接手。」",
+         "font": FONT_BODY, "size": 13, "color": MUTED, "italic": True,
+         "space_after": 16},
+
+        {"text": "command 這串字",
+         "font": FONT_TITLE, "size": 14, "color": GREEN, "bold": True,
+         "space_after": 4},
+        {"text": "是 LLM token-by-token 生出來的;constrained decoding 確保 JSON 一定合法。",
+         "font": FONT_BODY, "size": 13, "color": DARK,
+         "space_after": 0},
+    ])
+
+    # Big punchline at bottom
+    _add_rounded(s, 0.75, 6.05, 12, 0.85, LIGHT_ORANGE,
+                 line_color=ORANGE, line_w=2)
+    _add_text(s, 0.75, 6.05, 12, 0.85,
+              "LLM 沒有「呼叫」任何東西 —— 它就是吐了一段 JSON 字串。",
+              font=FONT_TITLE, size=20, color=ORANGE, bold=True,
+              align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+    return s
+
+
+def build_fc_stage4(prs):
+    """Stage 4: Harness actually executes — the 'eval LLM output' moment."""
+    s = _blank_slide(prs, WHITE)
+    _add_text(s, 0.75, 0.4, 12, 0.7,
+              "Stage 4 — Harness 真的執行",
+              font=FONT_TITLE, size=26, color=NAVY, bold=True)
+    _add_rect(s, 0.75, 1.20, 3, 0.04, ORANGE)
+
+    code_lines = [
+        ("# Harness 拿到 LLM 的 tool_use 後,跑 dispatcher", MUTED),
+        ("for block in response.content:",            CODE_FG),
+        ('    if block.type == "tool_use":',          CODE_FG),
+        ('        cmd = block.input["command"]',      CODE_FG),
+        ("",                                          CODE_FG),
+        ("        # 這一行才是「真的下去執行」",       ORANGE),
+        ("        result = subprocess.run(",          ORANGE),
+        ("            cmd,",                          ORANGE),
+        ("            shell=True,         ← LLM 字串 → /bin/bash", ORANGE),
+        ("            capture_output=True,",          ORANGE),
+        ("            text=True,",                    ORANGE),
+        ("            timeout=30,",                   ORANGE),
+        ("        )",                                 ORANGE),
+        ('        tool_output = result.stdout.strip()    # "42"', CODE_FG),
+    ]
+    _code_block(s, 0.75, 1.55, 8.2, 3.7, code_lines)
+
+    # Right side: door metaphor
+    _add_multi(s, 9.2, 1.7, 4.0, 3.5, [
+        {"text": "「文字宇宙」",
+         "font": FONT_TITLE, "size": 16, "color": BLUE, "bold": True,
+         "align": PP_ALIGN.CENTER, "space_after": 2},
+        {"text": "= LLM 吐的字串",
+         "font": FONT_BODY, "size": 13, "color": MUTED,
+         "align": PP_ALIGN.CENTER, "space_after": 14},
+
+        {"text": "↓  這道門  ↓",
+         "font": FONT_TITLE, "size": 20, "color": ORANGE, "bold": True,
+         "align": PP_ALIGN.CENTER, "space_after": 4},
+        {"text": "subprocess.run(...)",
+         "font": FONT_CODE, "size": 13, "color": ORANGE, "bold": True,
+         "align": PP_ALIGN.CENTER, "space_after": 14},
+
+        {"text": "「真實電腦」",
+         "font": FONT_TITLE, "size": 16, "color": NAVY, "bold": True,
+         "align": PP_ALIGN.CENTER, "space_after": 2},
+        {"text": "= shell fork + exec",
+         "font": FONT_BODY, "size": 13, "color": MUTED,
+         "align": PP_ALIGN.CENTER, "space_after": 0},
+    ])
+
+    # Bottom warning box
+    _add_rounded(s, 0.75, 5.45, 12, 1.5,
+                 RGBColor(0xFD, 0xE5, 0xE5),
+                 line_color=RED, line_w=2)
+    _add_multi(s, 1.0, 5.6, 11.5, 1.3, [
+        {"text": "⚠  安全警告 — 本質上是 eval(LLM 輸出)",
+         "font": FONT_TITLE, "size": 16, "color": RED, "bold": True,
+         "space_after": 6},
+        {"text": "若 prompt injection 攻擊,LLM 會生出 rm -rf ~,harness 不長眼就照跑。",
+         "font": FONT_BODY, "size": 14, "color": DARK,
+         "space_after": 4},
+        {"text": "Production 系統必須加 sandbox / docker / allow-list / human-in-the-loop confirmation。",
+         "font": FONT_BODY, "size": 14, "color": DARK, "italic": True,
+         "space_after": 0},
+    ])
+    return s
+
+
+def build_fc_stage56(prs):
+    """Stage 5+6: tool_result fed back, LLM produces final answer."""
+    s = _blank_slide(prs, WHITE)
+    _add_text(s, 0.75, 0.4, 12, 0.7,
+              "Stage 5+6 — 結果塞回,LLM 給最終答案",
+              font=FONT_TITLE, size=24, color=NAVY, bold=True)
+    _add_rect(s, 0.75, 1.20, 3, 0.04, ORANGE)
+
+    _add_text(s, 0.75, 1.55, 8, 0.4, "messages 陣列現在長這樣:",
+              font=FONT_TITLE, size=14, color=NAVY, bold=True)
+
+    msg_lines = [
+        ("[user]",                                                BLUE),
+        ('    "我家目錄底下有幾個 .py 檔？"',                       CODE_FG),
+        ("",                                                       CODE_FG),
+        ("[assistant]",                                            ORANGE),
+        ('    "讓我用 find 幫你數一下。"',                          CODE_FG),
+        ('    + tool_use { execute_bash, "find ~ ..." }',          CODE_FG),
+        ("",                                                       CODE_FG),
+        ("[user]   ← 注意:role 是 user!",                         GREEN),
+        ('    tool_result { id=toolu_01XYZ, content="42" }',       CODE_FG),
+        ("",                                                       CODE_FG),
+        ("[assistant]   stop_reason: end_turn",                    ORANGE),
+        ('    "你家目錄底下總共有 42 個 .py 檔。"',                  CODE_FG),
+    ]
+    _code_block(s, 0.75, 2.0, 7.8, 4.4, msg_lines)
+
+    _add_multi(s, 8.9, 2.0, 4.2, 4.4, [
+        {"text": "tool_result 用 role: user 送回",
+         "font": FONT_TITLE, "size": 15, "color": GREEN, "bold": True,
+         "space_after": 4},
+        {"text": "從 model 的角度,它中斷自己去問了外面的世界,外面的世界回了一句,現在輪到 model 繼續講。",
+         "font": FONT_BODY, "size": 13, "color": DARK,
+         "space_after": 18},
+
+        {"text": "stop_reason: end_turn",
+         "font": FONT_CODE, "size": 14, "color": ORANGE, "bold": True,
+         "space_after": 4},
+        {"text": "harness 看到這個(不是 tool_use)就知道:迴圈結束了。",
+         "font": FONT_BODY, "size": 13, "color": DARK,
+         "space_after": 18},
+
+        {"text": "完整 loop",
+         "font": FONT_TITLE, "size": 14, "color": NAVY, "bold": True,
+         "space_after": 4},
+        {"text": "tool_use → run → tool_result → … → end_turn",
+         "font": FONT_CODE, "size": 12, "color": MUTED,
+         "space_after": 0},
+    ])
+
+    _add_text(s, 0.75, 6.6, 12, 0.4,
+              "可能要跑很多輪 —— LLM 可以連續呼叫多個工具,直到它覺得夠了 (end_turn)。",
+              font=FONT_BODY, size=15, color=MUTED, italic=True,
+              align=PP_ALIGN.CENTER)
+    return s
+
+
+def build_fc_takeaway(prs):
+    """Takeaway: LLM ↔ Harness responsibility split + transition to MCP."""
+    s = _blank_slide(prs, WHITE)
+    _add_text(s, 0.75, 0.4, 12, 0.7,
+              "重點:LLM ↔ Harness 職責分工",
+              font=FONT_TITLE, size=28, color=NAVY, bold=True)
+    _add_rect(s, 0.75, 1.20, 3, 0.04, ORANGE)
+
+    # Left: LLM card
+    llm_x, llm_w = 0.75, 5.9
+    _add_rounded(s, llm_x, 1.7, llm_w, 4.5, WHITE,
+                 line_color=BLUE, line_w=2.5)
+    _add_rect(s, llm_x + 0.08, 1.78, llm_w - 0.16, 0.55, BLUE)
+    _add_text(s, llm_x + 0.08, 1.78, llm_w - 0.16, 0.55, "LLM 做的",
+              font=FONT_TITLE, size=22, color=WHITE, bold=True,
+              align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+    _add_multi(s, llm_x + 0.4, 2.6, llm_w - 0.7, 3.4, [
+        {"text": "• 純粹吐字串 (text + tool_use JSON)",
+         "font": FONT_BODY, "size": 17, "color": DARK, "space_after": 8},
+        {"text": "• 讀 tool schema,生 input JSON",
+         "font": FONT_BODY, "size": 17, "color": DARK, "space_after": 8},
+        {"text": "• Constrained decoding 確保 JSON 合法",
+         "font": FONT_BODY, "size": 17, "color": DARK, "space_after": 8},
+        {"text": "• 不知道工具真正做什麼",
+         "font": FONT_BODY, "size": 17, "color": DARK, "space_after": 8},
+        {"text": "✗ 碰不到 OS、檔案、網路",
+         "font": FONT_BODY, "size": 17, "color": RED, "bold": True,
+         "space_after": 0},
+    ])
+
+    # Right: Harness card
+    h_x, h_w = 6.95, 5.9
+    _add_rounded(s, h_x, 1.7, h_w, 4.5, WHITE,
+                 line_color=ORANGE, line_w=2.5)
+    _add_rect(s, h_x + 0.08, 1.78, h_w - 0.16, 0.55, ORANGE)
+    _add_text(s, h_x + 0.08, 1.78, h_w - 0.16, 0.55, "Harness 做的",
+              font=FONT_TITLE, size=22, color=WHITE, bold=True,
+              align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+    _add_multi(s, h_x + 0.4, 2.6, h_w - 0.7, 3.4, [
+        {"text": "• 真的執行 (subprocess、HTTP、DB…)",
+         "font": FONT_BODY, "size": 17, "color": DARK, "space_after": 8},
+        {"text": "• 維護 messages 陣列",
+         "font": FONT_BODY, "size": 17, "color": DARK, "space_after": 8},
+        {"text": "• Loop 直到 stop_reason: end_turn",
+         "font": FONT_BODY, "size": 17, "color": DARK, "space_after": 8},
+        {"text": "• 處理 timeout / 錯誤 / 結果格式",
+         "font": FONT_BODY, "size": 17, "color": DARK, "space_after": 8},
+        {"text": "✓ 加 sandbox / 安全防護",
+         "font": FONT_BODY, "size": 17, "color": GREEN, "bold": True,
+         "space_after": 0},
+    ])
+
+    # Bottom transition to next section
+    _add_text(s, 0.75, 6.5, 12, 0.5,
+              "→ MCP 在這個機制上加了什麼?把 harness ↔ tool 的協定標準化、抽到獨立 process。",
+              font=FONT_BODY, size=17, color=NAVY, bold=True, italic=True,
+              align=PP_ALIGN.CENTER)
+    return s
 
 
 def _replace_exact_text(slide, old, new):
@@ -683,21 +1042,22 @@ def rebuild_recap(slide):
     _add_rect(slide, 0.75, 1.40, 3, 0.04, ORANGE)
 
     items = [
+        "Function calling:LLM 只吐 tool_use JSON,真的執行的是外面的 harness;harness 跨越「文字宇宙 → 真實電腦」",
         "MCP 把 LLM ⇄ 工具的通訊抽出來,變成 Parent / Child 兩個 process 之間的雙向管道",
         "兩階段握手:① 互換能力 → ② 拿到工具清單;兩步都過才算真的連上",
         "工具呼叫:LLM 決定 → token 飛去 Child → Child 執行 → 結果飛回 → 找到對應請求回給使用者",
         "每個工具由 name / description / inputSchema 三個欄位定義;description 的品質直接決定 LLM 選不選得對",
         "Client 把所有工具定義轉換後,注入 LLM API 的 tools 參數 — LLM 只看得到 name + description + inputSchema",
     ]
-    y = 2.0
+    y = 1.65
     for i, txt in enumerate(items, 1):
         _add_text(slide, 0.9, y, 0.8, 0.5, str(i),
-                  font=FONT_TITLE, size=24, color=ORANGE, bold=True,
+                  font=FONT_TITLE, size=22, color=ORANGE, bold=True,
                   anchor=MSO_ANCHOR.MIDDLE)
         _add_text(slide, 1.8, y, 11.3, 0.5, txt,
-                  font=FONT_BODY, size=18, color=DARK,
+                  font=FONT_BODY, size=16, color=DARK,
                   anchor=MSO_ANCHOR.MIDDLE)
-        y += 0.85
+        y += 0.78
 
     _add_text(slide, 0.75, 6.8, 12, 0.4,
               "下一講預告:Agentic Tool Loop — LLM 怎麼自主決定該呼叫哪個工具",
@@ -712,17 +1072,32 @@ def main():
 
     # Build new slides — appended at end first
     new_indices = {}
+
+    # Section 01: Function Calling 怎麼運作 (new)
+    new_indices["fc_divider"]  = len(prs.slides); build_slide_section_divider(
+        prs, "01", "Function Calling 怎麼運作",
+        "LLM 只吐字串,真的執行的是外面的 harness")
+    new_indices["fc_setup"]    = len(prs.slides); build_fc_setup(prs)
+    new_indices["fc_stage12"]  = len(prs.slides); build_fc_stage12(prs)
+    new_indices["fc_stage3"]   = len(prs.slides); build_fc_stage3(prs)
+    new_indices["fc_stage4"]   = len(prs.slides); build_fc_stage4(prs)
+    new_indices["fc_stage56"]  = len(prs.slides); build_fc_stage56(prs)
+    new_indices["fc_takeaway"] = len(prs.slides); build_fc_takeaway(prs)
+
+    # Section 02: 從一個查詢開始 (renumbered from previous 01)
     new_indices["divider"]  = len(prs.slides); build_slide_section_divider(
-        prs, "01", "從一個查詢開始",
+        prs, "02", "從一個查詢開始",
         "用 search_new_books 走一遍完整流程")
     new_indices["scenario"] = len(prs.slides); build_slide_scenario(prs)
     new_indices["act1"]     = len(prs.slides); build_slide_act1(prs)
     new_indices["act2"]     = len(prs.slides); build_slide_act2(prs)
     new_indices["act3"]     = len(prs.slides); build_slide_act3(prs)
     new_indices["video"]    = len(prs.slides); build_slide_video_cue(prs)
+
+    # Appendix divider
     new_indices["appendix"] = len(prs.slides); build_appendix_divider(prs)
 
-    print(f"appended 7 new slides; total now {len(prs.slides)}")
+    print(f"appended 14 new slides; total now {len(prs.slides)}")
 
     # Reorder. Goal final order:
     #   1: orig slide 1 (title)
@@ -743,38 +1118,67 @@ def main():
     # Use sldId-element references to be safe across reorders
     xml = _slides_xml(prs)
     all_slides = list(xml)
-    orig_3_to_7 = all_slides[2:7]
-    orig_8_to_11 = all_slides[7:11]
+    orig_3_to_7   = all_slides[2:7]
+    orig_8_to_11  = all_slides[7:11]
     orig_12_to_19 = all_slides[11:19]
-    orig_20 = all_slides[19]
-    new_divider = all_slides[20]
-    new_scenario = all_slides[21]
-    new_act1 = all_slides[22]
-    new_act2 = all_slides[23]
-    new_act3 = all_slides[24]
-    new_video = all_slides[25]
-    new_appendix = all_slides[26]
+    orig_20       = all_slides[19]
+
+    # New FC section (7 slides, indices 20..26 in the appended order)
+    new_fc_divider  = all_slides[20]
+    new_fc_setup    = all_slides[21]
+    new_fc_stage12  = all_slides[22]
+    new_fc_stage3   = all_slides[23]
+    new_fc_stage4   = all_slides[24]
+    new_fc_stage56  = all_slides[25]
+    new_fc_takeaway = all_slides[26]
+
+    # New query section (6 slides, indices 27..32)
+    new_divider  = all_slides[27]
+    new_scenario = all_slides[28]
+    new_act1     = all_slides[29]
+    new_act2     = all_slides[30]
+    new_act3     = all_slides[31]
+    new_video    = all_slides[32]
+
+    # Appendix divider (index 33)
+    new_appendix = all_slides[33]
 
     # Remove all from XML; then re-append in desired order
     for el in list(xml):
         xml.remove(el)
 
-    # Final order
     final = [
-        all_slides[0],  # slide 1 (title)
-        all_slides[1],  # slide 2 (outline; will be rebuilt)
+        all_slides[0],     # 1: title (kept)
+        all_slides[1],     # 2: outline (REBUILT)
+
+        # Section 01 — Function Calling 怎麼運作 (new)
+        new_fc_divider,
+        new_fc_setup,
+        new_fc_stage12,
+        new_fc_stage3,
+        new_fc_stage4,
+        new_fc_stage56,
+        new_fc_takeaway,
+
+        # Section 02 — 從一個查詢開始 (renumbered)
         new_divider,
         new_scenario,
         new_act1,
         new_act2,
         new_act3,
         new_video,
+
+        # Sections 03 + 04 — Tool 註冊與描述 / Client 整合機制 (kept original)
         *orig_12_to_19,
-        orig_20,
+
+        # Recap
+        orig_20,           # REBUILT
+
+        # Appendix
         new_appendix,
         *orig_3_to_7,
     ]
-    # orig_8_to_11 dropped
+    # orig_8_to_11 (lifecycle) dropped
 
     for el in final:
         xml.append(el)
@@ -784,23 +1188,20 @@ def main():
     # the deck but the underlying slide part still lives in the package. Good
     # enough for our purposes — file is slightly larger but no broken refs.
 
-    # Rebuild outline slide (still indexed by position; slide 2 is now at index 1)
+    # Rebuild outline slide (slide 2 → index 1)
     rebuild_slide_2(prs.slides[1])
-    # Recap is now at index 16 (0-based) — 17th slide
-    rebuild_recap(prs.slides[16])
-    print("rebuilt outline (slide 2) and recap (slide 17)")
+    # Recap is now at index 23 (24th slide, 0-based) after the FC + query
+    # sections + 8 kept slides above it
+    rebuild_recap(prs.slides[23])
+    print("rebuilt outline (slide 2) and recap (slide 24)")
 
-    # Renumber the two kept section dividers to match the new outline:
-    #   slide 9  was "03 Tool 註冊與描述"   → now "02"
-    #   slide 13 was "04 Client 整合機制"   → now "03"
-    _replace_exact_text(prs.slides[8],  "03", "02")
-    _replace_exact_text(prs.slides[12], "04", "03")
-    print("renumbered section dividers (slide 9 → 02, slide 13 → 03)")
+    # Kept section dividers already have correct numbers (03 Tool / 04 Client)
+    # from the original pptx — no renumbering needed in this revision.
 
     # Replace the old "→ 切換到 mcp-architecture-animation.html" demo cue
-    # at slide 16 (index 15) with a static 4-layer architecture diagram.
-    rebuild_architecture_slide(prs.slides[15])
-    print("rebuilt architecture slide (slide 16) — no more HTML demo cue")
+    # (originally orig slide 19, now at index 22) with a static 4-layer diagram.
+    rebuild_architecture_slide(prs.slides[22])
+    print("rebuilt architecture slide (slide 23) — no more HTML demo cue")
 
     prs.save(str(PPTX))
     print(f"saved → {PPTX.name} ({len(prs.slides)} slides)")

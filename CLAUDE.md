@@ -19,7 +19,7 @@ This file provides guidance to Claude Code / Claude Agent SDK clients when worki
 | 段落 | 時間 | 主題 | 主要檔案 | 狀態 |
 |------|------|------|---------|------|
 | 第一段 | 50 min | **Why MCP** | `01-why-mcp.pptx`、`01-why-mcp-video.mp4`（3 min Manim 長片） | ✅ 初稿完成（21 張 + v2 影片）|
-| 第二段 | 50 min | **How MCP Works** | `02-how-mcp-works.pptx`（23 張，含附錄）、`02-mcp-connection-video.mp4`（2:17 Manim 影片） | ✅ v3 完成（pptx 與影片已對齊）|
+| 第二段 | 50 min | **How MCP Works** | `02-how-mcp-works.pptx`（30 張，含附錄）、`02-mcp-connection-video.mp4`（2:17 Manim 影片） | ✅ v3 完成（pptx 與影片已對齊）|
 | 休息 | 10 min | | | |
 | 第三段 | 50 min | **Agentic Tool Loop** | `03-agentic-tool-loop.pptx`、`sonnet-running-example.pptx` | 🔨 初稿完成（HTML 動畫已移除，預計改 Manim 影片） |
 | 第四段 | 50 min | **動手做（mini-project 實作）** | `04-hands-on-lab.pptx`、`04-hands-on-lab.md` + `mini-project/` + `infra/` | ✅ 完成 |
@@ -40,10 +40,11 @@ This file provides guidance to Claude Code / Claude Agent SDK clients when worki
 - 興大 AI 學伴案例引子（33 工具、9 大分類）
 
 ### 第二段：How MCP Works（50 min）
-- **新結構（v3）**：以「使用者問新書」的 frame story 為主軸串連
-  - Section 01 從一個查詢開始（場景 → Parent 開出 Child → 兩階段握手 → 工具呼叫）
-  - Section 02 Tool 註冊與描述（JSON Schema、description 對 LLM 的重要性）
-  - Section 03 Client 整合機制（工具清單如何餵給 LLM）
+- **結構（v4）**：先講 function calling 底層，再用 frame story 串 MCP
+  - Section 01 Function Calling 怎麼運作（LLM 只吐字串、subprocess.run 那道門、安全警告、LLM ↔ Harness 職責分工）
+  - Section 02 從一個查詢開始（場景 → Parent 開出 Child → 兩階段握手 → 工具呼叫）
+  - Section 03 Tool 註冊與描述（JSON Schema、description 對 LLM 的重要性）
+  - Section 04 Client 整合機制（工具清單如何餵給 LLM）
   - 附錄：REST vs JSON-RPC、JSON-RPC 三種訊息類型（給技術 curious 老師，可跳）
 - 搭配影片：`02-mcp-connection-video.mp4`（2:17，Parent / Child / 兩階段握手 checkbox / 第 4 個請求 / frame closure）
 - pptx 重生工具：`tools/refresh-02-slides.py`（程式化生成，避免手動同步影片內容）

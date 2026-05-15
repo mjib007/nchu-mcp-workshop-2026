@@ -9,7 +9,7 @@
 | 段落 | 時間 | 主題 | 檔案 |
 |------|------|------|------|
 | 1 | 50 min | Why MCP | `01-why-mcp.pptx` + `01-why-mcp-video.mp4`（3 min 概念長片） |
-| 2 | 50 min | How MCP Works | `02-how-mcp-works.pptx`（23 張，附錄含 REST vs JSON-RPC）+ `02-mcp-connection-video.mp4`（2:17 handshake 影片） |
+| 2 | 50 min | How MCP Works | `02-how-mcp-works.pptx`（30 張，附錄含 REST vs JSON-RPC）+ `02-mcp-connection-video.mp4`（2:17 handshake 影片） |
 | — | 10 min | 休息 | |
 | 3 | 50 min | Agentic Tool Loop | `03-agentic-tool-loop.pptx` |
 | 4 | 50 min | 動手做（mini-project 實作） | `04-hands-on-lab.pptx`（15 張）+ `04-hands-on-lab.md` + `mini-project/` + `infra/` |
@@ -96,7 +96,7 @@ cd backend-node && npm start           # → http://localhost:3001
 ## 目前進度
 
 - 第一段：`01-why-mcp.pptx`（21 張）+ `01-why-mcp-video.mp4`（3 min Manim 長片，v2 已 polish）
-- 第二段：`02-how-mcp-works.pptx`（**23 張**，含附錄 REST vs JSON-RPC）+ `02-mcp-connection-video.mp4`（2:17 handshake 影片，v3 已 polish）
+- 第二段：`02-how-mcp-works.pptx`（**30 張**，含附錄 REST vs JSON-RPC）+ `02-mcp-connection-video.mp4`（2:17 handshake 影片，v3 已 polish）
 - 第三段：`03-agentic-tool-loop.pptx`（20 張）初稿（HTML 動畫已移除，預計改 Manim 影片）
 - 第四段（動手做）：`04-hands-on-lab.pptx`（**15 張**，code-truth 對齊 mini-project）+ `04-hands-on-lab.md` + 完整可跑 `mini-project/`（28 檔 + 三關 Lab 手冊）
 - 第五段（實務考量收尾）：`05-practical-considerations.md` 完成（四大支柱：規模／品質／模型／成本，HTML 動畫已移除）
