@@ -7,21 +7,27 @@
 <meta name="description" content="三小時 MCP 入門工作坊教材，受眾為大專院校教師。以興大 AI 學伴為實例，含投影片、Manim 動畫影片、可跑 mini-project 與 course TA agent。">
 <style>
   :root {
-    --navy:       #1E2761;
-    --deep-blue:  #065A82;
-    --teal:       #1C7293;
-    --teal-bright:#2DB5C9;
-    --blue:       #5B8DE8;
-    --orange:     #E8793A;
-    --green:      #5CB85C;
-    --bg:         #FAF7F2;
+    --violet:     #7B5CF5;
+    --violet-deep:#5B3ED9;
+    --orange:     #FB7048;
+    --teal:       #0EA594;
+    --teal-deep:  #0F766E;
+    --pink:       #EF4444;
+    --blue:       #3B82F6;
+    --violet-pastel: #EEE8FF;
+    --orange-pastel: #FFE7DB;
+    --teal-pastel:   #D4F7F0;
+    --pink-pastel:   #FEE2E2;
+    --blue-pastel:   #DBEAFE;
+    --bg:         #FFFFFF;
     --card:       #FFFFFF;
-    --ink:        #1A1A1A;
-    --muted:      #6B6B6B;
-    --line:       #E5E3DE;
-    --code-bg:    #101A2E;
-    --code-fg:    #DDE4EE;
-    --shadow:     0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(30,39,97,.06);
+    --ink:        #1F2937;
+    --muted:      #9CA3AF;
+    --italic-gray:#6B7280;
+    --line:       #E5E7EB;
+    --code-bg:    #1A2138;
+    --code-fg:    #E5E7EB;
+    --shadow:     0 1px 2px rgba(0,0,0,.04), 0 12px 32px rgba(123,92,245,.10);
   }
   *,*::before,*::after { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -48,38 +54,49 @@
     line-height: 1.55;
   }
   code {
-    background: rgba(232, 121, 58, 0.10);
-    color: #B85A1F;
+    background: rgba(123, 92, 245, 0.10);
+    color: var(--violet-deep);
     padding: 1px 5px;
     border-radius: 3px;
     font-size: 0.92em;
   }
   pre code { background: none; color: inherit; padding: 0; }
   a {
-    color: var(--deep-blue);
+    color: var(--violet-deep);
     text-decoration: none;
-    border-bottom: 1px solid rgba(6, 90, 130, 0.30);
+    border-bottom: 1px solid rgba(123, 92, 245, 0.30);
     transition: border-color .15s;
   }
-  a:hover { border-color: var(--deep-blue); }
+  a:hover { border-color: var(--violet); }
   h1, h2, h3 { line-height: 1.25; }
 
   /* ── Hero ───────────────────────────────────── */
   .hero {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--deep-blue) 60%, var(--teal) 100%);
-    color: #FFFFFF;
-    padding: 80px 24px 70px;
+    background: #FFFFFF;
+    color: var(--ink);
+    padding: 72px 24px 56px;
     position: relative;
     overflow: hidden;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    left: 24px;
+    top: 56px;
+    width: 56px;
+    height: 6px;
+    background: var(--violet);
+    border-radius: 3px;
   }
   .hero::after {
     content: "";
     position: absolute;
-    right: -120px;
+    right: -180px;
     top: -120px;
-    width: 360px;
-    height: 360px;
-    background: radial-gradient(circle, rgba(232,121,58,0.25), transparent 70%);
+    width: 460px;
+    height: 460px;
+    background: radial-gradient(circle, rgba(123,92,245,0.10), transparent 70%);
     pointer-events: none;
   }
   .container {
@@ -90,28 +107,23 @@
     z-index: 1;
   }
   .hero h1 {
-    font-size: clamp(34px, 5vw, 52px);
-    margin: 0 0 12px;
+    font-size: clamp(40px, 6.5vw, 72px);
+    margin: 18px 0 16px;
     font-weight: 900;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    line-height: 1.05;
   }
-  .hero .accent {
-    display: inline-block;
-    width: 60px;
-    height: 4px;
-    background: var(--orange);
-    margin: 18px 0 24px;
-    border-radius: 2px;
-  }
+  .hero .accent { display: none; }
   .hero .subtitle {
-    font-size: clamp(18px, 2.2vw, 22px);
+    font-size: clamp(20px, 2.3vw, 26px);
     margin: 0 0 8px;
-    font-weight: 500;
-    color: #FFF;
+    font-weight: 700;
+    color: var(--violet);
   }
   .hero .meta {
     font-size: 14px;
-    color: rgba(255,255,255,.75);
+    color: var(--muted);
     margin: 0 0 28px;
     letter-spacing: 0.02em;
   }
@@ -133,48 +145,50 @@
   }
   .btn:hover { transform: translateY(-1px); border-bottom-color: transparent; }
   .btn-primary {
-    background: var(--orange);
+    background: var(--violet);
     color: #FFF;
-    border: 1px solid var(--orange);
+    border: 1px solid var(--violet);
   }
-  .btn-primary:hover { box-shadow: 0 6px 16px rgba(232,121,58,.35); }
+  .btn-primary:hover { box-shadow: 0 8px 20px rgba(123,92,245,.35); }
   .btn-ghost {
     background: transparent;
-    color: #FFF;
-    border: 1px solid rgba(255,255,255,.4);
+    color: var(--ink);
+    border: 1px solid var(--line);
   }
-  .btn-ghost:hover { border-color: #FFF; background: rgba(255,255,255,.06); }
+  .btn-ghost:hover { border-color: var(--violet); color: var(--violet); }
 
   /* ── Sections ───────────────────────────────── */
   main { padding: 64px 0 32px; }
   section { margin: 0 0 64px; }
   section h2 {
-    font-size: 28px;
+    font-size: 30px;
     margin: 0 0 8px;
-    color: var(--navy);
-    font-weight: 800;
+    color: var(--ink);
+    font-weight: 900;
     display: flex;
     align-items: baseline;
     gap: 14px;
+    letter-spacing: -0.01em;
   }
   section h2 .seg-num {
     font-family: "SF Mono", "Consolas", monospace;
     font-size: 38px;
-    color: var(--orange);
+    color: var(--violet);
     font-weight: 900;
     line-height: 1;
   }
   section .h2-accent {
-    width: 48px; height: 3px;
-    background: var(--orange);
+    width: 48px; height: 4px;
+    background: var(--violet);
     margin: 6px 0 22px;
     border-radius: 2px;
   }
   section p.lead {
     font-size: 17px;
-    color: var(--muted);
+    color: var(--italic-gray);
     margin: 0 0 24px;
     max-width: 720px;
+    font-style: italic;
   }
 
   /* ── Outline table ──────────────────────────── */
@@ -193,8 +207,8 @@
     border-bottom: 1px solid var(--line);
   }
   .outline thead th {
-    background: rgba(30, 39, 97, 0.04);
-    color: var(--navy);
+    background: var(--violet-pastel);
+    color: var(--violet-deep);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -208,12 +222,12 @@
   }
   .outline td.num {
     font-family: "SF Mono", monospace;
-    color: var(--orange);
-    font-weight: 700;
+    color: var(--violet);
+    font-weight: 800;
     width: 64px;
   }
   .outline td.dur {
-    color: var(--teal);
+    color: var(--teal-deep);
     font-weight: 600;
     width: 90px;
     font-variant-numeric: tabular-nums;
@@ -237,8 +251,8 @@
     margin-bottom: 4px;
   }
   .segment .duration {
-    color: var(--teal);
-    font-weight: 600;
+    color: var(--teal-deep);
+    font-weight: 700;
     font-size: 14px;
     font-variant-numeric: tabular-nums;
   }
@@ -247,20 +261,20 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     padding: 2px 9px;
-    border-radius: 4px;
-    background: rgba(92, 184, 92, 0.12);
-    color: #3D7A3D;
-    font-weight: 600;
+    border-radius: 999px;
+    background: var(--teal-pastel);
+    color: var(--teal-deep);
+    font-weight: 700;
   }
   .segment .status.draft {
-    background: rgba(232, 121, 58, 0.12);
-    color: #B85A1F;
+    background: var(--orange-pastel);
+    color: #C2410C;
   }
   .segment h3 {
-    font-size: 16px;
-    color: var(--navy);
+    font-size: 17px;
+    color: var(--violet-deep);
     margin: 24px 0 12px;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: 0.02em;
   }
   .segment p { margin: 0 0 14px; }
@@ -301,27 +315,30 @@
     align-items: center;
     gap: 6px;
     padding: 7px 14px;
-    background: rgba(30, 39, 97, 0.05);
-    border: 1px solid var(--line);
+    background: var(--violet-pastel);
+    border: 1px solid transparent;
     border-radius: 999px;
     font-size: 13px;
-    color: var(--navy);
+    color: var(--violet-deep);
     text-decoration: none;
-    transition: background .15s, border-color .15s;
+    font-weight: 600;
+    transition: background .15s, border-color .15s, transform .15s;
   }
   .chip:hover {
-    background: rgba(232, 121, 58, 0.10);
-    border-color: var(--orange);
-    color: var(--orange);
+    background: #FFF;
+    border-color: var(--violet);
+    color: var(--violet);
+    transform: translateY(-1px);
   }
   .chip .ext {
     font-family: "SF Mono", monospace;
     font-size: 11px;
-    color: var(--muted);
+    color: var(--violet);
     text-transform: uppercase;
     letter-spacing: 0.06em;
+    opacity: 0.75;
   }
-  .chip:hover .ext { color: var(--orange); }
+  .chip:hover .ext { color: var(--violet); opacity: 1; }
 
   /* ── Hands-on grid ──────────────────────────── */
   .grid-2 {
@@ -341,8 +358,9 @@
   }
   .card h3 {
     margin: 0 0 8px;
-    color: var(--navy);
+    color: var(--violet-deep);
     font-size: 19px;
+    font-weight: 800;
   }
   .card .desc {
     color: var(--muted);
@@ -353,7 +371,7 @@
 
   /* ── Footer ─────────────────────────────────── */
   footer {
-    background: var(--navy);
+    background: #0F1429;
     color: rgba(255,255,255,.7);
     padding: 36px 24px;
     text-align: center;
@@ -362,23 +380,23 @@
   footer a { color: rgba(255,255,255,.85); border-bottom-color: rgba(255,255,255,.35); }
   footer a:hover { border-bottom-color: #FFF; color: #FFF; }
   footer .logo {
-    color: var(--orange);
-    font-weight: 700;
+    color: var(--violet);
+    font-weight: 800;
     letter-spacing: 0.04em;
   }
 
   /* TOC nav (sticky on desktop, hidden on mobile) */
   .toc {
-    background: rgba(30, 39, 97, 0.04);
-    border: 1px solid var(--line);
+    background: var(--violet-pastel);
+    border: 1px solid transparent;
     border-radius: 8px;
     padding: 12px 18px;
     margin-bottom: 36px;
     font-size: 14px;
   }
-  .toc strong { color: var(--navy); margin-right: 12px; }
-  .toc a { color: var(--deep-blue); margin-right: 14px; white-space: nowrap; border: none; }
-  .toc a:hover { color: var(--orange); }
+  .toc strong { color: var(--violet-deep); margin-right: 12px; }
+  .toc a { color: var(--violet); margin-right: 14px; white-space: nowrap; border: none; font-weight: 600; }
+  .toc a:hover { color: var(--violet-deep); }
 </style>
 </head>
 <body>
