@@ -45,7 +45,7 @@ config.pixel_height = 1080
 
 class MCPConnection(Scene):
     SUBTITLE_MAX_WIDTH = 14.0
-    TOTAL_SECONDS = 131.3   # measured: ~2:11 after R3 pacing cuts
+    TOTAL_SECONDS = 135.1   # ~2:15 after R3-R5 (caption dwell time restored)
 
     TITLE     = "MCP 握手"
     SUBTITLE  = "Parent / Child Process 怎麼開始講話"
@@ -188,8 +188,8 @@ class MCPConnection(Scene):
         body_top_y = header.get_bottom()[1]
         body_bot_y = box.get_bottom()[1]
         body_center_y = (body_top_y + body_bot_y) / 2
-        bot = Text(label_bot, font=MONO_FONT, font_size=16,
-                   color=NEUTRAL).move_to([0, body_center_y, 0])
+        bot = Text(label_bot, font=MONO_FONT, font_size=20,
+                   color=INK).move_to([0, body_center_y, 0])
 
         group = VGroup(shadow, box, header, sep, top, bot).move_to(pos)
         return group
@@ -317,7 +317,7 @@ class MCPConnection(Scene):
         self.show_subtitle("但 LLM 自己不會呼叫 —— 要靠 Parent 去跟 Child 講話")
         self.play(Indicate(line2, scale_factor=1.12, color=ORANGE),
                   run_time=1.2)
-        self.wait(2.5)
+        self.wait(4.5)
 
         # cleanup
         self.play(FadeOut(user_lbl), FadeOut(user_group),
@@ -343,10 +343,10 @@ class MCPConnection(Scene):
         self.play(FadeIn(title, shift=DOWN * 0.2), run_time=0.9)
         self.play(GrowFromCenter(accent), run_time=0.3)
         self.play(FadeIn(subtitle, shift=UP * 0.15), run_time=0.5)
-        self.wait(1.7)
+        self.wait(0.6)
         self.play(FadeOut(title), FadeOut(subtitle), FadeOut(accent),
-                  run_time=0.5)
-        self.advance_progress(4)
+                  run_time=0.4)
+        self.advance_progress(3)
 
     # ============================================================
     # ACT 1 — spawn (35s)
@@ -355,7 +355,7 @@ class MCPConnection(Scene):
         act_badge = self._make_act_badge("ACT 1")
         self.play(FadeIn(act_badge), run_time=0.3)
         self.show_subtitle("Node.js (Parent) × Python (Child)")
-        self.wait(1.5)
+        self.wait(3.0)
 
         # Beat 1.2 — spawn + stdio pipe (15s)
         self.parent_box = self.make_process_box(
@@ -383,7 +383,7 @@ class MCPConnection(Scene):
 
         self.play(FadeIn(spawn_call, shift=DOWN * 0.2), run_time=0.4)
         self.show_subtitle("Parent 開出一個 Child")
-        self.wait(0.5)
+        self.wait(2.0)
 
         # child box appears
         self.play(FadeIn(self.child_box, shift=LEFT * 0.3), run_time=0.6)
@@ -610,12 +610,12 @@ class MCPConnection(Scene):
         # 等候名單 icon — yellow, with id and timeout
         self.show_subtitle("Parent 記下這個請求，等 Child 回應")
         wait_box = RoundedRectangle(
-            width=2.9, height=0.65, corner_radius=0.14,
+            width=4.0, height=0.65, corner_radius=0.14,
             stroke_color=ORANGE, stroke_width=2,
             fill_color=ORANGE, fill_opacity=0.20,
         )
         wait_lbl = Text("等候 search_new_books 回應 · 30s 內", font=CN_FONT,
-                        font_size=15, color=ORANGE, weight=BOLD)
+                        font_size=18, color=ORANGE, weight=BOLD)
         wait_lbl.move_to(wait_box.get_center())
         wait_group = VGroup(wait_box, wait_lbl)
         wait_group.next_to(self.parent_box, DOWN, buff=0.3)
@@ -656,12 +656,12 @@ class MCPConnection(Scene):
         # 等候名單 yellow → green ✓
         self.show_subtitle("找到對應的請求 → 把結果回給使用者")
         done_box = RoundedRectangle(
-            width=2.9, height=0.65, corner_radius=0.14,
+            width=4.0, height=0.65, corner_radius=0.14,
             stroke_color=GREEN, stroke_width=2,
             fill_color=GREEN, fill_opacity=0.20,
         )
         done_lbl = Text("search_new_books ✓ 回應完成", font=CN_FONT,
-                        font_size=15, color=GREEN, weight=BOLD)
+                        font_size=18, color=GREEN, weight=BOLD)
         done_lbl.move_to(done_box.get_center())
         done_group = VGroup(done_box, done_lbl)
         done_group.move_to(wait_group.get_center())

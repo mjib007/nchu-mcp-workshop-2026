@@ -53,7 +53,7 @@ config.pixel_height = 1080
 
 class FunctionCalling(Scene):
     SUBTITLE_MAX_WIDTH = 14.0
-    TOTAL_SECONDS = 86.0
+    TOTAL_SECONDS = 85.5   # after R4 intro speedup
 
     TITLE     = "Function Calling 怎麼運作"
     SUBTITLE  = "LLM 只吐字串,真的執行的是外面的 harness"
@@ -217,10 +217,10 @@ class FunctionCalling(Scene):
         self.play(FadeIn(title, shift=DOWN * 0.2), run_time=0.9)
         self.play(GrowFromCenter(accent), run_time=0.3)
         self.play(FadeIn(subtitle, shift=UP * 0.15), run_time=0.5)
-        self.wait(1.6)
+        self.wait(0.6)
         self.play(FadeOut(title), FadeOut(subtitle), FadeOut(accent),
-                  run_time=0.5)
-        self.advance_progress(4)
+                  run_time=0.4)
+        self.advance_progress(3)
 
     # ============================================================
     # SCENARIO (10s)
@@ -316,7 +316,7 @@ class FunctionCalling(Scene):
         # Bottom punchline
         pl = Text("這就是 LLM 端的全部 — 沒有「綁定 Python 函式」這回事",
                   font=CN_FONT, font_size=24,
-                  color=VIOLET_SOFT, slant=ITALIC).move_to(DOWN * 2.6)
+                  color=VIOLET, weight=MEDIUM).move_to(DOWN * 2.6)
         self.play(FadeIn(pl, shift=UP * 0.2), run_time=0.6)
         self.wait(2.0)
 

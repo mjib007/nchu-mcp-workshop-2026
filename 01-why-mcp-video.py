@@ -46,7 +46,7 @@ config.pixel_height = 1080
 
 class WhyMCP(Scene):
     SUBTITLE_MAX_WIDTH = 14.0
-    TOTAL_SECONDS = 155.5   # measured: ~2:35 after R3 pacing cuts
+    TOTAL_SECONDS = 156.3   # ~2:36 after R3 cuts + R4 intro-speedup + closing hero
 
     TITLE     = "Why MCP"
     SUBTITLE  = "LLM 為何需要一個統一協定"
@@ -175,10 +175,10 @@ class WhyMCP(Scene):
         self.play(FadeIn(title, shift=DOWN * 0.2), run_time=0.9)
         self.play(GrowFromCenter(accent_line), run_time=0.3)
         self.play(FadeIn(subtitle, shift=UP * 0.15), run_time=0.5)
-        self.wait(1.7)
+        self.wait(0.6)
         self.play(FadeOut(title), FadeOut(subtitle), FadeOut(accent_line),
-                  run_time=0.5)
-        self.advance_progress(4)
+                  run_time=0.4)
+        self.advance_progress(3)
 
     # ============================================================
     # ACT 1 — LLM 的三道牆 (0:04–0:39, 35s)
@@ -596,10 +596,10 @@ class WhyMCP(Scene):
                                    fill_color=c, fill_opacity=0.18)
             n = Text(name, font=CN_FONT, font_size=28, color=INK,
                      weight=BOLD).move_to(box.get_top() + DOWN * 0.55)
-            d_lbl = Text("如：", font=CN_FONT, font_size=16, color=NEUTRAL,
+            d_lbl = Text("如：", font=CN_FONT, font_size=20, color=INK,
                          weight=MEDIUM)
             d_val = Text(desc, font=MONO_FONT if "(" in desc else CN_FONT,
-                         font_size=18, color=INK, weight=MEDIUM)
+                         font_size=22, color=INK, weight=MEDIUM)
             d = VGroup(d_lbl, d_val).arrange(RIGHT, buff=0.15)
             d.move_to(box.get_center() + DOWN * 0.35)
             roles.add(VGroup(box, n, d))
@@ -719,7 +719,22 @@ class WhyMCP(Scene):
             self.play(FadeIn(p, shift=RIGHT * 0.3), run_time=0.6)
             self.wait(2.2)
 
-        self.wait(5.0)
+        self.wait(2.5)
+
+        # Closing hero shot — give the audience one image to remember
+        self.play(FadeOut(outro_title), FadeOut(points), run_time=0.5)
+        hero_eq = Text("N × M    →    N + M",
+                       font=SERIF_FONT, font_size=110,
+                       color=INK, weight=BOLD).move_to(UP * 0.5)
+        hero_line = Line(start=LEFT * 3.0, end=RIGHT * 3.0,
+                         color=VIOLET, stroke_width=5).move_to(DOWN * 0.5)
+        hero_sub = Text("MCP 把整合工作從爆炸變線性",
+                        font=CN_FONT, font_size=32, color=VIOLET_SOFT,
+                        weight=MEDIUM).move_to(DOWN * 1.2)
+        self.play(FadeIn(hero_eq, shift=DOWN * 0.2), run_time=0.7)
+        self.play(GrowFromCenter(hero_line), run_time=0.3)
+        self.play(FadeIn(hero_sub, shift=UP * 0.15), run_time=0.5)
+        self.wait(2.5)
         self.advance_progress(self.TOTAL_SECONDS)
         self.wait(0.5)
 
