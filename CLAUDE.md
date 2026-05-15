@@ -18,12 +18,12 @@ This file provides guidance to Claude Code / Claude Agent SDK clients when worki
 
 | 段落 | 時間 | 主題 | 主要檔案 | 狀態 |
 |------|------|------|---------|------|
-| 第一段 | 50 min | **Why MCP** | `01-why-mcp.pptx` | ✅ 初稿完成（21 張）|
-| 第二段 | 50 min | **How MCP Works** | `02-how-mcp-works.pptx`、`mcp-architecture-animation.html`、`mcp-connection-animation.html` | 🔨 初稿完成 |
+| 第一段 | 50 min | **Why MCP** | `01-why-mcp.pptx`、`01-why-mcp-video.mp4`（3 min Manim 長片） | ✅ 初稿完成（21 張 + v2 影片）|
+| 第二段 | 50 min | **How MCP Works** | `02-how-mcp-works.pptx`（23 張，含附錄）、`02-mcp-connection-video.mp4`（2:17 Manim 影片） | ✅ v3 完成（pptx 與影片已對齊）|
 | 休息 | 10 min | | | |
-| 第三段 | 50 min | **Agentic Tool Loop** | `03-agentic-tool-loop.pptx`、`sonnet-flow-running-example.html`、`sonnet-running-example.pptx` | 🔨 初稿完成 |
+| 第三段 | 50 min | **Agentic Tool Loop** | `03-agentic-tool-loop.pptx`、`sonnet-running-example.pptx` | 🔨 初稿完成（HTML 動畫已移除，預計改 Manim 影片） |
 | 第四段 | 50 min | **動手做（mini-project 實作）** | `04-hands-on-lab.pptx`、`04-hands-on-lab.md` + `mini-project/` + `infra/` | ✅ 完成 |
-| 第五段 | 10 min | **實務考量（收尾）** | `05-practical-considerations.md`、`haiku-alignment-report.pptx`、`haiku-alignment-animation.html` | ✅ 完成（md 版本） |
+| 第五段 | 10 min | **實務考量（收尾）** | `05-practical-considerations.md`、`haiku-alignment-report.pptx` | ✅ 完成（md 版本，HTML 動畫已移除） |
 
 ## 各段內容規劃
 
@@ -40,18 +40,20 @@ This file provides guidance to Claude Code / Claude Agent SDK clients when worki
 - 興大 AI 學伴案例引子（33 工具、9 大分類）
 
 ### 第二段：How MCP Works（50 min）
-- JSON-RPC 協定深入（request / response / notification 格式）
-- Server 生命週期管理（spawn → initialize → ready → shutdown）
-- Tool 註冊與描述格式（JSON Schema、description 對 LLM 的重要性）
-- Client 如何把工具清單餵給 LLM（system prompt injection）
-- 搭配動畫：`mcp-architecture-animation.html`、`mcp-connection-animation.html`
+- **新結構（v3）**：以「使用者問新書」的 frame story 為主軸串連
+  - Section 01 從一個查詢開始（場景 → Parent 開出 Child → 兩階段握手 → 工具呼叫）
+  - Section 02 Tool 註冊與描述（JSON Schema、description 對 LLM 的重要性）
+  - Section 03 Client 整合機制（工具清單如何餵給 LLM）
+  - 附錄：REST vs JSON-RPC、JSON-RPC 三種訊息類型（給技術 curious 老師，可跳）
+- 搭配影片：`02-mcp-connection-video.mp4`（2:17，Parent / Child / 兩階段握手 checkbox / 第 4 個請求 / frame closure）
+- pptx 重生工具：`tools/refresh-02-slides.py`（程式化生成，避免手動同步影片內容）
 
 ### 第三段：Agentic Tool Loop（50 min）
 - 完整查詢流程 walk-through（使用者提問 → 最終回覆）
 - LLM 自主選工具（`tool_use` block → `tool_result` → 多輪迭代）
 - `maxIterations` 限制與最後一輪強制回覆機制
-- Live Demo：現場操作系統，對照動畫逐步解說
-- 搭配素材：`sonnet-flow-running-example.html`、`sonnet-running-example.pptx`
+- Live Demo：現場操作系統
+- 搭配素材：`sonnet-running-example.pptx`（HTML 動畫已移除，預計改 Manim 影片）
 
 ### 第四段：動手做（50 min，hands-on 主場）
 
@@ -84,7 +86,7 @@ Workshop 現場可連 NCHU vLLM 端點（`infra/serve-*.sh` 提供 Gemma 4 / Qwe
 
 **10 分鐘塞不下四支柱**。講師於現場依聽眾屬性**擇一深入 ~7 min**，其餘三節各一句帶過，最後 ~2 min Q&A。md 保留完整四節供課後閱讀。
 
-搭配素材：`haiku-alignment-report.pptx`、`haiku-alignment-animation.html`（可作為 §4 成本中 Haiku alignment 的延伸閱讀）。
+搭配素材：`haiku-alignment-report.pptx`（可作為 §4 成本中 Haiku alignment 的延伸閱讀；HTML 動畫已移除）。
 
 ## 工作流：教材 vs TA agent 拆兩個 worktree
 
@@ -124,7 +126,7 @@ git commit -am "data: refresh course content from main"
 ## 檔案命名慣例
 
 - 簡報：`0X-主題.pptx`，直接放在 repo 根目錄
-- 動畫：`主題-animation.html`，直接放在 repo 根目錄
+- 動畫：以 Manim 渲染為 `.mp4`，放在 repo 根目錄（早期的 `*-animation.html` 已全數移除）
 - 教材 md：`0X-主題.md`（Segment 4、5 以 md 為主；Segment 4 另有配套 pptx 作為現場講師開場使用）
 - 投影片生成腳本：`tools/gen-0X-slides.py`（用 python-pptx 程式化生成，確保視覺風格統一且可重現）
 - 草稿 / 筆記：`course-notes-*.md`
@@ -135,7 +137,9 @@ git commit -am "data: refresh course content from main"
 
 ```
 repo root/
-├── 01–03 *.pptx / *-animation.html    講課投影片與動畫（學員端）
+├── 01–03 *.pptx                       講課投影片（學員端）
+├── 01-why-mcp-video.mp4               Segment 1 Manim 長片
+├── 02-mcp-connection-video.mp4        Segment 2 Manim 長片
 ├── 04-hands-on-lab.md                 第四段動手做 landing page（現場實作主場）
 ├── 04-hands-on-lab.pptx               第四段講師開場投影片（12 張，由 tools/ 產出）
 ├── 05-practical-considerations.md     第五段實務考量收尾

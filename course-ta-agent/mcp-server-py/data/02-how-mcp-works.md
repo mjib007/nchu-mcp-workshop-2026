@@ -14,175 +14,105 @@ MCP 入門工作坊  ｜  第二講（50 min）
 
 本講大綱
 01
-通訊協定
-REST vs JSON-RPC，為什麼 MCP 選 JSON-RPC
+從一個查詢開始
+場景 → Parent 開出 Child → 兩階段握手 → 工具呼叫
 02
-Server 生命週期
-spawn → initialize → ready → shutdown
-03
 Tool 註冊與描述
-JSON Schema、description 如何影響 LLM 選擇
-04
+JSON Schema · description 如何影響 LLM 選擇
+03
 Client 整合機制
 工具清單如何注入 LLM 的 system prompt
+附錄
+技術細節(時間夠就講,不夠就跳)
+REST vs JSON-RPC · JSON-RPC 三種訊息類型
 
 ---
 
 ## Slide 3
 
 01
-通訊協定
-REST  vs  JSON-RPC
+從一個查詢開始
+用 search_new_books 走一遍完整流程
 
 ---
 
 ## Slide 4
 
-REST vs JSON-RPC — 一張表看懂差異
-面向 | REST | JSON-RPC
-核心概念 | 資源（URL + HTTP 動詞） | 動作（method 欄位）
-端點 | 每個資源一個 URL | 單一入口，靠 method 區分
-傳輸層 | 綁定 HTTP | 不綁定（stdio / HTTP / WS）
-語意 | CRUD 操作 | 呼叫函式
-範例 | GET /books?keyword=AI | { method: "search_books" }
-MCP 選 JSON-RPC 的原因：  傳輸層不綁 HTTP（可用 stdio），語意是「呼叫工具」而非「操作資源」
+場景:使用者問了一個問題,LLM 決定要呼叫工具
+使用者
+幫我查最近圖書館有什麼新書
+嗯…需要查新書資料庫
+→ 呼叫 search_new_books 工具
+LLM (Sonnet)
+但 LLM 自己不會呼叫 — 要靠 Parent 去跟 Child 講話
 
 ---
 
 ## Slide 5
 
-REST — 每個資源有自己的路徑
-// 搜尋書籍
-GET /api/books?keyword=AI
-Host: library.nchu.edu.tw
-// 新增一本書
-POST /api/books
-Content-Type: application/json
-{ "title": "深度學習入門", "author": "..." }
-// 刪除
-DELETE /api/books/123
-// → 三個不同的 URL path + 三個不同的 HTTP method，必須透過 HTTP
+Act 1 — Parent 開出 Child
+▶ 開出 Child
+Parent Process
+Node.js
+LLM · Sonnet
+Child Process
+Python MCP Server
+• Parent (Node.js) 用 spawn() 開出 Child (Python) 子程序
+• LLM (Sonnet) 是 Parent 裡的一個 client component — 它住在 Parent 內,不會自己出去呼叫工具
+• 兩條 stdio pipe 串通 → Parent ⇄ Child 可以雙向講話
 
 ---
 
 ## Slide 6
 
-JSON-RPC — 單一入口，靠 method 區分
-// 搜尋書籍
-{ "jsonrpc": "2.0",
-"method": "search_books",
-"params": { "keyword": "AI" },
-"id": 1 }
-// 新增一本書 — 同一個入口，換 method 就好
-{ "jsonrpc": "2.0",
-"method": "create_book",
-"params": { "title": "深度學習入門" },
-"id": 2 }
-// → 不需要 HTTP、不需要 URL — 可以透過 stdio 傳送！
+Act 2 — 兩階段握手
+Parent
+Node.js
+Child
+Python
+→ 我來了 / 給我工具清單
+← 我能做什麼 / 8 個工具
+握手進度
+✓
+Step 1:打過招呼
+✓
+Step 2:拿到工具清單
+兩個都打勾 才算真的連上
+重點:中間時刻(Step 1 ✓ 但 Step 2 ✗)Parent 還不知道工具清單,送 tool call 也沒用
 
 ---
 
 ## Slide 7
 
-JSON-RPC 2.0 的三種訊息類型
-Request
-Client → Server
-帶有 id 欄位
-期待回應
-{ method: "tools/call",
-params: {...},
-id: 1 }
-Response
-Server → Client
-帶有相同 id
-回傳 result 或 error
-{ result: {
-content: [...]
-},
-id: 1 }
-Notification
-任一方向
-沒有 id 欄位
-不期待回應（fire & forget）
-{ method:
-"notifications/
-initialized" }
+Act 3 — 工具呼叫
+Parent
+Node.js
+LLM · Sonnet
+Child
+Python
+search_new_books("新書")
+等候第 4 個請求 · 30s 內
+結果 · 10 筆新書
+第 4 個請求 ✓ 完成
+完整流程:LLM 決定 → token 飛去 Child → Child 執行 → 結果飛回 → Parent 找到對應請求 → 回給使用者
+「第 4 個請求」是 JSON-RPC 給每個 request 的編號,讓 response 能對得回來
 
 ---
 
 ## Slide 8
 
-02
-Server 生命週期
-spawn  →  initialize  →  ready  →  shutdown
+→  切換到影片
+02-mcp-connection-video.mp4   ·   2:17
+影片重點:
+1. 場景開場 — 使用者問「新書」 → LLM 判斷要呼叫工具
+2. Act 1 — Parent / Child 的 spawn 與 pipe;LLM (Sonnet) 住在 Parent 內
+3. Act 2 — 兩階段握手:checkbox ☐打過招呼 → ✓打過招呼 → ☐拿工具 → ✓拿工具
+4. Act 3 — 工具呼叫:token 飛去、等候第 4 個請求、結果飛回
+5. Frame closure — 「查新書」→ Child 執行 → 10 筆新書 → 使用者
 
 ---
 
 ## Slide 9
-
-MCP Server 的四個階段
-spawn
-Client 啟動子程序
-（Python / Node）
-→
-initialize
-交換版本與
-capabilities
-→
-ready
-工具已註冊
-開始接受請求
-→
-shutdown
-Client 送出關閉
-子程序結束
-// config.json — 定義如何 spawn 每個 MCP Server
-{ "mcpServers": {
-"library": {
-"command": "python",
-"args": ["${NCHU_MODULES_PATH}/library/server.py"]
-} } }
-// → Python 子程序，透過 stdio 通訊；Client 啟動時自動 spawn
-
----
-
-## Slide 10
-
-initialize 握手 — 交換 capabilities
-Client → Server
-{ "method": "initialize",
-  "params": {
-    "protocolVersion": "2024-11-05",
-    "capabilities": {}
-  }, "id": 1 }
-Server → Client
-{ "result": {
-    "protocolVersion": "2024-11-05",
-    "capabilities": {
-      "tools": { "listChanged": true }
-    }
-}, "id": 1 }
-→
-握手完成後，Client 送出 notification：
-{ "method": "notifications/initialized" }
-沒有 id → 單向通知，不期待回應。接下來 Client 呼叫 tools/list 取得工具清單。
-
----
-
-## Slide 11
-
-→  切換到互動動畫 Demo
-mcp-connection-animation.html
-展示重點：
-1. spawn 子程序的實際流程（config.json → child_process.spawn）
-2. initialize 握手的 JSON-RPC 訊息往返
-3. notifications/initialized 通知
-4. tools/list 載入工具清單
-5. isConnected = true 的判定時機
-
----
-
-## Slide 12
 
 03
 Tool 註冊與描述
@@ -190,7 +120,7 @@ JSON Schema  ·  description  ·  LLM 的唯一線索
 
 ---
 
-## Slide 13
+## Slide 10
 
 tools/list — Server 回傳工具定義
 // Client 發送 tools/list request
@@ -210,7 +140,7 @@ tools/list — Server 回傳工具定義
 
 ---
 
-## Slide 14
+## Slide 11
 
 每個 Tool 的三個關鍵欄位
 name
@@ -228,7 +158,7 @@ LLM 據此產生正確的 arguments
 
 ---
 
-## Slide 15
+## Slide 12
 
 description 寫得好不好，決定 LLM 選不選得對
 ✕  模糊的 description
@@ -249,7 +179,7 @@ LLM 從來不會直接接觸 MCP Server。
 
 ---
 
-## Slide 16
+## Slide 13
 
 04
 Client 整合機制
@@ -257,7 +187,7 @@ Client 整合機制
 
 ---
 
-## Slide 17
+## Slide 14
 
 工具清單 → LLM 的 tools 參數
 33 個
@@ -281,7 +211,7 @@ input_schema: t.inputSchema // 來自 MCP Server
 
 ---
 
-## Slide 18
+## Slide 15
 
 LLM 眼中的世界 — 只看到工具描述
 LLM 看到的
@@ -312,7 +242,7 @@ LLM 看不到的
 
 ---
 
-## Slide 19
+## Slide 16
 
 →  切換到互動動畫 Demo
 mcp-architecture-animation.html
@@ -324,19 +254,111 @@ mcp-architecture-animation.html
 
 ---
 
-## Slide 20
+## Slide 17
 
 本講重點回顧
 1
-MCP 用 JSON-RPC 2.0 通訊 — 不綁 HTTP，支援 stdio / WebSocket
+MCP 把 LLM ⇄ 工具的通訊抽出來,變成 Parent / Child 兩個 process 之間的雙向管道
 2
-Server 生命週期四階段：spawn → initialize → ready → shutdown
+兩階段握手:① 互換能力 → ② 拿到工具清單;兩步都過才算真的連上
 3
-每個 Tool 由 name / description / inputSchema 三個欄位定義
+工具呼叫:LLM 決定 → token 飛去 Child → Child 執行 → 結果飛回 → 找到對應請求回給使用者
 4
-description 的品質直接決定 LLM 能否正確選用工具
+每個工具由 name / description / inputSchema 三個欄位定義;description 的品質直接決定 LLM 選不選得對
 5
-Client 把所有工具定義轉換後注入 LLM API 的 tools 參數
-下一講預告：Agentic Tool Loop — 讓 AI 自己決定用什麼工具、用幾次
+Client 把所有工具定義轉換後,注入 LLM API 的 tools 參數 — LLM 只看得到 name + description + inputSchema
+下一講預告:Agentic Tool Loop — LLM 怎麼自主決定該呼叫哪個工具
+
+---
+
+## Slide 18
+
+附錄
+Appendix
+給技術 curious 老師的細節
+• REST vs JSON-RPC 比較
+• JSON-RPC 三種訊息類型(Request / Response / Notification)
+
+---
+
+## Slide 19
+
+01
+通訊協定
+REST  vs  JSON-RPC
+
+---
+
+## Slide 20
+
+REST vs JSON-RPC — 一張表看懂差異
+面向 | REST | JSON-RPC
+核心概念 | 資源（URL + HTTP 動詞） | 動作（method 欄位）
+端點 | 每個資源一個 URL | 單一入口，靠 method 區分
+傳輸層 | 綁定 HTTP | 不綁定（stdio / HTTP / WS）
+語意 | CRUD 操作 | 呼叫函式
+範例 | GET /books?keyword=AI | { method: "search_books" }
+MCP 選 JSON-RPC 的原因：  傳輸層不綁 HTTP（可用 stdio），語意是「呼叫工具」而非「操作資源」
+
+---
+
+## Slide 21
+
+REST — 每個資源有自己的路徑
+// 搜尋書籍
+GET /api/books?keyword=AI
+Host: library.nchu.edu.tw
+// 新增一本書
+POST /api/books
+Content-Type: application/json
+{ "title": "深度學習入門", "author": "..." }
+// 刪除
+DELETE /api/books/123
+// → 三個不同的 URL path + 三個不同的 HTTP method，必須透過 HTTP
+
+---
+
+## Slide 22
+
+JSON-RPC — 單一入口，靠 method 區分
+// 搜尋書籍
+{ "jsonrpc": "2.0",
+"method": "search_books",
+"params": { "keyword": "AI" },
+"id": 1 }
+// 新增一本書 — 同一個入口，換 method 就好
+{ "jsonrpc": "2.0",
+"method": "create_book",
+"params": { "title": "深度學習入門" },
+"id": 2 }
+// → 不需要 HTTP、不需要 URL — 可以透過 stdio 傳送！
+
+---
+
+## Slide 23
+
+JSON-RPC 2.0 的三種訊息類型
+Request
+Client → Server
+帶有 id 欄位
+期待回應
+{ method: "tools/call",
+params: {...},
+id: 1 }
+Response
+Server → Client
+帶有相同 id
+回傳 result 或 error
+{ result: {
+content: [...]
+},
+id: 1 }
+Notification
+任一方向
+沒有 id 欄位
+不期待回應（fire & forget）
+{ method:
+"notifications/
+initialized" }
 
 ---
