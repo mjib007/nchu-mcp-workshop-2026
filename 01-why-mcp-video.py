@@ -15,7 +15,7 @@ import numpy as np
 # ============================================================
 # Ocean Gradient design system (per repo style guide)
 # ============================================================
-BG          = "#1E2761"   # Navy — background
+BG          = "#0a0a10"   # 3B1B-style near-black (was Ocean Navy #1E2761)
 DEEP_BLUE   = "#065A82"   # Deep blue — secondary panels
 TEAL        = "#1C7293"   # Teal — tertiary elements
 INK         = "#FFFFFF"   # Primary text

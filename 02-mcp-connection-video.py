@@ -18,7 +18,7 @@ from manim import *
 import numpy as np
 
 # Ocean Gradient palette (per repo style guide)
-BG          = "#1E2761"
+BG          = "#0a0a10"   # 3B1B-style near-black (was Ocean Navy #1E2761)
 DEEP_BLUE   = "#065A82"
 TEAL        = "#1C7293"
 INK         = "#FFFFFF"
