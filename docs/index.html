@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP 入門工作坊 · 國立中興大學</title>
+<meta name="description" content="三小時 MCP 入門工作坊教材，受眾為大專院校教師。以興大 AI 學伴為實例，含投影片、Manim 動畫影片、可跑 mini-project 與 course TA agent。">
+<style>
+  :root {
+    --navy:       #1E2761;
+    --deep-blue:  #065A82;
+    --teal:       #1C7293;
+    --teal-bright:#2DB5C9;
+    --blue:       #5B8DE8;
+    --orange:     #E8793A;
+    --green:      #5CB85C;
+    --bg:         #FAF7F2;
+    --card:       #FFFFFF;
+    --ink:        #1A1A1A;
+    --muted:      #6B6B6B;
+    --line:       #E5E3DE;
+    --code-bg:    #101A2E;
+    --code-fg:    #DDE4EE;
+    --shadow:     0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(30,39,97,.06);
+  }
+  *,*::before,*::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC",
+                 "PingFang TC", "Microsoft JhengHei", sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.65;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  code, pre, .mono {
+    font-family: "SF Mono", "Consolas", "Liberation Mono", "Roboto Mono", monospace;
+  }
+  pre {
+    background: var(--code-bg);
+    color: var(--code-fg);
+    padding: 16px 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  code {
+    background: rgba(232, 121, 58, 0.10);
+    color: #B85A1F;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.92em;
+  }
+  pre code { background: none; color: inherit; padding: 0; }
+  a {
+    color: var(--deep-blue);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(6, 90, 130, 0.30);
+    transition: border-color .15s;
+  }
+  a:hover { border-color: var(--deep-blue); }
+  h1, h2, h3 { line-height: 1.25; }
+
+  /* ── Hero ───────────────────────────────────── */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--deep-blue) 60%, var(--teal) 100%);
+    color: #FFFFFF;
+    padding: 80px 24px 70px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: -120px;
+    top: -120px;
+    width: 360px;
+    height: 360px;
+    background: radial-gradient(circle, rgba(232,121,58,0.25), transparent 70%);
+    pointer-events: none;
+  }
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero h1 {
+    font-size: clamp(34px, 5vw, 52px);
+    margin: 0 0 12px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+  .hero .accent {
+    display: inline-block;
+    width: 60px;
+    height: 4px;
+    background: var(--orange);
+    margin: 18px 0 24px;
+    border-radius: 2px;
+  }
+  .hero .subtitle {
+    font-size: clamp(18px, 2.2vw, 22px);
+    margin: 0 0 8px;
+    font-weight: 500;
+    color: #FFF;
+  }
+  .hero .meta {
+    font-size: 14px;
+    color: rgba(255,255,255,.75);
+    margin: 0 0 28px;
+    letter-spacing: 0.02em;
+  }
+  .hero .actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .btn {
+    display: inline-block;
+    padding: 10px 22px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .btn:hover { transform: translateY(-1px); border-bottom-color: transparent; }
+  .btn-primary {
+    background: var(--orange);
+    color: #FFF;
+    border: 1px solid var(--orange);
+  }
+  .btn-primary:hover { box-shadow: 0 6px 16px rgba(232,121,58,.35); }
+  .btn-ghost {
+    background: transparent;
+    color: #FFF;
+    border: 1px solid rgba(255,255,255,.4);
+  }
+  .btn-ghost:hover { border-color: #FFF; background: rgba(255,255,255,.06); }
+
+  /* ── Sections ───────────────────────────────── */
+  main { padding: 64px 0 32px; }
+  section { margin: 0 0 64px; }
+  section h2 {
+    font-size: 28px;
+    margin: 0 0 8px;
+    color: var(--navy);
+    font-weight: 800;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  section h2 .seg-num {
+    font-family: "SF Mono", "Consolas", monospace;
+    font-size: 38px;
+    color: var(--orange);
+    font-weight: 900;
+    line-height: 1;
+  }
+  section .h2-accent {
+    width: 48px; height: 3px;
+    background: var(--orange);
+    margin: 6px 0 22px;
+    border-radius: 2px;
+  }
+  section p.lead {
+    font-size: 17px;
+    color: var(--muted);
+    margin: 0 0 24px;
+    max-width: 720px;
+  }
+
+  /* ── Outline table ──────────────────────────── */
+  .outline {
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .outline table { width: 100%; border-collapse: collapse; }
+  .outline th, .outline td {
+    text-align: left;
+    padding: 14px 20px;
+    font-size: 15px;
+    border-bottom: 1px solid var(--line);
+  }
+  .outline thead th {
+    background: rgba(30, 39, 97, 0.04);
+    color: var(--navy);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 12px;
+  }
+  .outline tbody tr:last-child td { border-bottom: none; }
+  .outline tbody tr.break td {
+    background: rgba(0,0,0,0.02);
+    color: var(--muted);
+    font-style: italic;
+  }
+  .outline td.num {
+    font-family: "SF Mono", monospace;
+    color: var(--orange);
+    font-weight: 700;
+    width: 64px;
+  }
+  .outline td.dur {
+    color: var(--teal);
+    font-weight: 600;
+    width: 90px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Segment cards ──────────────────────────── */
+  .segment {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 32px 36px 28px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    position: relative;
+  }
+  .segment + .segment { margin-top: 28px; }
+  .segment .meta-row {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+  .segment .duration {
+    color: var(--teal);
+    font-weight: 600;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  .segment .status {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 9px;
+    border-radius: 4px;
+    background: rgba(92, 184, 92, 0.12);
+    color: #3D7A3D;
+    font-weight: 600;
+  }
+  .segment .status.draft {
+    background: rgba(232, 121, 58, 0.12);
+    color: #B85A1F;
+  }
+  .segment h3 {
+    font-size: 16px;
+    color: var(--navy);
+    margin: 24px 0 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .segment p { margin: 0 0 14px; }
+  .segment ul { padding-left: 22px; margin: 0 0 18px; }
+  .segment ul li { margin-bottom: 4px; }
+
+  /* Video embed */
+  .video-wrap {
+    margin: 20px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #000;
+    border: 1px solid var(--line);
+  }
+  .video-wrap video {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .video-caption {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 6px 0 0;
+    font-style: italic;
+  }
+
+  /* Download chips */
+  .resources {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px dashed var(--line);
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: rgba(30, 39, 97, 0.05);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--navy);
+    text-decoration: none;
+    transition: background .15s, border-color .15s;
+  }
+  .chip:hover {
+    background: rgba(232, 121, 58, 0.10);
+    border-color: var(--orange);
+    color: var(--orange);
+  }
+  .chip .ext {
+    font-family: "SF Mono", monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .chip:hover .ext { color: var(--orange); }
+
+  /* ── Hands-on grid ──────────────────────────── */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 720px) {
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+    box-shadow: var(--shadow);
+  }
+  .card h3 {
+    margin: 0 0 8px;
+    color: var(--navy);
+    font-size: 19px;
+  }
+  .card .desc {
+    color: var(--muted);
+    font-size: 14.5px;
+    margin: 0 0 14px;
+  }
+  .card pre { font-size: 12.5px; padding: 12px 14px; }
+
+  /* ── Footer ─────────────────────────────────── */
+  footer {
+    background: var(--navy);
+    color: rgba(255,255,255,.7);
+    padding: 36px 24px;
+    text-align: center;
+    font-size: 14px;
+  }
+  footer a { color: rgba(255,255,255,.85); border-bottom-color: rgba(255,255,255,.35); }
+  footer a:hover { border-bottom-color: #FFF; color: #FFF; }
+  footer .logo {
+    color: var(--orange);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  /* TOC nav (sticky on desktop, hidden on mobile) */
+  .toc {
+    background: rgba(30, 39, 97, 0.04);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 18px;
+    margin-bottom: 36px;
+    font-size: 14px;
+  }
+  .toc strong { color: var(--navy); margin-right: 12px; }
+  .toc a { color: var(--deep-blue); margin-right: 14px; white-space: nowrap; border: none; }
+  .toc a:hover { color: var(--orange); }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="container">
+    <h1>MCP 入門工作坊</h1>
+    <p class="subtitle">讓 LLM 連上你的工具：從 RAG 到 MCP 的完整路徑</p>
+    <span class="accent"></span>
+    <p class="meta">三小時 · 國立中興大學 · 受眾為大專院校教師（非必要為資工背景）</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026">GitHub Repo</a>
+      <a class="btn btn-ghost" href="#segments">瀏覽教材</a>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- ── Course outline ──────────────────────────────────── -->
+  <section id="overview">
+    <h2>課程結構</h2>
+    <span class="h2-accent"></span>
+    <p class="lead">
+      所有內容以
+      <a href="https://github.com/UDICatNCHU/claude-mcp-project">興大 AI 學伴</a>
+      作為實際案例（~239 個 MCP 工具的 web chat 系統）。
+    </p>
+    <div class="outline">
+      <table>
+        <thead>
+          <tr><th>段落</th><th>時間</th><th>主題</th><th>內容</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="num">01</td><td class="dur">50 min</td><td><a href="#segment-1">Why MCP</a></td><td>從 LLM 的限制 → RAG / Tool Use / MCP 三策略比較</td></tr>
+          <tr><td class="num">02</td><td class="dur">50 min</td><td><a href="#segment-2">How MCP Works</a></td><td>Parent / Child 兩階段握手、工具呼叫機制</td></tr>
+          <tr class="break"><td>—</td><td>10 min</td><td colspan="2">休息</td></tr>
+          <tr><td class="num">03</td><td class="dur">50 min</td><td><a href="#segment-3">Agentic Tool Loop</a></td><td>LLM 自主選工具、多輪迭代、強制回覆</td></tr>
+          <tr><td class="num">04</td><td class="dur">50 min</td><td><a href="#segment-4">動手做</a></td><td>mini-project 現場跑：換 JSON、加搜尋工具、呼叫外部 API</td></tr>
+          <tr><td class="num">05</td><td class="dur">10 min</td><td><a href="#segment-5">實務考量</a></td><td>規模 / 品質 / 模型選擇 / 成本</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div id="segments"></div>
+
+  <!-- ── Segment 1 ──────────────────────────────────────── -->
+  <section class="segment" id="segment-1">
+    <div class="meta-row">
+      <h2><span class="seg-num">01</span> Why MCP</h2>
+      <span class="duration">50 min</span>
+      <span class="status">v2 完成</span>
+    </div>
+    <span class="h2-accent"></span>
+    <p>從 LLM 擅長的事與天花板出發，介紹三種策略——RAG、Tool Use、MCP——並深入比較它們的差異與適用場景。最後引入興大 AI 學伴 33 工具案例。</p>
+
+    <h3>3 分鐘概念影片</h3>
+    <div class="video-wrap">
+      <video controls preload="metadata"
+             src="https://cdn.jsdelivr.net/gh/UDICatNCHU/nchu-mcp-workshop-2026@main/01-why-mcp-video-preview.mp4"
+             poster=""></video>
+    </div>
+    <p class="video-caption">Manim 渲染 · ~3 min · 概念導論長片</p>
+
+    <div class="resources">
+      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/01-why-mcp.pptx">投影片 <span class="ext">pptx · 21 張</span></a>
+      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/01-why-mcp-video-youtube.md">YouTube 發佈素材 <span class="ext">md</span></a>
+      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/01-why-mcp-video.py">Manim 原始碼 <span class="ext">py</span></a>
+    </div>
+  </section>
+
+  <!-- ── Segment 2 ──────────────────────────────────────── -->
+  <section class="segment" id="segment-2">
+    <div class="meta-row">
+      <h2><span class="seg-num">02</span> How MCP Works</h2>
+      <span class="duration">50 min</span>
+      <span class="status">v3 完成</span>
+    </div>
+    <span class="h2-accent"></span>
+    <p>用一個具體查詢「幫我查最近圖書館有什麼新書」串連整段：使用者提問 → LLM 決定呼叫工具 → Parent 跟 Child 兩階段握手 → 工具呼叫 → 結果回到使用者。</p>
+    <ul>
+      <li><strong>01 從一個查詢開始</strong>：場景 → spawn → 兩階段握手 → 工具呼叫</li>
+      <li><strong>02 Tool 註冊與描述</strong>：JSON Schema、description 對 LLM 的重要性</li>
+      <li><strong>03 Client 整合機制</strong>：工具清單如何餵給 LLM</li>
+      <li><strong>附錄</strong>：REST vs JSON-RPC、JSON-RPC 三種訊息類型（給技術 curious 老師）</li>
+    </ul>
+
+    <h3>2:17 Handshake 影片</h3>
+    <div class="video-wrap">
+      <video controls preload="metadata"
+             src="https://cdn.jsdelivr.net/gh/UDICatNCHU/nchu-mcp-workshop-2026@main/02-mcp-connection-video-preview.mp4"
+             poster=""></video>
+    </div>
+    <p class="video-caption">Manim 渲染 · 2:17 · scenario + 三幕 + frame closure</p>
+
+    <div class="resources">
+      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/02-how-mcp-works.pptx">投影片 <span class="ext">pptx · 23 張</span></a>
+      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/02-mcp-connection-video-youtube.md">YouTube 發佈素材 <span class="ext">md</span></a>
+      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/02-mcp-connection-video.py">Manim 原始碼 <span class="ext">py</span></a>
+      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/tools/refresh-02-slides.py">投影片產生器 <span class="ext">py</span></a>
+    </div>
+  </section>
+
+  <!-- ── Segment 3 ──────────────────────────────────────── -->
+  <section class="segment" id="segment-3">
+    <div class="meta-row">
+      <h2><span class="seg-num">03</span> Agentic Tool Loop</h2>
+      <span class="duration">50 min</span>
+      <span class="status draft">初稿</span>
+    </div>
+    <span class="h2-accent"></span>
+    <p>完整查詢流程 walk-through：LLM 怎麼自主決定要呼叫哪個工具、<code>tool_use</code> ↔ <code>tool_result</code> 多輪迭代、<code>maxIterations</code> 限制與最後一輪強制回覆機制。配合現場操作系統 demo。</p>
+
+    <div class="resources">
+      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/03-agentic-tool-loop.pptx">投影片 <span class="ext">pptx · 20 張</span></a>
+      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/sonnet-running-example.pptx">Sonnet 實例 <span class="ext">pptx</span></a>
+    </div>
+  </section>
+
+  <!-- ── Segment 4 ──────────────────────────────────────── -->
+  <section class="segment" id="segment-4">
+    <div class="meta-row">
+      <h2><span class="seg-num">04</span> 動手做</h2>
+      <span class="duration">50 min</span>
+      <span class="status">完成</span>
+    </div>
+    <span class="h2-accent"></span>
+    <p>整場 hands-on 主場：學員現場跑 <code>mini-project/</code>，三關 Lab 路徑——L1 換 JSON 做你領域的助理、L2 加搜尋工具、L3 呼叫外部 API。10 分鐘內就能讓 Segment 1–3 的概念在自己電腦上發生。</p>
+
+    <div class="resources">
+      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/04-hands-on-lab.pptx">講師開場投影片 <span class="ext">pptx · 15 張</span></a>
+      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/04-hands-on-lab.md">學員端 landing <span class="ext">md</span></a>
+      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/tree/main/mini-project">mini-project/ <span class="ext">code</span></a>
+      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/tree/main/mini-project/docs/labs">L1–L3 Lab 手冊 <span class="ext">md</span></a>
+    </div>
+  </section>
+
+  <!-- ── Segment 5 ──────────────────────────────────────── -->
+  <section class="segment" id="segment-5">
+    <div class="meta-row">
+      <h2><span class="seg-num">05</span> 實務考量</h2>
+      <span class="duration">10 min</span>
+      <span class="status">完成</span>
+    </div>
+    <span class="h2-accent"></span>
+    <p>四大支柱（從 mini-project 往外擴）：</p>
+    <ul>
+      <li><strong>Scale 質變</strong>：3 tools → 239 tools 的五個質變</li>
+      <li><strong>Tool-calling 品質</strong>：docstring 設計、邊界防禦、錯誤當資料</li>
+      <li><strong>模型選擇</strong>：task-complexity gradient、benchmark 佐證</li>
+      <li><strong>成本</strong>：10 人 workshop 真實帳、prompt caching、Anthropic Console 護欄</li>
+    </ul>
+    <p>10 分鐘塞不下四支柱，講師現場依聽眾屬性擇一深入 ~7 min，其餘各一句帶過。md 保留完整四節供課後閱讀。</p>
+
+    <div class="resources">
+      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/05-practical-considerations.md">收尾筆記 <span class="ext">md</span></a>
+      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/haiku-alignment-report.pptx">Haiku alignment 報告 <span class="ext">pptx</span></a>
+      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/haiku-alignment-report.md">Haiku alignment 摘要 <span class="ext">md</span></a>
+    </div>
+  </section>
+
+  <!-- ── Hands-on subprojects ────────────────────────────── -->
+  <section id="hands-on">
+    <h2>Hands-on 子專案</h2>
+    <span class="h2-accent"></span>
+    <p class="lead">兩個可跑的子專案：學員 hands-on 練習用的 <code>mini-project/</code>，以及現場小助教 <code>course-ta-agent/</code>。</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>mini-project/</h3>
+        <p class="desc">Express + Claude + FastMCP + 極簡 chat UI。3 支教學工具（hello / teachers / weather）+ 1 支 L3 練習 stub（arxiv）。</p>
+<pre><code>cd mini-project
+cp .env.example .env
+vim .env       # 填 ANTHROPIC_API_KEY
+./setup.sh                 # 5/5 ✅
+cd backend-node && npm start
+# → http://localhost:3000</code></pre>
+        <div class="resources">
+          <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/tree/main/mini-project">原始碼 <span class="ext">code</span></a>
+          <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/mini-project/README.md">README <span class="ext">md</span></a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>course-ta-agent/</h3>
+        <p class="desc">學員現場開 URL 直接問問題的 web bot。架構刻意 mirror mini-project；4 支 MCP tool：segment / search / lab handout / source file。</p>
+<pre><code>cd course-ta-agent
+cp .env.example .env
+vim .env       # 填 ANTHROPIC_API_KEY
+./setup.sh
+cd backend-node && npm start
+# → http://localhost:3001</code></pre>
+        <div class="resources">
+          <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/tree/main/course-ta-agent">原始碼 <span class="ext">code</span></a>
+          <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/course-ta-agent/README.md">README <span class="ext">md</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Style spec ──────────────────────────────────────── -->
+  <section id="style">
+    <h2>視覺風格規範</h2>
+    <span class="h2-accent"></span>
+    <p class="lead">所有教材遵循 Ocean Gradient 色票與字型規範，影片以 Manim 渲染（早期的 HTML 互動動畫已全數移除）。</p>
+    <ul>
+      <li>配色：Navy <code>#1E2761</code> · Deep Blue <code>#065A82</code> · Teal <code>#1C7293</code> · 橘色 accent <code>#E8793A</code></li>
+      <li>字型：Arial Black（標題）／ Calibri（內文）／ Consolas（程式碼）</li>
+      <li>簡報以 <code>.pptx</code> 產出，部分可由 <code>tools/gen-*-slides.py</code> 程式化生成</li>
+      <li>動畫展示以 Manim 渲染為 <code>.mp4</code>，可直接上 YouTube</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <p>
+    <span class="logo">NCHU MCP Workshop 2026</span>
+    · 教材整理：<a href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026">UDICatNCHU/nchu-mcp-workshop-2026</a>
+    · 案例來源：<a href="https://github.com/UDICatNCHU/claude-mcp-project">claude-mcp-project</a>
+  </p>
+  <p style="margin-top: 8px; font-size: 12.5px; opacity: 0.7;">
+    本頁為 GitHub Pages 靜態 landing，內容隨 main 分支自動更新（影片透過 jsDelivr CDN 服務）
+  </p>
+</footer>
+
+</body>
+</html>
