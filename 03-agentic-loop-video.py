@@ -50,7 +50,7 @@ config.pixel_height = 1080
 
 class AgenticLoop(Scene):
     SUBTITLE_MAX_WIDTH = 14.0
-    TOTAL_SECONDS = 51.7   # measured: scenes ran tighter than the 105s estimate
+    TOTAL_SECONDS = 67.5   # D-plan measured (after #1 #2 #3 polish)
 
     TITLE     = "Agentic Loop"
     SUBTITLE  = "LLM 多輪迭代怎麼運作"
@@ -60,12 +60,14 @@ class AgenticLoop(Scene):
         self._cur_subtitle = None
         self._init_progress_bar()
 
-        self.scene_intro()       # 0:00 – 0:05  magazine cover
-        self.scene_scenario()    # 0:05 – 0:11  user query
-        self.scene_loop()        # 0:11 – 0:36  3-round walkthrough
-        self.scene_maxiter()     # 0:36 – 0:44  safety guard
-        self.scene_takeaway()    # 0:44 – 0:50  3 insights
-        self.scene_closing()     # 0:50 – 0:52  closing hero shot
+        self.scene_intro()             # 0:00 – 0:05  magazine cover
+        self.scene_single_turn_pain()  # 0:05 – 0:13  why agentic — single-turn fails
+        self.scene_scenario()          # 0:13 – 0:19  pivot to multi-turn
+        self.scene_loop()              # 0:19 – 0:46  3-round walkthrough + stop_reason
+        self.scene_maxiter()           # 0:46 – 0:55  safety guard
+        self.scene_recap()             # 0:55 – 1:00  compressed loop replay
+        self.scene_takeaway()          # 1:00 – 1:15  3 insights (longer dwell)
+        self.scene_closing()           # 1:15 – 1:18  closing hero shot
 
     # ============================================================
     # Progress bar
@@ -223,15 +225,86 @@ class AgenticLoop(Scene):
         self.advance_progress(5.6)
 
     # ============================================================
-    # SCENE — SCENARIO (9s)
+    # SCENE — SINGLE-TURN PAIN (8s) — motivates why we need a loop
+    # ============================================================
+    def scene_single_turn_pain(self):
+        """Demo what single-turn Function Calling does on a composite query:
+        fires one tool, answers half the question, hits a dead end."""
+        badge = self._stage_badge("SINGLE-TURN", PINK)
+        self.play(FadeIn(badge), run_time=0.3)
+        self.show_subtitle("如果只用單輪 Function Calling …")
+
+        # User query (smaller, top)
+        u_chip = self._role_chip("user", BLUE, width=1.4).scale(0.85)
+        u_bub = self._bubble(
+            "「下學期能修哪些 AI 課?這些老師最近有什麼論文?」",
+            BLUE, fill_opacity=0.30, width=11.0, height=0.90, size=20,
+        )
+        u_chip.move_to(LEFT * 6.5 + UP * 2.5)
+        u_bub.move_to(RIGHT * 0.4 + UP * 2.5)
+        self.play(FadeIn(u_chip), FadeIn(u_bub, shift=DOWN * 0.1),
+                  run_time=0.5)
+
+        # Single tool fires
+        a_chip = self._role_chip("assistant", VIOLET).scale(0.85)
+        a_bub = self._bubble(
+            "「先查 AI 課程…」", VIOLET, fill_opacity=0.18,
+            width=11.0, height=0.78, size=18,
+        )
+        a_chip.move_to(LEFT * 6.5 + UP * 1.05)
+        a_bub.move_to(RIGHT * 0.4 + UP * 1.05)
+        single_tool = self._pill('search_courses("AI")', ORANGE, size=14)
+        single_tool.scale(0.85).move_to(UP * 0.1)
+        self.play(FadeIn(a_chip), FadeIn(a_bub, shift=DOWN * 0.1),
+                  run_time=0.4)
+        self.play(FadeIn(single_tool, scale=0.8), run_time=0.4)
+        self.wait(0.5)
+
+        # tool_result
+        r_chip = self._role_chip("tool_result", TEAL_BRIGHT, width=1.7).scale(0.85)
+        r_bub = self._bubble(
+            "5 門 AI 課,老師:張、李、范、林、王",
+            TEAL_BRIGHT, fill_opacity=0.18,
+            width=11.0, height=0.78, size=18,
+        )
+        r_chip.move_to(LEFT * 6.4 + DOWN * 0.7)
+        r_bub.move_to(RIGHT * 0.4 + DOWN * 0.7)
+        self.play(FadeOut(single_tool), run_time=0.2)
+        self.play(FadeIn(r_chip), FadeIn(r_bub, shift=DOWN * 0.1),
+                  run_time=0.5)
+        self.wait(0.4)
+
+        # Assistant gives partial answer
+        f_chip = self._role_chip("assistant", VIOLET).scale(0.85)
+        f_bub = self._bubble(
+            "「這些是 AI 課程。但老師論文我無法繼續查…」",
+            PINK, fill_opacity=0.25, stroke_width=2,
+            width=11.0, height=0.85, size=19,
+        )
+        f_chip.move_to(LEFT * 6.5 + DOWN * 2.3)
+        f_bub.move_to(RIGHT * 0.4 + DOWN * 2.3)
+        self.play(FadeIn(f_chip), FadeIn(f_bub, shift=DOWN * 0.1),
+                  run_time=0.5)
+
+        # Failure indicator
+        fail_box = self._pill("△  第二題卡住 · 單輪只能交一次", PINK, size=15)
+        fail_box.scale(0.95).move_to(DOWN * 3.3)
+        self.play(FadeIn(fail_box, scale=0.85), run_time=0.5)
+        self.wait(1.8)
+
+        cleanup = VGroup(badge, u_chip, u_bub, a_chip, a_bub,
+                         r_chip, r_bub, f_chip, f_bub, fail_box)
+        self.play(FadeOut(cleanup), run_time=0.5)
+        self.clear_subtitle(run_time=0.3)
+        self.advance_progress(13)
+
+    # ============================================================
+    # SCENE — SCENARIO (6s) — pivot to multi-turn
     # ============================================================
     def scene_scenario(self):
-        self.show_subtitle("從一個複合請求開始")
+        self.show_subtitle("→ 讓 LLM 看到結果,再決定下一步")
 
         u_chip = self._role_chip("user", BLUE)
-        # Bubble width unified with the assistant/tool_result bubbles below
-        # so the loop section reads as a consistent chat thread, not a mix
-        # of wide top + narrow rows.
         u_bub = self._bubble(
             "「我下學期能修哪些 AI 課?這些老師最近有什麼論文?」",
             BLUE, fill_opacity=0.32, width=11.5, height=1.0, size=22,
@@ -241,19 +314,19 @@ class AgenticLoop(Scene):
 
         self.play(FadeIn(u_chip, shift=RIGHT * 0.15),
                   FadeIn(u_bub, shift=DOWN * 0.15),
-                  run_time=0.6)
-        self.wait(1.2)
+                  run_time=0.5)
+        self.wait(0.5)
 
-        complexity = Text("→ 兩個問題鏈在一起 · 後一個取決於前一個",
-                          font=CN_FONT, font_size=24,
-                          color=ORANGE, weight=BOLD).move_to(DOWN * 0.4)
-        self.play(FadeIn(complexity, shift=UP * 0.15), run_time=0.6)
+        pivot = Text("→ 同一個問題 · 給 LLM 多輪機會看 tool_result",
+                     font=CN_FONT, font_size=22,
+                     color=TEAL_BRIGHT, weight=BOLD).move_to(DOWN * 0.4)
+        self.play(FadeIn(pivot, shift=UP * 0.15), run_time=0.5)
         self.wait(2.5)
 
-        self.play(FadeOut(complexity), run_time=0.4)
+        self.play(FadeOut(pivot), run_time=0.4)
         self.user_chip = u_chip
         self.user_bub = u_bub
-        self.advance_progress(11)
+        self.advance_progress(19)
 
     # ============================================================
     # SCENE — LOOP (~65s) — 3 rounds, chat bubbles accumulate
@@ -277,28 +350,32 @@ class AgenticLoop(Scene):
                             LEFT * 7.4 + UP * 1.2)
 
         r1_assistant_chip = self._role_chip("assistant", VIOLET)
+        # Narrower bubble (was 11.5) — make room for tool_use badge outside,
+        # right of the bubble. Reviewer flagged the "sticker glued onto
+        # bubble" look in the previous layout.
         r1_assistant_bub = self._bubble(
             "「先查 AI 課程」", VIOLET, fill_opacity=0.18,
-            width=11.5, height=0.85, size=20,
+            width=10.3, height=0.85, size=20,
         )
         r1_assistant_chip.move_to(LEFT * 6.5 + UP * 2.0)
-        r1_assistant_bub.move_to(RIGHT * 0.4 + UP * 2.0)
+        # Keep bubble center at x=-0.2 so it sits visually closer to the chip
+        # on the left and leaves clean room for the badge on the right
+        r1_assistant_bub.move_to(LEFT * 0.2 + UP * 2.0)
         self.play(FadeIn(r1_label), run_time=0.25)
 
         r1_tool_use = RoundedRectangle(
-            width=2.4, height=0.40, corner_radius=0.20,
+            width=2.4, height=0.50, corner_radius=0.22,
             stroke_color=ORANGE, stroke_width=2,
             fill_color=ORANGE, fill_opacity=0.30,
         )
-        r1_tool_use_text = Text("+ tool_use", font=MONO_FONT, font_size=13,
+        r1_tool_use_text = Text("+ tool_use", font=MONO_FONT, font_size=14,
                                 color=ORANGE, weight=BOLD).move_to(
                                     r1_tool_use.get_center())
-        # Place badge fully INSIDE the bubble, vertically centered, near
-        # right edge — avoids the "sticker glued onto corner" look that
-        # clipped the bubble's rounded corner outline.
-        r1_tool_badge = VGroup(r1_tool_use, r1_tool_use_text).move_to(
-            r1_assistant_bub.get_right() + LEFT * 1.35
-        )
+        # Badge sits OUTSIDE the bubble's right edge — symmetric to the
+        # assistant chip on the left. Clean violet ellipse + clear orange
+        # side-effect label.
+        r1_tool_badge = VGroup(r1_tool_use, r1_tool_use_text)
+        r1_tool_badge.next_to(r1_assistant_bub, RIGHT, buff=0.22)
 
         self.play(FadeIn(r1_assistant_chip, shift=RIGHT * 0.15),
                   FadeIn(r1_assistant_bub, shift=DOWN * 0.15),
@@ -320,10 +397,10 @@ class AgenticLoop(Scene):
         r1_result_bub = self._bubble(
             "5 門 AI 課,老師:張、李、范、林、王",
             TEAL_BRIGHT, fill_opacity=0.18,
-            width=11.5, height=0.85, size=20,
+            width=10.3, height=0.85, size=20,
         )
         r1_result_chip.move_to(LEFT * 6.4 + UP * 0.4)
-        r1_result_bub.move_to(RIGHT * 0.4 + UP * 0.4)
+        r1_result_bub.move_to(LEFT * 0.2 + UP * 0.4)
 
         self.play(FadeOut(r1_tool_call), run_time=0.3)
         self.play(FadeIn(r1_result_chip, shift=RIGHT * 0.15),
@@ -341,23 +418,23 @@ class AgenticLoop(Scene):
         r2_assistant_chip = self._role_chip("assistant", VIOLET)
         r2_assistant_bub = self._bubble(
             "「查每位老師最近論文」", VIOLET, fill_opacity=0.18,
-            width=11.5, height=0.85, size=20,
+            width=10.3, height=0.85, size=20,
         )
         r2_assistant_chip.move_to(LEFT * 6.5 + DOWN * 1.1)
-        r2_assistant_bub.move_to(RIGHT * 0.4 + DOWN * 1.1)
+        r2_assistant_bub.move_to(LEFT * 0.2 + DOWN * 1.1)
         self.play(FadeIn(r2_label), run_time=0.25)
 
         r2_tool_use = RoundedRectangle(
-            width=3.0, height=0.40, corner_radius=0.20,
+            width=2.6, height=0.50, corner_radius=0.22,
             stroke_color=ORANGE, stroke_width=2,
             fill_color=ORANGE, fill_opacity=0.30,
         )
         r2_tool_use_text = Text("+ 5× tool_use", font=MONO_FONT, font_size=13,
                                 color=ORANGE, weight=BOLD).move_to(
                                     r2_tool_use.get_center())
-        r2_tool_badge = VGroup(r2_tool_use, r2_tool_use_text).move_to(
-            r2_assistant_bub.get_right() + LEFT * 1.65
-        )
+        # Badge sits OUTSIDE bubble's right edge — symmetric to assistant chip
+        r2_tool_badge = VGroup(r2_tool_use, r2_tool_use_text)
+        r2_tool_badge.next_to(r2_assistant_bub, RIGHT, buff=0.22)
 
         self.play(FadeIn(r2_assistant_chip, shift=RIGHT * 0.15),
                   FadeIn(r2_assistant_bub, shift=DOWN * 0.15),
@@ -387,10 +464,10 @@ class AgenticLoop(Scene):
         r2_result_bub = self._bubble(
             "5 位老師最近論文清單(各 3-5 篇)",
             TEAL_BRIGHT, fill_opacity=0.18,
-            width=11.5, height=0.85, size=20,
+            width=10.3, height=0.85, size=20,
         )
         r2_result_chip.move_to(LEFT * 6.2 + DOWN * 2.4)
-        r2_result_bub.move_to(RIGHT * 0.4 + DOWN * 2.4)
+        r2_result_bub.move_to(LEFT * 0.2 + DOWN * 2.4)
         self.play(FadeIn(r2_result_chip, shift=RIGHT * 0.15),
                   FadeIn(r2_result_bub, shift=DOWN * 0.15),
                   run_time=0.5)
@@ -438,17 +515,24 @@ class AgenticLoop(Scene):
         self.play(FadeIn(end_turn_chip, shift=LEFT * 0.10), run_time=0.4)
         self.play(Indicate(end_turn_chip, scale_factor=1.25, color=GREEN),
                   run_time=0.7)
-        self.wait(2.0)
+
+        # B-plan enhancement: bring up explicit stop_reason verdict so the
+        # audience walks away with the vocabulary
+        sr_verdict = self._pill("stop_reason = end_turn  →  loop 收工",
+                                GREEN, size=16)
+        sr_verdict.move_to(DOWN * 3.0)
+        self.play(FadeIn(sr_verdict, shift=UP * 0.1), run_time=0.4)
+        self.wait(2.5)
 
         cleanups = [
             self.user_chip, self.user_bub,
             loop_so_far,
             final_chip, final_bub, end_turn_chip,
-            badge,
+            sr_verdict, badge,
         ]
         self.play(*[FadeOut(m) for m in cleanups], run_time=0.5)
         self.clear_subtitle(run_time=0.3)
-        self.advance_progress(36)
+        self.advance_progress(46)
 
     # ============================================================
     # SCENE — MAXITER (12s)
@@ -487,56 +571,175 @@ class AgenticLoop(Scene):
         cleanup = VGroup(circles, x_mark, forced_lbl, max_label, badge)
         self.play(FadeOut(cleanup), run_time=0.5)
         self.clear_subtitle(run_time=0.3)
-        self.advance_progress(44)
+        self.advance_progress(55)
 
     # ============================================================
-    # SCENE — TAKEAWAY (12s)
+    # SCENE — RECAP (5s) — compressed loop replay
+    # ============================================================
+    def scene_recap(self):
+        """5s compressed visual of the 3-round loop ─ for audience to lock
+        the pattern before takeaway cards roll in."""
+        badge = self._stage_badge("RECAP", VIOLET_SOFT)
+        self.play(FadeIn(badge), run_time=0.3)
+        self.show_subtitle("一條 loop 的全貌 · 從 query 到 final answer")
+
+        # User query (compressed)
+        u_pill = self._pill("USER · 複合 query", BLUE, size=15)
+        u_pill.move_to(LEFT * 5.5 + UP * 0.3)
+        # 3 round circles — all ORANGE (iteration phase),
+        # GREEN reserved for end_turn terminal state only
+        rounds_data = [
+            ("R1", "search_courses", ORANGE),
+            ("R2", "arxiv × 5", ORANGE),
+            ("R3", "integrate", ORANGE),
+        ]
+        round_pills = VGroup()
+        for i, (rid, label, c) in enumerate(rounds_data):
+            x = -1.5 + i * 2.0
+            ring = Circle(radius=0.42, color=c, stroke_width=3,
+                          fill_color=c, fill_opacity=0.15)
+            ring.move_to([x, 0.3, 0])
+            rid_text = Text(rid, font=MONO_FONT, font_size=18,
+                            color=c, weight=BOLD).move_to(ring.get_center())
+            sub_text = Text(label, font=MONO_FONT, font_size=13,
+                            color=NEUTRAL).next_to(ring, DOWN, buff=0.25)
+            round_pills.add(VGroup(ring, rid_text, sub_text))
+
+        final_pill = self._pill("✓ end_turn", GREEN, size=15)
+        final_pill.move_to(RIGHT * 5.5 + UP * 0.3)
+
+        # Arrows
+        arr1 = Arrow(u_pill.get_right() + RIGHT * 0.05,
+                     round_pills[0][0].get_left() + LEFT * 0.05,
+                     stroke_width=2.5, max_tip_length_to_length_ratio=0.18,
+                     color=NEUTRAL, buff=0.05)
+        arr2 = Arrow(round_pills[0][0].get_right() + RIGHT * 0.05,
+                     round_pills[1][0].get_left() + LEFT * 0.05,
+                     stroke_width=2.5, max_tip_length_to_length_ratio=0.18,
+                     color=NEUTRAL, buff=0.05)
+        arr3 = Arrow(round_pills[1][0].get_right() + RIGHT * 0.05,
+                     round_pills[2][0].get_left() + LEFT * 0.05,
+                     stroke_width=2.5, max_tip_length_to_length_ratio=0.18,
+                     color=NEUTRAL, buff=0.05)
+        arr4 = Arrow(round_pills[2][0].get_right() + RIGHT * 0.05,
+                     final_pill.get_left() + LEFT * 0.05,
+                     stroke_width=2.5, max_tip_length_to_length_ratio=0.18,
+                     color=GREEN, buff=0.05)
+
+        self.play(FadeIn(u_pill, shift=RIGHT * 0.15),
+                  GrowArrow(arr1), run_time=0.5)
+        for i, r in enumerate(round_pills):
+            arr = [arr2, arr3][i] if i < 2 else None
+            self.play(FadeIn(r, scale=0.8), run_time=0.3)
+            if arr is not None:
+                self.play(GrowArrow(arr), run_time=0.25)
+        self.play(GrowArrow(arr4),
+                  FadeIn(final_pill, shift=LEFT * 0.15), run_time=0.5)
+
+        # stop_reason pill between chain and caption — anchors the
+        # terminal-state vocabulary in the recap. Pushed further down so
+        # it doesn't collide with the sub_text labels under each round ring.
+        sr_pill = self._pill("stop_reason = end_turn  →  loop 收工", GREEN, size=14)
+        sr_pill.scale(0.85).move_to(DOWN * 1.15)
+        self.play(FadeIn(sr_pill, shift=UP * 0.10), run_time=0.4)
+
+        # Caption — moved further down to balance vertical composition
+        caption = Text("關鍵:LLM 自己看 tool_result 再決定下一輪 · loop 一定收得回來",
+                       font=CN_FONT, font_size=20,
+                       color=VIOLET_SOFT, weight=BOLD).move_to(DOWN * 1.95)
+        self.play(FadeIn(caption, shift=UP * 0.1), run_time=0.4)
+        self.wait(1.2)
+
+        cleanup = VGroup(badge, u_pill, round_pills,
+                         arr1, arr2, arr3, arr4, final_pill,
+                         sr_pill, caption)
+        self.play(FadeOut(cleanup), run_time=0.5)
+        self.clear_subtitle(run_time=0.3)
+        self.advance_progress(60)
+
+    # ============================================================
+    # SCENE — TAKEAWAY (15s) — D-plan: stagger cards, mini-icons, longer dwell
     # ============================================================
     def scene_takeaway(self):
+        # Hero title uses SERIF_FONT to match V1/V2 channel convention
+        # (intro "Agentic / Loop" + closing "Decide · Iterate · Closure"
+        # are both SERIF). The mixed "三件事" Chinese fragment renders fine
+        # in Noto Serif CJK TC.
         outro_title = Text("Agentic Loop = 三件事",
-                           font=CN_FONT, font_size=42,
+                           font=SERIF_FONT, font_size=42,
                            color=INK, weight=BOLD).move_to(UP * 3.0)
 
         cards_data = [
             ("①", "Decide", "拆解問題 + 選 tool",
-             "LLM 自己決定要不要、要呼叫哪個", VIOLET),
+             "LLM 自己決定要不要、要呼叫哪個", VIOLET, "?"),
             ("②", "Iterate", "多輪迭代 + 結果驅動",
-             "看 tool_result 再決定下一輪", ORANGE),
+             "看 tool_result 再決定下一輪", ORANGE, "↻"),
             ("③", "Closure", "end_turn / maxIterations",
-             "loop 一定收得回來,不無限跑", TEAL_BRIGHT),
+             "loop 一定收得回來,不無限跑", TEAL_BRIGHT, "✓"),
         ]
 
         card_w = 4.4
-        cards = VGroup()
-        for i, (num, eng, cn, desc, color) in enumerate(cards_data):
+        cards = VGroup()         # whole card groups (box + content)
+        contents = []            # per-card content sub-group (texts + icon)
+        icons = []
+        for i, (num, eng, cn, desc, color, icon_char) in enumerate(cards_data):
             x = -4.6 + i * 4.6
-            box = RoundedRectangle(width=card_w, height=4.0, corner_radius=0.22,
+            box = RoundedRectangle(width=card_w, height=4.2, corner_radius=0.22,
                                    stroke_color=color, stroke_width=3,
                                    fill_color=color, fill_opacity=0.12)
-            box.move_to([x, -0.3, 0])
+            box.move_to([x, -0.4, 0])
 
-            num_text = Text(num, font=MONO_FONT, font_size=48,
+            num_text = Text(num, font=MONO_FONT, font_size=42,
                             color=color, weight=BOLD).move_to(
-                                box.get_top() + DOWN * 0.7)
-            eng_text = Text(eng, font=SERIF_FONT, font_size=32,
+                                box.get_top() + DOWN * 0.55)
+            # mini-icon ring
+            icon_ring = Circle(radius=0.36, color=color, stroke_width=3,
+                               fill_color=color, fill_opacity=0.18)
+            icon_ring.move_to(box.get_top() + DOWN * 1.45)
+            icon_glyph = Text(icon_char, font=SERIF_FONT, font_size=36,
+                              color=color, weight=BOLD).move_to(icon_ring.get_center())
+            icon = VGroup(icon_ring, icon_glyph)
+            eng_text = Text(eng, font=SERIF_FONT, font_size=28,
                             color=INK, weight=BOLD).move_to(
-                                box.get_top() + DOWN * 1.5)
-            cn_text = Text(cn, font=CN_FONT, font_size=17,
+                                box.get_top() + DOWN * 2.25)
+            cn_text = Text(cn, font=CN_FONT, font_size=16,
                            color=color, weight=BOLD).move_to(
-                               box.get_top() + DOWN * 2.2)
-            desc_text = Text(desc, font=CN_FONT, font_size=15,
+                               box.get_top() + DOWN * 2.85)
+            desc_text = Text(desc, font=CN_FONT, font_size=14,
                              color=INK).move_to(
-                                 box.get_top() + DOWN * 3.0)
-            card = VGroup(box, num_text, eng_text, cn_text, desc_text)
+                                 box.get_top() + DOWN * 3.55)
+            # IMPORTANT — box stays separate so opacity animations on the
+            # content do NOT change the box fill (else fill_opacity 0.12 → 1.0
+            # turns the card into a solid color block that swallows the text)
+            content = VGroup(num_text, icon, eng_text, cn_text, desc_text)
+            card = VGroup(box, content)  # card[0]=box, card[1]=content
             cards.add(card)
+            contents.append(content)
+            icons.append(icon)
 
         self.play(FadeIn(outro_title, shift=DOWN * 0.2), run_time=0.6)
-        self.play(LaggedStart(*[FadeIn(c, shift=UP * 0.15) for c in cards],
-                              lag_ratio=0.25, run_time=1.4))
-        self.wait(6.5)
 
+        # All 3 cards appear together; their CONTENT starts at 0.25 opacity
+        # so the 3-column layout is complete from t=0 but only hero focus
+        # shifts ① → ② → ③ over time. Box stays at fill_opacity 0.12 always.
+        for content in contents:
+            content.set_opacity(0.25)
+        self.play(FadeIn(cards, shift=UP * 0.15), run_time=0.7)
+
+        for i in range(len(cards)):
+            self.play(
+                contents[i].animate.set_opacity(1.0),
+                Indicate(icons[i], scale_factor=1.35,
+                         color=cards_data[i][4]),
+                run_time=0.7,
+            )
+            self.wait(1.8)
+            if i < len(cards) - 1:
+                self.play(contents[i].animate.set_opacity(0.55), run_time=0.3)
+
+        self.wait(0.6)
         self.play(FadeOut(outro_title), FadeOut(cards), run_time=0.5)
-        self.advance_progress(50)
+        self.advance_progress(75)
 
     # ============================================================
     # SCENE — CLOSING (5s)
