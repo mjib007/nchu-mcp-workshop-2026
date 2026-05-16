@@ -30,13 +30,16 @@ def build_cover(prs):
     _text(s, 0.85, 6.75, 8, 0.4,
           "國立中興大學  ·  AI 學伴系統實務案例",
           font=FONT_BODY, size=14, color=MUTED)
-    pastel_card(s, 8.8, 6.0, 4.3, 1.1, accent=VIOLET, fill=VIOLET_PASTEL)
-    _text(s, 8.95, 6.05, 4.0, 0.5, "從一次回答 → 多輪迭代",
-          font=FONT_TITLE, size=16, color=VIOLET_DEEP, bold=True,
-          align=PP_ALIGN.CENTER)
-    _text(s, 8.95, 6.5, 4.0, 0.5,
+    # Hook card moved from floating right-bottom to under the hero subtitle,
+    # creating a clean title → subtitle → hook vertical anchor in the
+    # left column. Width matches hero (0.85, w=7) so it visually belongs
+    # to the title group instead of orphan-floating near the author block.
+    pastel_card(s, 0.85, 4.3, 7.0, 1.15, accent=VIOLET, fill=VIOLET_PASTEL)
+    _text(s, 1.1, 4.4, 6.5, 0.55, "從一次回答  →  多輪迭代",
+          font=FONT_TITLE, size=22, color=VIOLET_DEEP, bold=True)
+    _text(s, 1.1, 4.95, 6.5, 0.45,
           "LLM 不只回答,還會自己選工具",
-          font=FONT_BODY, size=13, color=INK, align=PP_ALIGN.CENTER)
+          font=FONT_BODY, size=15, color=INK)
 
 
 def build_agenda(prs):
@@ -68,8 +71,10 @@ def build_agenda(prs):
                [{"text": line, "font": FONT_BODY, "size": 14,
                  "color": INK_SOFT, "space_after": 4}
                 for line in body.split("\n")])
+        # Time hint demoted from accent color to INK_SOFT so it doesn't
+        # compete with title for attention; time is metadata not headline.
         _text(s, x + 0.30, 6.30, card_w - 0.6, 0.4, time_hint,
-              font=FONT_CODE, size=13, color=accent, bold=True)
+              font=FONT_CODE, size=13, color=INK_SOFT, bold=True)
     page_number(s, 2, TOTAL)
 
 
@@ -119,7 +124,7 @@ def build_traditional_vs_agentic(prs):
 
 def build_loop_diagram(prs):
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "01 · ①", "A G E N T I C   L O O P   ·   概 念 圖", accent=ORANGE)
+    metadata_bar(s, "01 · ①", "A G E N T I C   L O O P · 概念圖", accent=ORANGE)
     slide_title(s, "Agentic Tool Loop 概念圖", y=0.95)
     slide_subtitle(s, "每一輪稱為一個 iteration,最多 maxIterations(預設 7)輪", y=1.85)
 
@@ -140,8 +145,11 @@ def build_loop_diagram(prs):
               font=FONT_BODY, size=13, color=color, bold=True,
               align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
         if i < len(nodes) - 1:
+            # Arrow color follows the destination node color so the data
+            # flow reads as "violet → violet → orange → orange → teal".
+            arrow_color = nodes[i + 1][1]
             _text(s, x + card_w, 2.85, gap + 0.2, 1.1, "→",
-                  font=FONT_TITLE, size=18, color=MUTED, bold=True,
+                  font=FONT_TITLE, size=22, color=arrow_color, bold=True,
                   align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
 
     # Return arrow + label
@@ -371,7 +379,7 @@ def build_core_loop_code(prs):
 
 def build_max_iter(prs):
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "03 · ①", "M A X _ I T E R A T I O N S   ·   強 制 回 覆", accent=TEAL)
+    metadata_bar(s, "03 · ①", "M A X _ I T E R A T I O N S · 強制回覆", accent=TEAL)
     slide_title(s, "maxIterations 與強制回覆機制", y=0.95)
     slide_subtitle(s, "避免 LLM 無限呼叫工具 —— 設上限 + 最後一輪強制總結", y=1.85)
 
@@ -399,11 +407,15 @@ def build_max_iter(prs):
          "font": FONT_BODY, "size": 14, "color": INK, "space_after": 2},
         {"text": "    工具,直接整理回覆",
          "font": FONT_BODY, "size": 14, "color": INK, "space_after": 14},
+        # Quoted "強制 user message" — was 3-emphasis stacked (italic +
+        # bold + FONT_CODE) which paradoxically diluted the emphasis.
+        # Now: FONT_BODY + italic only, reads as actual user-text quote
+        # rather than a code comment.
         {"text": "「請不要再使用任何工具,",
-         "font": FONT_CODE, "size": 12, "color": TEAL_DEEP, "bold": True,
+         "font": FONT_BODY, "size": 13, "color": TEAL_DEEP,
          "italic": True, "space_after": 2},
         {"text": "  直接根據工具回傳的資料整理 Markdown 回覆。」",
-         "font": FONT_CODE, "size": 12, "color": TEAL_DEEP, "bold": True,
+         "font": FONT_BODY, "size": 13, "color": TEAL_DEEP,
          "italic": True, "space_after": 0},
     ])
     page_number(s, 6, TOTAL)
@@ -480,22 +492,32 @@ def build_sse_streaming(prs):
 
 def build_demo_cue(prs):
     """Slide 7 — Live Demo briefing with 5-question cheat sheet.
-    Dual purpose: transition cue + 講師's running checklist during demo."""
+    Dual purpose: transition cue + 講師's running checklist during demo.
+    Dark BG but follows the same family conventions as the other 7 slides
+    (metadata bar top-left, left-aligned hero, page number bottom-right)
+    so it doesn't read as 'visual orphan' from another deck."""
     s = _blank_slide(prs, MIDNIGHT)
 
-    # Hero
-    _text(s, 0.85, 0.7, 12, 0.85, "▶  切換到 Live Demo",
-          font=FONT_TITLE, size=46, color=ORANGE, bold=True,
-          align=PP_ALIGN.CENTER)
-    _text(s, 0.85, 1.75, 12, 0.45,
+    # Manual metadata bar in dark-BG-friendly colors. (lib metadata_bar's
+    # default text color assumes light BG.)
+    _oval(s, 0.85, 0.55, 0.20, ORANGE)
+    _text(s, 1.2, 0.30, 12, 0.55,
+          "04   L I V E   D E M O",
+          font=FONT_BODY, size=14, color=RGBColor(0xCB, 0xD5, 0xE1), bold=True,
+          anchor=MSO_ANCHOR.MIDDLE)
+
+    # Hero — switched from align=CENTER to align=LEFT (default) so it
+    # anchors to x=0.85 like every other slide's slide_title.
+    _text(s, 0.85, 1.05, 12, 0.85, "▶  切換到 Live Demo",
+          font=FONT_TITLE, size=44, color=ORANGE, bold=True)
+    _text(s, 0.85, 2.05, 12, 0.45,
           "25 分鐘 · 興大 AI 學伴實機",
-          font=FONT_BODY, size=18, color=MUTED, italic=True,
-          align=PP_ALIGN.CENTER)
+          font=FONT_BODY, size=18, color=RGBColor(0xCB, 0xD5, 0xE1), italic=True)
 
     # Section header
-    _text(s, 1.0, 2.45, 12, 0.4,
+    _text(s, 0.85, 2.7, 12, 0.4,
           "5 個示範問題(從淺到深,完整腳本見 03-live-demo-script.md)",
-          font=FONT_BODY, size=14, color=VIOLET, bold=True)
+          font=FONT_BODY, size=14, color=VIOLET_PASTEL, bold=True)
 
     # 5 question rows
     questions = [
@@ -505,11 +527,15 @@ def build_demo_cue(prs):
         ("Q4", "新書 + 天氣",           "parallel call",       "★★",     "~45s",   ORANGE),
         ("Q5", "課程 + 論文 + 推薦",    "maxIter 挑戰",        "★★★",   "~90-120s", PINK),
     ]
-    row_h = 0.72
-    row_gap = 0.10
+    # Row dimensions tightened so we don't crash into page_number after
+    # adding the metadata bar that pushed everything down ~0.4 unit.
+    row_h = 0.65
+    row_gap = 0.08
     for i, (num, q, tag, stars, dur, accent) in enumerate(questions):
-        y = 2.95 + i * (row_h + row_gap)
-        _rounded(s, 1.0, y, 11.85, row_h, RGBColor(0x1E, 0x20, 0x3A),
+        y = 3.20 + i * (row_h + row_gap)
+        # Row bg lifted from #1E203A to #242A44 so the rounded outline
+        # against the midnight BG is more readable on a projector.
+        _rounded(s, 1.0, y, 11.85, row_h, RGBColor(0x24, 0x2A, 0x44),
                  line_color=accent, line_w=1.5)
         _text(s, 1.20, y, 0.70, row_h, num,
               font=FONT_CODE, size=14, color=accent, bold=True,
@@ -527,7 +553,11 @@ def build_demo_cue(prs):
               font=FONT_CODE, size=11, color=MUTED,
               anchor=MSO_ANCHOR.MIDDLE, align=PP_ALIGN.RIGHT)
 
-    page_number(s, 7, TOTAL)
+    # Manual page number with light color so it doesn't disappear into the
+    # midnight BG (lib's default uses MUTED which is ~3:1 here — WCAG fail).
+    _text(s, 11.0, 7.0, 2.0, 0.4, "7 / 8",
+          font=FONT_CODE, size=12, color=RGBColor(0xCB, 0xD5, 0xE1),
+          align=PP_ALIGN.RIGHT)
 
 
 def build_finale(prs):
@@ -585,7 +615,7 @@ def build_recap(prs):
 def build_single_turn_pain(prs):
     """§1 · ① — Single-turn LLM 解不了的問題類型 (3 個例子)"""
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "01 · ①", "S I N G L E - T U R N   解 不 了", accent=PINK)
+    metadata_bar(s, "01 · ①", "S I N G L E - T U R N · 解不了", accent=PINK)
     slide_title(s, "為什麼需要 Agentic Loop?", y=0.95)
     slide_subtitle(s, "single-turn LLM(就算有 tool)解不了的三類問題", y=1.85)
 
@@ -606,15 +636,19 @@ def build_single_turn_pain(prs):
     card_w = 3.95
     for i, (title, example, why, accent, fill) in enumerate(items):
         x = 0.55 + i * (card_w + 0.20)
-        _rounded(s, x, 2.7, card_w, 3.7, fill, line_color=accent, line_w=2)
+        # Card height 3.7 → 3.3 (was bottom-padding死白); callout y also up
+        _rounded(s, x, 2.7, card_w, 3.3, fill, line_color=accent, line_w=2)
         _text(s, x + 0.25, 2.9, card_w - 0.5, 0.5, title,
               font=FONT_TITLE, size=15, color=accent, bold=True)
+        # example bumped 13→15 + bold (was italic) — hero in card hierarchy
         _text(s, x + 0.25, 3.55, card_w - 0.5, 1.4, example,
-              font=FONT_BODY, size=13, color=INK, italic=True)
-        _text(s, x + 0.25, 5.1, card_w - 0.5, 1.2, why,
-              font=FONT_BODY, size=13, color=INK_SOFT)
+              font=FONT_BODY, size=15, color=INK, bold=True)
+        # why dropped 13→12 + italic — clearly explanation tier
+        _text(s, x + 0.25, 4.85, card_w - 0.5, 1.1, why,
+              font=FONT_BODY, size=12, color=INK_SOFT, italic=True)
 
-    callout_box(s, 0.85, 6.6, 12, 0.55,
+    # Callout y 6.6 → 6.25 to leave breathing room above page_number
+    callout_box(s, 0.85, 6.25, 12, 0.55,
                 "Agentic Loop = LLM 自己決定何時、用什麼工具,以及要重複幾輪",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=14)
     page_number(s, 3, TOTAL)
@@ -623,7 +657,7 @@ def build_single_turn_pain(prs):
 def build_agentic_walkthrough(prs):
     """§1 · ③ — 4-step preview of how agentic resolves a composite query"""
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "01 · ③", "A G E N T I C   解 法   預 覽", accent=ORANGE)
+    metadata_bar(s, "01 · ③", "A G E N T I C · 解法預覽", accent=ORANGE)
     slide_title(s, "Agentic 怎麼解 — 一個 query 的 4 步走法", y=0.95, size=30)
     slide_subtitle(s, '範例:"找 AI 課程 + 看這些老師最近的論文"', y=1.85)
 
@@ -640,19 +674,24 @@ def build_agentic_walkthrough(prs):
          "看到課的老師後:\nfor each 老師 →\narxiv_search (parallel)",
          "結果驅動的後續決定",
          TEAL),
+        # STEP 4 was TEAL_DEEP (same family as STEP 3 TEAL) → cards looked
+        # identical, lost the "endgame" signal. Switched to VIOLET_DEEP so
+        # STEP 4 reads as "closure / return to LLM main color".
         ("STEP 4", "整合 + end_turn",
          "LLM 整合課 + 論文\n→ 完整自然語言回覆",
          'stop_reason = "end_turn"',
-         TEAL_DEEP),
+         VIOLET_DEEP),
     ]
     card_w = 2.95
     for i, (step, title, body, note, accent) in enumerate(steps):
         x = 0.55 + i * (card_w + 0.15)
         fill = pastel_for(accent)
         _rounded(s, x, 2.7, card_w, 3.85, fill, line_color=accent, line_w=2)
-        _rect(s, x + 0.25, 2.85, 1.0, 0.32, accent)
-        _text(s, x + 0.25, 2.85, 1.0, 0.32, step,
-              font=FONT_CODE, size=10, color=BG_WHITE, bold=True,
+        # STEP badge bumped: rect 1.0×0.32 → 1.2×0.42, font 10 → 12
+        # (was so small it looked like decoration not a progress indicator)
+        _rect(s, x + 0.25, 2.85, 1.2, 0.42, accent)
+        _text(s, x + 0.25, 2.85, 1.2, 0.42, step,
+              font=FONT_CODE, size=12, color=BG_WHITE, bold=True,
               align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
         _text(s, x + 0.25, 3.30, card_w - 0.5, 0.5, title,
               font=FONT_TITLE, size=18, color=INK, bold=True)
@@ -713,7 +752,7 @@ def build_engineering_footnotes(prs):
 def build_strategy_callback(prs):
     """§5 · ① — 回頭跟 Segment 1 的 RAG / Tool Use / Agentic Loop 比較"""
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "05 · ①", "S T R A T E G I E S   ·   回 看", accent=VIOLET)
+    metadata_bar(s, "05 · ①", "S T R A T E G I E S · 回看", accent=VIOLET)
     slide_title(s, "回頭看三種策略 — Agentic Loop 站在哪", y=0.95, size=28)
     slide_subtitle(s, "Segment 1 介紹的三條路,Agentic Loop 是其中能力最完整的一條", y=1.85)
 
@@ -728,7 +767,7 @@ def build_strategy_callback(prs):
          ORANGE, ORANGE_PASTEL),
         ("Agentic Loop", "多輪迭代",
          "✓ 自己拆解問題\n✓ 多輪 + 結果驅動\n✓ Tool Use 完整版",
-         "成本最高、難 debug",
+         "⚠ 成本最高、難 debug",
          VIOLET, VIOLET_PASTEL),
     ]
     card_w = 3.95
@@ -741,9 +780,12 @@ def build_strategy_callback(prs):
               font=FONT_BODY, size=13, color=MUTED, italic=True)
         _text(s, x + 0.25, 4.15, card_w - 0.5, 1.5, pros,
               font=FONT_BODY, size=13, color=INK)
+        # Cons unified: ✗ red = hard limitation (RAG/Tool Use),
+        # ⚠ orange = trade-off (Agentic Loop "成本最高、難 debug" is not
+        # a hard wall, it's a cost). Symbol's color does the signaling now.
         _text(s, x + 0.25, 5.75, card_w - 0.5, 1.0, cons,
               font=FONT_BODY, size=13,
-              color=(PINK_DEEP if i < 2 else MUTED))
+              color=(PINK_DEEP if i < 2 else ORANGE))
 
     # Bottom callout = recap + Segment 4 bridge (合併原 recap slide 進來)
     callout_box(s, 0.85, 6.95, 12, 0.55,
