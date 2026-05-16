@@ -757,7 +757,14 @@
         <li><strong>03 Tool 註冊與描述</strong>:JSON Schema、description 對 LLM 的重要性</li>
         <li><strong>04 Client 整合機制</strong>:工具清單如何餵給 LLM</li>
       </ul>
-      <h4>2:16 Handshake 影片</h4>
+      <h4>Section 01 · Function Calling 機制（1:27 影片）</h4>
+      <div class="video-wrap">
+        <video controls preload="metadata"
+               src="https://cdn.jsdelivr.net/gh/UDICatNCHU/nchu-mcp-workshop-2026@main/function-calling-video-preview.mp4"></video>
+      </div>
+      <p class="video-caption">Manim 渲染 · ~1:27 · LLM 只吐字串、subprocess.run 那道門、tool_use ↔ end_turn 對位收斂</p>
+
+      <h4>Section 02 · 兩階段握手（2:16 影片）</h4>
       <div class="video-wrap">
         <video controls preload="metadata"
                src="https://cdn.jsdelivr.net/gh/UDICatNCHU/nchu-mcp-workshop-2026@main/02-mcp-connection-video-preview.mp4"></video>
@@ -766,7 +773,8 @@
       <div class="resources">
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/02-how-mcp-works.pptx">投影片 <span class="ext">pptx · 30 張</span></a>
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/02-mcp-connection-video-youtube.md">YouTube 發佈素材 <span class="ext">md</span></a>
-        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/02-mcp-connection-video.py">Manim 原始碼 <span class="ext">py</span></a>
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/02-mcp-connection-video.py">02 Manim <span class="ext">py</span></a>
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/function-calling-video.py">Function Calling Manim <span class="ext">py</span></a>
       </div>
       <div class="seg-nav">
         <a href="#segment-1">← Why MCP</a>
@@ -783,12 +791,12 @@
         <span class="status draft">初稿</span>
       </div>
       <p>完整查詢流程 walk-through:LLM 怎麼自主決定要呼叫哪個工具、<code>tool_use</code> ↔ <code>tool_result</code> 多輪迭代、<code>maxIterations</code> 限制與最後一輪強制回覆機制。配合現場操作系統 demo。</p>
-      <h4>1:27 Function Calling 機制影片</h4>
+      <h4>1:27 Function Calling 機制影片 <span style="font-size:11px;color:var(--violet-soft);font-weight:600;">（與 Segment 2 共用 · 在此複習 tool_use ↔ end_turn 對位後接多輪 loop）</span></h4>
       <div class="video-wrap">
         <video controls preload="metadata"
                src="https://cdn.jsdelivr.net/gh/UDICatNCHU/nchu-mcp-workshop-2026@main/function-calling-video-preview.mp4"></video>
       </div>
-      <p class="video-caption">Manim 渲染 · ~1:27 · LLM 只吐字串、subprocess.run 那道門、tool_use ↔ end_turn 對位收斂</p>
+      <p class="video-caption">Manim 渲染 · ~1:27 · LLM 只吐字串、subprocess.run 那道門、tool_use ↔ end_turn 對位收斂。Segment 3 的 multi-turn agentic loop 視覺化影片待製作（規劃中）。</p>
       <div class="resources">
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/03-agentic-tool-loop.pptx">投影片 <span class="ext">pptx · 20 張</span></a>
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/sonnet-running-example.pptx">Sonnet 實例 <span class="ext">pptx</span></a>
