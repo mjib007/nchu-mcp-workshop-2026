@@ -4,200 +4,267 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MCP 入門工作坊 · 國立中興大學</title>
-<meta name="description" content="三小時 MCP 入門工作坊教材，受眾為大專院校教師。以興大 AI 學伴為實例，含投影片、Manim 動畫影片、可跑 mini-project 與 course TA agent。">
+<meta name="description" content="三小時 MCP 入門工作坊教材,受眾為大專院校教師。以興大 AI 學伴為實例,含投影片、Manim 動畫影片、可跑 mini-project 與 course TA agent。">
 <style>
   :root {
-    --violet:     #7B5CF5;
-    --violet-deep:#5B3ED9;
-    --orange:     #FB7048;
-    --teal:       #0EA594;
-    --teal-deep:  #0F766E;
-    --pink:       #EF4444;
-    --blue:       #3B82F6;
-    --violet-pastel: #EEE8FF;
-    --orange-pastel: #FFE7DB;
-    --teal-pastel:   #D4F7F0;
-    --pink-pastel:   #FEE2E2;
-    --blue-pastel:   #DBEAFE;
-    --bg:         #FFFFFF;
-    --card:       #FFFFFF;
-    --ink:        #1F2937;
-    --muted:      #9CA3AF;
-    --italic-gray:#6B7280;
-    --line:       #E5E7EB;
-    --code-bg:    #1A2138;
-    --code-fg:    #E5E7EB;
-    --shadow:     0 1px 2px rgba(0,0,0,.04), 0 12px 32px rgba(123,92,245,.10);
+    --bg:           #0a0a10;
+    --bg-card:      #14172B;
+    --bg-elev:      #1B1F38;
+    --violet:       #7B5CF5;
+    --violet-deep:  #5B3ED9;
+    --violet-soft:  #9D85F7;
+    --violet-glow:  rgba(123, 92, 245, 0.35);
+    --orange:       #FB7048;
+    --teal:         #2DD4BF;
+    --pink:         #EF4444;
+    --green:        #5CB85C;
+    --ink:          #FFFFFF;
+    --muted:        #B4BED2;
+    --line:         #2A2D44;
+    --line-strong:  #3A3F5C;
   }
   *,*::before,*::after { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC",
-                 "PingFang TC", "Microsoft JhengHei", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
     color: var(--ink);
     background: var(--bg);
     line-height: 1.65;
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
   }
-  code, pre, .mono {
-    font-family: "SF Mono", "Consolas", "Liberation Mono", "Roboto Mono", monospace;
+  .serif {
+    font-family: "Noto Serif TC", "PingFang TC", Georgia, serif;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  .mono, code, pre {
+    font-family: "JetBrains Mono", "SF Mono", "Consolas", "Roboto Mono", monospace;
+  }
+  code {
+    background: rgba(123, 92, 245, 0.15);
+    color: var(--violet-soft);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.92em;
   }
   pre {
-    background: var(--code-bg);
-    color: var(--code-fg);
+    background: #050608;
+    color: #E5E7EB;
     padding: 16px 20px;
     border-radius: 8px;
     overflow-x: auto;
-    font-size: 13.5px;
+    font-size: 13px;
     line-height: 1.55;
-  }
-  code {
-    background: rgba(123, 92, 245, 0.10);
-    color: var(--violet-deep);
-    padding: 1px 5px;
-    border-radius: 3px;
-    font-size: 0.92em;
+    border: 1px solid var(--line);
   }
   pre code { background: none; color: inherit; padding: 0; }
   a {
-    color: var(--violet-deep);
+    color: var(--violet-soft);
     text-decoration: none;
-    border-bottom: 1px solid rgba(123, 92, 245, 0.30);
-    transition: border-color .15s;
+    border-bottom: 1px solid rgba(157, 133, 247, 0.35);
+    transition: border-color .15s, color .15s;
   }
-  a:hover { border-color: var(--violet); }
-  h1, h2, h3 { line-height: 1.25; }
+  a:hover { border-color: var(--violet-soft); color: #FFF; }
 
-  /* ── Hero ───────────────────────────────────── */
+  /* ── Hero with auto-play loop video as bg ───────────── */
   .hero {
-    background: #FFFFFF;
-    color: var(--ink);
-    padding: 72px 24px 56px;
     position: relative;
+    min-height: 92vh;
+    padding: 80px 24px 60px;
     overflow: hidden;
     border-bottom: 1px solid var(--line);
   }
   .hero::before {
     content: "";
     position: absolute;
-    left: 24px;
-    top: 56px;
-    width: 56px;
-    height: 6px;
-    background: var(--violet);
-    border-radius: 3px;
+    top: -200px; right: -260px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, var(--violet-glow), transparent 65%);
+    pointer-events: none;
+    z-index: 0;
   }
   .hero::after {
     content: "";
     position: absolute;
-    right: -180px;
-    top: -120px;
-    width: 460px;
-    height: 460px;
-    background: radial-gradient(circle, rgba(123,92,245,0.10), transparent 70%);
+    bottom: -240px; left: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(251,112,72,.18), transparent 65%);
     pointer-events: none;
+    z-index: 0;
   }
-  .container {
-    max-width: 920px;
+  .hero-grid {
+    position: relative; z-index: 1;
+    max-width: 1300px;
     margin: 0 auto;
-    padding: 0 24px;
-    position: relative;
-    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 48px;
+    align-items: center;
+    min-height: calc(92vh - 140px);
   }
-  .hero h1 {
-    font-size: clamp(40px, 6.5vw, 72px);
-    margin: 18px 0 16px;
-    font-weight: 900;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-    line-height: 1.05;
+  @media (max-width: 880px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 32px; min-height: 0; }
   }
-  .hero .accent { display: none; }
-  .hero .subtitle {
-    font-size: clamp(20px, 2.3vw, 26px);
+  .hero-left .kicker {
+    font-size: 13px;
+    color: var(--violet-soft);
+    font-weight: 800;
+    letter-spacing: 0.20em;
+    text-transform: uppercase;
+    margin: 0 0 24px;
+  }
+  .hero-left h1 {
+    font-size: clamp(56px, 8.5vw, 112px);
     margin: 0 0 8px;
-    font-weight: 700;
-    color: var(--violet);
+    line-height: 0.98;
+    color: #FFF;
   }
-  .hero .meta {
-    font-size: 14px;
+  .hero-left .accent {
+    width: 96px; height: 6px;
+    background: linear-gradient(90deg, var(--violet), var(--orange));
+    margin: 24px 0 22px;
+    border-radius: 3px;
+  }
+  .hero-left .lead {
+    font-size: clamp(18px, 1.8vw, 22px);
     color: var(--muted);
-    margin: 0 0 28px;
-    letter-spacing: 0.02em;
+    font-weight: 500;
+    margin: 0 0 12px;
+    max-width: 36ch;
+    line-height: 1.5;
   }
-  .hero .actions {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-top: 12px;
+  .hero-left .meta {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 16px 0 28px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
   }
+  .hero-left .actions { display: flex; gap: 10px; flex-wrap: wrap; }
   .btn {
     display: inline-block;
-    padding: 10px 22px;
+    padding: 13px 26px;
     border-radius: 6px;
-    font-weight: 600;
-    font-size: 15px;
+    font-weight: 700;
+    font-size: 14px;
     text-decoration: none;
     border: 1px solid transparent;
-    transition: transform .15s, box-shadow .15s;
+    transition: transform .12s, box-shadow .15s;
+    letter-spacing: 0.04em;
   }
   .btn:hover { transform: translateY(-1px); border-bottom-color: transparent; }
   .btn-primary {
-    background: var(--violet);
-    color: #FFF;
-    border: 1px solid var(--violet);
+    background: var(--violet); color: #FFF; border-color: var(--violet);
+    box-shadow: 0 8px 24px rgba(123,92,245,.30);
   }
-  .btn-primary:hover { box-shadow: 0 8px 20px rgba(123,92,245,.35); }
+  .btn-primary:hover { box-shadow: 0 12px 32px rgba(123,92,245,.55); }
   .btn-ghost {
-    background: transparent;
-    color: var(--ink);
-    border: 1px solid var(--line);
+    background: transparent; color: var(--ink); border: 1px solid var(--line-strong);
   }
-  .btn-ghost:hover { border-color: var(--violet); color: var(--violet); }
+  .btn-ghost:hover { border-color: var(--violet-soft); color: var(--violet-soft); }
 
-  /* ── Sections ───────────────────────────────── */
-  main { padding: 64px 0 32px; }
-  section { margin: 0 0 64px; }
-  section h2 {
-    font-size: 30px;
-    margin: 0 0 8px;
-    color: var(--ink);
-    font-weight: 900;
-    display: flex;
-    align-items: baseline;
-    gap: 14px;
-    letter-spacing: -0.01em;
+  .hero-right {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
   }
-  section h2 .seg-num {
-    font-family: "SF Mono", "Consolas", monospace;
-    font-size: 38px;
-    color: var(--violet);
-    font-weight: 900;
+  .hero-video {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(123,92,245,.25),
+                0 0 0 1px var(--line-strong);
+  }
+  .hero-video video {
+    width: 100%; height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+  .hero-video::after {
+    content: "🔄 5s loop · 第三章 magazine intro";
+    position: absolute;
+    bottom: 12px; left: 12px;
+    background: rgba(10,10,16,0.75);
+    color: var(--muted);
+    font-size: 11px; padding: 4px 10px;
+    border-radius: 999px;
+    font-family: "JetBrains Mono", monospace;
+    backdrop-filter: blur(8px);
+  }
+
+  /* ── Stats strip ────────────────────────────────── */
+  .stats-strip {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--line);
+    padding: 26px 24px;
+  }
+  .stats {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+  @media (max-width: 720px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+  }
+  .stat { text-align: center; padding: 4px 8px; border-right: 1px solid var(--line); }
+  .stat:last-child { border-right: 0; }
+  @media (max-width: 720px) {
+    .stat { border-right: 0; }
+  }
+  .stat .num {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 30px; font-weight: 900;
+    background: linear-gradient(180deg, var(--violet-soft), var(--violet));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     line-height: 1;
   }
-  section .h2-accent {
-    width: 48px; height: 4px;
-    background: var(--violet);
-    margin: 6px 0 22px;
-    border-radius: 2px;
-  }
-  section p.lead {
-    font-size: 17px;
-    color: var(--italic-gray);
-    margin: 0 0 24px;
-    max-width: 720px;
-    font-style: italic;
+  .stat .lbl {
+    font-size: 11px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.14em;
+    margin-top: 8px;
   }
 
-  /* ── Outline table ──────────────────────────── */
+  /* ── sections ───────────────────────────────────── */
+  main { padding: 72px 0 40px; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  section { margin: 0 0 84px; }
+  section .section-kicker {
+    font-size: 12px; color: var(--violet-soft);
+    font-weight: 800; letter-spacing: 0.20em;
+    text-transform: uppercase; margin: 0 0 12px;
+  }
+  section h2 {
+    font-size: clamp(30px, 4vw, 48px);
+    margin: 0 0 8px;
+    line-height: 1.1;
+    color: #FFF;
+    letter-spacing: -0.02em;
+  }
+  section .h2-accent {
+    width: 56px; height: 4px;
+    background: var(--violet);
+    margin: 16px 0 24px;
+    border-radius: 2px;
+  }
+  section p.lead-p {
+    font-size: 17px; color: var(--muted);
+    margin: 0 0 28px; max-width: 720px; line-height: 1.55;
+  }
+
+  /* outline */
   .outline {
-    background: var(--card);
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-    overflow: hidden;
+    background: var(--bg-card);
     border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
   }
   .outline table { width: 100%; border-collapse: collapse; }
   .outline th, .outline td {
@@ -207,235 +274,215 @@
     border-bottom: 1px solid var(--line);
   }
   .outline thead th {
-    background: var(--violet-pastel);
-    color: var(--violet-deep);
+    background: var(--bg-elev);
+    color: var(--violet-soft);
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    font-size: 12px;
+    letter-spacing: 0.10em;
+    font-size: 11px;
   }
   .outline tbody tr:last-child td { border-bottom: none; }
   .outline tbody tr.break td {
-    background: rgba(0,0,0,0.02);
+    background: rgba(255,255,255,0.02);
     color: var(--muted);
     font-style: italic;
   }
   .outline td.num {
-    font-family: "SF Mono", monospace;
-    color: var(--violet);
+    font-family: "JetBrains Mono", monospace;
+    color: var(--violet-soft);
     font-weight: 800;
     width: 64px;
   }
   .outline td.dur {
-    color: var(--teal-deep);
+    color: var(--teal);
     font-weight: 600;
     width: 90px;
     font-variant-numeric: tabular-nums;
   }
 
-  /* ── Segment cards ──────────────────────────── */
+  /* segments */
   .segment {
-    background: var(--card);
-    border-radius: 12px;
-    padding: 32px 36px 28px;
-    box-shadow: var(--shadow);
+    background: var(--bg-card);
     border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 32px 36px 28px;
+    margin-bottom: 24px;
     position: relative;
+    overflow: hidden;
   }
-  .segment + .segment { margin-top: 28px; }
-  .segment .meta-row {
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 4px;
+  .segment::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--violet);
   }
-  .segment .duration {
-    color: var(--teal-deep);
-    font-weight: 700;
-    font-size: 14px;
-    font-variant-numeric: tabular-nums;
-  }
-  .segment .status {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 2px 9px;
-    border-radius: 999px;
-    background: var(--teal-pastel);
-    color: var(--teal-deep);
-    font-weight: 700;
-  }
-  .segment .status.draft {
-    background: var(--orange-pastel);
-    color: #C2410C;
+  .segment .seg-id {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px; color: var(--violet-soft);
+    font-weight: 800; letter-spacing: 0.14em;
+    margin: 0 0 4px;
   }
   .segment h3 {
-    font-size: 17px;
-    color: var(--violet-deep);
-    margin: 24px 0 12px;
-    font-weight: 800;
-    letter-spacing: 0.02em;
+    font-size: clamp(24px, 2.6vw, 32px);
+    margin: 0 0 8px;
+    color: #FFF;
+    letter-spacing: -0.01em;
   }
-  .segment p { margin: 0 0 14px; }
+  .segment .meta-row {
+    display: flex; align-items: center; gap: 14px;
+    flex-wrap: wrap; margin: 8px 0 16px;
+  }
+  .segment .duration {
+    color: var(--teal); font-weight: 700;
+    font-size: 13px; font-variant-numeric: tabular-nums;
+  }
+  .segment .status {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 3px 10px; border-radius: 999px;
+    background: rgba(45,212,191,0.15); color: var(--teal); font-weight: 700;
+  }
+  .segment .status.draft {
+    background: rgba(251,112,72,0.15); color: var(--orange);
+  }
+  .segment p { margin: 0 0 14px; color: var(--muted); }
   .segment ul { padding-left: 22px; margin: 0 0 18px; }
-  .segment ul li { margin-bottom: 4px; }
+  .segment ul li { margin-bottom: 4px; color: var(--muted); }
+  .segment ul li strong { color: #FFF; }
+  .segment h4 {
+    font-size: 13px; color: var(--violet-soft);
+    margin: 18px 0 10px;
+    text-transform: uppercase; letter-spacing: 0.12em;
+  }
 
-  /* Video embed */
   .video-wrap {
-    margin: 20px 0;
+    margin: 18px 0;
     border-radius: 8px;
     overflow: hidden;
     background: #000;
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-strong);
+    box-shadow: 0 10px 30px rgba(123,92,245,.15);
   }
-  .video-wrap video {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
+  .video-wrap video { display: block; width: 100%; height: auto; }
   .video-caption {
-    font-size: 13px;
-    color: var(--muted);
-    margin: 6px 0 0;
-    font-style: italic;
+    font-size: 13px; color: var(--muted);
+    margin: 6px 0 0; font-style: italic;
   }
 
-  /* Download chips */
   .resources {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 18px;
-    padding-top: 18px;
-    border-top: 1px dashed var(--line);
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 18px; padding-top: 18px;
+    border-top: 1px dashed var(--line-strong);
   }
   .chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    display: inline-flex; align-items: center; gap: 6px;
     padding: 7px 14px;
-    background: var(--violet-pastel);
-    border: 1px solid transparent;
+    background: rgba(123,92,245,0.10);
+    border: 1px solid rgba(123,92,245,0.30);
     border-radius: 999px;
-    font-size: 13px;
-    color: var(--violet-deep);
-    text-decoration: none;
-    font-weight: 600;
+    font-size: 13px; color: var(--violet-soft);
+    text-decoration: none; font-weight: 600;
     transition: background .15s, border-color .15s, transform .15s;
   }
   .chip:hover {
-    background: #FFF;
+    background: rgba(123,92,245,0.20);
     border-color: var(--violet);
-    color: var(--violet);
+    color: #FFF;
     transform: translateY(-1px);
   }
   .chip .ext {
-    font-family: "SF Mono", monospace;
-    font-size: 11px;
-    color: var(--violet);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    opacity: 0.75;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px; color: var(--orange);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    opacity: 0.85;
   }
-  .chip:hover .ext { color: var(--violet); opacity: 1; }
 
-  /* ── Hands-on grid ──────────────────────────── */
   .grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 22px;
   }
   @media (max-width: 720px) {
     .grid-2 { grid-template-columns: 1fr; }
   }
   .card {
-    background: var(--card);
+    background: var(--bg-card);
     border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 24px 28px;
-    box-shadow: var(--shadow);
+    border-radius: 10px;
+    padding: 26px 30px;
   }
   .card h3 {
-    margin: 0 0 8px;
-    color: var(--violet-deep);
-    font-size: 19px;
-    font-weight: 800;
+    margin: 0 0 6px; color: #FFF; font-size: 19px;
+    letter-spacing: -0.01em;
   }
-  .card .desc {
-    color: var(--muted);
-    font-size: 14.5px;
-    margin: 0 0 14px;
-  }
+  .card .desc { color: var(--muted); font-size: 14.5px; margin: 0 0 14px; }
   .card pre { font-size: 12.5px; padding: 12px 14px; }
 
-  /* ── Footer ─────────────────────────────────── */
   footer {
-    background: #0F1429;
-    color: rgba(255,255,255,.7);
-    padding: 36px 24px;
+    background: #050608;
+    color: var(--muted);
+    padding: 40px 24px;
     text-align: center;
     font-size: 14px;
+    border-top: 1px solid var(--line);
   }
-  footer a { color: rgba(255,255,255,.85); border-bottom-color: rgba(255,255,255,.35); }
-  footer a:hover { border-bottom-color: #FFF; color: #FFF; }
+  footer a {
+    color: var(--violet-soft);
+    border-bottom-color: rgba(157,133,247,.35);
+  }
+  footer a:hover { color: #FFF; border-bottom-color: #FFF; }
   footer .logo {
-    color: var(--violet);
-    font-weight: 800;
-    letter-spacing: 0.04em;
+    color: var(--violet-soft);
+    font-weight: 800; letter-spacing: 0.10em;
   }
-
-  /* TOC nav (sticky on desktop, hidden on mobile) */
-  .toc {
-    background: var(--violet-pastel);
-    border: 1px solid transparent;
-    border-radius: 8px;
-    padding: 12px 18px;
-    margin-bottom: 36px;
-    font-size: 14px;
-  }
-  .toc strong { color: var(--violet-deep); margin-right: 12px; }
-  .toc a { color: var(--violet); margin-right: 14px; white-space: nowrap; border: none; font-weight: 600; }
-  .toc a:hover { color: var(--violet-deep); }
 </style>
 </head>
 <body>
 
-<!-- ── R8 比較 banner (決定後拿掉) ───────────────────── -->
-<div style="background:#0F1429;color:#FFF;padding:14px 24px;text-align:center;font-size:14px;border-bottom:1px solid #2A2D44;">
-  <strong style="color:#9D85F7;letter-spacing:0.08em;">🎨 三版視覺方案 A/B 測試中</strong>
-  &nbsp;·&nbsp;
-  <a href="v-a/" style="color:#FFF;border-bottom:1px solid rgba(255,255,255,.5);padding:0 4px;">方案 A · Magazine</a>
-  &nbsp;|&nbsp;
-  <a href="v-b/" style="color:#FFF;border-bottom:1px solid rgba(255,255,255,.5);padding:0 4px;">方案 B · Dark</a>
-  &nbsp;|&nbsp;
-  <a href="v-c/" style="color:#FFF;border-bottom:1px solid rgba(255,255,255,.5);padding:0 4px;">方案 C · SaaS</a>
-  <span style="color:#B4BED2;font-size:12.5px;margin-left:14px;">↓ 目前看到的是現行版</span>
-</div>
-
+<!-- ── Hero ────────────────────────────────────────────── -->
 <header class="hero">
-  <div class="container">
-    <h1>MCP 入門工作坊</h1>
-    <p class="subtitle">讓 LLM 連上你的工具：從 RAG 到 MCP 的完整路徑</p>
-    <span class="accent"></span>
-    <p class="meta">三小時 · 國立中興大學 · 受眾為大專院校教師（非必要為資工背景）</p>
-    <div class="actions">
-      <a class="btn btn-primary" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026">GitHub Repo</a>
-      <a class="btn btn-ghost" href="#segments">瀏覽教材</a>
+  <div class="hero-grid">
+    <div class="hero-left">
+      <p class="kicker">章節 00 · 國立中興大學</p>
+      <h1 class="serif">MCP 入門<br>工作坊</h1>
+      <div class="accent"></div>
+      <p class="lead">讓 LLM 連上你的工具:從 RAG 到 MCP 的完整路徑。</p>
+      <p class="meta">三小時 · 大專院校教師 · 不必為資工背景</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026">GitHub Repo</a>
+        <a class="btn btn-ghost" href="#segments">瀏覽教材</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-video">
+        <video autoplay muted loop playsinline preload="auto"
+               src="https://cdn.jsdelivr.net/gh/UDICatNCHU/nchu-mcp-workshop-2026@main/function-calling-video-preview.mp4">
+        </video>
+      </div>
     </div>
   </div>
 </header>
 
+<!-- ── Stats strip ──────────────────────────────────────── -->
+<section class="stats-strip">
+  <div class="stats">
+    <div class="stat"><div class="num">3</div><div class="lbl">Manim 影片</div></div>
+    <div class="stat"><div class="num">5</div><div class="lbl">教學段落</div></div>
+    <div class="stat"><div class="num">33</div><div class="lbl">MCP 工具實例</div></div>
+    <div class="stat"><div class="num">3h</div><div class="lbl">課程長度</div></div>
+    <div class="stat"><div class="num">MIT</div><div class="lbl">完全開源</div></div>
+  </div>
+</section>
+
 <main class="container">
 
-  <!-- ── Course outline ──────────────────────────────────── -->
+  <!-- ── Outline ──────────────────────────────────────── -->
   <section id="overview">
-    <h2>課程結構</h2>
+    <p class="section-kicker">Overview · 課程結構</p>
+    <h2 class="serif">三小時、五段落、一條故事線</h2>
     <span class="h2-accent"></span>
-    <p class="lead">
+    <p class="lead-p">
       所有內容以
       <a href="https://github.com/UDICatNCHU/claude-mcp-project">興大 AI 學伴</a>
-      作為實際案例（~239 個 MCP 工具的 web chat 系統）。
+      作為實際案例(~239 個 MCP 工具的 web chat 系統)。
     </p>
     <div class="outline">
       <table>
@@ -447,150 +494,134 @@
           <tr><td class="num">02</td><td class="dur">50 min</td><td><a href="#segment-2">How MCP Works</a></td><td>Parent / Child 兩階段握手、工具呼叫機制</td></tr>
           <tr class="break"><td>—</td><td>10 min</td><td colspan="2">休息</td></tr>
           <tr><td class="num">03</td><td class="dur">50 min</td><td><a href="#segment-3">Agentic Tool Loop</a></td><td>LLM 自主選工具、多輪迭代、強制回覆</td></tr>
-          <tr><td class="num">04</td><td class="dur">50 min</td><td><a href="#segment-4">動手做</a></td><td>mini-project 現場跑：換 JSON、加搜尋工具、呼叫外部 API</td></tr>
+          <tr><td class="num">04</td><td class="dur">50 min</td><td><a href="#segment-4">動手做</a></td><td>mini-project 現場跑:換 JSON、加搜尋工具、呼叫外部 API</td></tr>
           <tr><td class="num">05</td><td class="dur">10 min</td><td><a href="#segment-5">實務考量</a></td><td>規模 / 品質 / 模型選擇 / 成本</td></tr>
         </tbody>
       </table>
     </div>
   </section>
 
-  <div id="segments"></div>
+  <div id="segments">
 
-  <!-- ── Segment 1 ──────────────────────────────────────── -->
-  <section class="segment" id="segment-1">
-    <div class="meta-row">
-      <h2><span class="seg-num">01</span> Why MCP</h2>
-      <span class="duration">50 min</span>
-      <span class="status">v2 完成</span>
-    </div>
-    <span class="h2-accent"></span>
-    <p>從 LLM 擅長的事與天花板出發，介紹三種策略——RAG、Tool Use、MCP——並深入比較它們的差異與適用場景。最後引入興大 AI 學伴 33 工具案例。</p>
+    <section class="segment" id="segment-1">
+      <p class="seg-id">章節 01</p>
+      <h3 class="serif">Why MCP</h3>
+      <div class="meta-row">
+        <span class="duration">50 min</span>
+        <span class="status">v2 完成</span>
+      </div>
+      <p>從 LLM 擅長的事與天花板出發,介紹三種策略——RAG、Tool Use、MCP——並深入比較它們的差異與適用場景。最後引入興大 AI 學伴 33 工具案例。</p>
+      <h4>3 分鐘概念影片</h4>
+      <div class="video-wrap">
+        <video controls preload="metadata"
+               src="https://cdn.jsdelivr.net/gh/UDICatNCHU/nchu-mcp-workshop-2026@main/01-why-mcp-video-preview.mp4"></video>
+      </div>
+      <p class="video-caption">Manim 渲染 · ~2:38 · 概念導論長片</p>
+      <div class="resources">
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/01-why-mcp.pptx">投影片 <span class="ext">pptx · 21 張</span></a>
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/01-why-mcp-video-youtube.md">YouTube 發佈素材 <span class="ext">md</span></a>
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/01-why-mcp-video.py">Manim 原始碼 <span class="ext">py</span></a>
+      </div>
+    </section>
 
-    <h3>3 分鐘概念影片</h3>
-    <div class="video-wrap">
-      <video controls preload="metadata"
-             src="https://cdn.jsdelivr.net/gh/UDICatNCHU/nchu-mcp-workshop-2026@main/01-why-mcp-video-preview.mp4"
-             poster=""></video>
-    </div>
-    <p class="video-caption">Manim 渲染 · ~3 min · 概念導論長片</p>
+    <section class="segment" id="segment-2">
+      <p class="seg-id">章節 02</p>
+      <h3 class="serif">How MCP Works</h3>
+      <div class="meta-row">
+        <span class="duration">50 min</span>
+        <span class="status">v3 完成</span>
+      </div>
+      <p>從 function calling 的底層機制談起(LLM 只吐字串,真的執行的是 harness),再用一個具體查詢「幫我查最近圖書館有什麼新書」串連 MCP 的兩階段握手與工具呼叫。</p>
+      <ul>
+        <li><strong>01 Function Calling 怎麼運作</strong>:LLM 只吐字串,harness 真的執行;subprocess.run 那道門;安全警告</li>
+        <li><strong>02 從一個查詢開始</strong>:場景 → spawn → 兩階段握手 → 工具呼叫</li>
+        <li><strong>03 Tool 註冊與描述</strong>:JSON Schema、description 對 LLM 的重要性</li>
+        <li><strong>04 Client 整合機制</strong>:工具清單如何餵給 LLM</li>
+      </ul>
+      <h4>2:16 Handshake 影片</h4>
+      <div class="video-wrap">
+        <video controls preload="metadata"
+               src="https://cdn.jsdelivr.net/gh/UDICatNCHU/nchu-mcp-workshop-2026@main/02-mcp-connection-video-preview.mp4"></video>
+      </div>
+      <p class="video-caption">Manim 渲染 · ~2:16 · scenario + 三幕 + frame closure</p>
+      <div class="resources">
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/02-how-mcp-works.pptx">投影片 <span class="ext">pptx · 30 張</span></a>
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/02-mcp-connection-video-youtube.md">YouTube 發佈素材 <span class="ext">md</span></a>
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/02-mcp-connection-video.py">Manim 原始碼 <span class="ext">py</span></a>
+      </div>
+    </section>
 
-    <div class="resources">
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/01-why-mcp.pptx">投影片 <span class="ext">pptx · 21 張</span></a>
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/01-why-mcp-video-youtube.md">YouTube 發佈素材 <span class="ext">md</span></a>
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/01-why-mcp-video.py">Manim 原始碼 <span class="ext">py</span></a>
-    </div>
-  </section>
+    <section class="segment" id="segment-3">
+      <p class="seg-id">章節 03</p>
+      <h3 class="serif">Agentic Tool Loop</h3>
+      <div class="meta-row">
+        <span class="duration">50 min</span>
+        <span class="status draft">初稿</span>
+      </div>
+      <p>完整查詢流程 walk-through:LLM 怎麼自主決定要呼叫哪個工具、<code>tool_use</code> ↔ <code>tool_result</code> 多輪迭代、<code>maxIterations</code> 限制與最後一輪強制回覆機制。配合現場操作系統 demo。</p>
+      <h4>1:27 Function Calling 機制影片</h4>
+      <div class="video-wrap">
+        <video controls preload="metadata"
+               src="https://cdn.jsdelivr.net/gh/UDICatNCHU/nchu-mcp-workshop-2026@main/function-calling-video-preview.mp4"></video>
+      </div>
+      <p class="video-caption">Manim 渲染 · ~1:27 · LLM 只吐字串、subprocess.run 那道門、tool_use ↔ end_turn 對位收斂</p>
+      <div class="resources">
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/03-agentic-tool-loop.pptx">投影片 <span class="ext">pptx · 20 張</span></a>
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/sonnet-running-example.pptx">Sonnet 實例 <span class="ext">pptx</span></a>
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/function-calling-video.py">Manim 原始碼 <span class="ext">py</span></a>
+      </div>
+    </section>
 
-  <!-- ── Segment 2 ──────────────────────────────────────── -->
-  <section class="segment" id="segment-2">
-    <div class="meta-row">
-      <h2><span class="seg-num">02</span> How MCP Works</h2>
-      <span class="duration">50 min</span>
-      <span class="status">v3 完成</span>
-    </div>
-    <span class="h2-accent"></span>
-    <p>從 function calling 的底層機制談起（LLM 只吐字串，真的執行的是 harness），再用一個具體查詢「幫我查最近圖書館有什麼新書」串連 MCP 的兩階段握手與工具呼叫。</p>
-    <ul>
-      <li><strong>01 Function Calling 怎麼運作</strong>：LLM 只吐字串，harness 真的執行；subprocess.run 那道門；安全警告</li>
-      <li><strong>02 從一個查詢開始</strong>：場景 → spawn → 兩階段握手 → 工具呼叫</li>
-      <li><strong>03 Tool 註冊與描述</strong>：JSON Schema、description 對 LLM 的重要性</li>
-      <li><strong>04 Client 整合機制</strong>：工具清單如何餵給 LLM</li>
-      <li><strong>附錄</strong>：REST vs JSON-RPC、JSON-RPC 三種訊息類型（給技術 curious 老師）</li>
-    </ul>
+    <section class="segment" id="segment-4">
+      <p class="seg-id">章節 04</p>
+      <h3 class="serif">動手做</h3>
+      <div class="meta-row">
+        <span class="duration">50 min</span>
+        <span class="status">完成</span>
+      </div>
+      <p>整場 hands-on 主場:學員現場跑 <code>mini-project/</code>,三關 Lab 路徑——L1 換 JSON 做你領域的助理、L2 加搜尋工具、L3 呼叫外部 API。10 分鐘內就能讓 Segment 1–3 的概念在自己電腦上發生。</p>
+      <div class="resources">
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/04-hands-on-lab.pptx">講師開場投影片 <span class="ext">pptx · 15 張</span></a>
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/04-hands-on-lab.md">學員端 landing <span class="ext">md</span></a>
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/tree/main/mini-project">mini-project/ <span class="ext">code</span></a>
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/tree/main/mini-project/docs/labs">L1–L3 Lab 手冊 <span class="ext">md</span></a>
+      </div>
+    </section>
 
-    <h3>2:17 Handshake 影片</h3>
-    <div class="video-wrap">
-      <video controls preload="metadata"
-             src="https://cdn.jsdelivr.net/gh/UDICatNCHU/nchu-mcp-workshop-2026@main/02-mcp-connection-video-preview.mp4"
-             poster=""></video>
-    </div>
-    <p class="video-caption">Manim 渲染 · 2:17 · scenario + 三幕 + frame closure</p>
+    <section class="segment" id="segment-5">
+      <p class="seg-id">章節 05</p>
+      <h3 class="serif">實務考量</h3>
+      <div class="meta-row">
+        <span class="duration">10 min</span>
+        <span class="status">完成</span>
+      </div>
+      <p>四大支柱(從 mini-project 往外擴):</p>
+      <ul>
+        <li><strong>Scale 質變</strong>:3 tools → 239 tools 的五個質變</li>
+        <li><strong>Tool-calling 品質</strong>:docstring 設計、邊界防禦、錯誤當資料</li>
+        <li><strong>模型選擇</strong>:task-complexity gradient、benchmark 佐證</li>
+        <li><strong>成本</strong>:10 人 workshop 真實帳、prompt caching、Anthropic Console 護欄</li>
+      </ul>
+      <p>10 分鐘塞不下四支柱,講師現場依聽眾屬性擇一深入 ~7 min,其餘各一句帶過。md 保留完整四節供課後閱讀。</p>
+      <div class="resources">
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/05-practical-considerations.md">收尾筆記 <span class="ext">md</span></a>
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/haiku-alignment-report.pptx">Haiku alignment 報告 <span class="ext">pptx</span></a>
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/haiku-alignment-report.md">Haiku alignment 摘要 <span class="ext">md</span></a>
+      </div>
+    </section>
 
-    <div class="resources">
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/02-how-mcp-works.pptx">投影片 <span class="ext">pptx · 30 張</span></a>
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/02-mcp-connection-video-youtube.md">YouTube 發佈素材 <span class="ext">md</span></a>
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/02-mcp-connection-video.py">Manim 原始碼 <span class="ext">py</span></a>
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/tools/refresh-02-slides.py">投影片產生器 <span class="ext">py</span></a>
-    </div>
-  </section>
+  </div>
 
-  <!-- ── Segment 3 ──────────────────────────────────────── -->
-  <section class="segment" id="segment-3">
-    <div class="meta-row">
-      <h2><span class="seg-num">03</span> Agentic Tool Loop</h2>
-      <span class="duration">50 min</span>
-      <span class="status draft">初稿</span>
-    </div>
-    <span class="h2-accent"></span>
-    <p>完整查詢流程 walk-through：LLM 怎麼自主決定要呼叫哪個工具、<code>tool_use</code> ↔ <code>tool_result</code> 多輪迭代、<code>maxIterations</code> 限制與最後一輪強制回覆機制。配合現場操作系統 demo。</p>
-
-    <h3>1:26 Function Calling 機制影片</h3>
-    <div class="video-wrap">
-      <video controls preload="metadata"
-             src="https://cdn.jsdelivr.net/gh/UDICatNCHU/nchu-mcp-workshop-2026@main/function-calling-video-preview.mp4"
-             poster=""></video>
-    </div>
-    <p class="video-caption">Manim 渲染 · 1:26 · LLM 只吐字串、subprocess.run 那道門、tool_use ↔ end_turn 對位收斂</p>
-
-    <div class="resources">
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/03-agentic-tool-loop.pptx">投影片 <span class="ext">pptx · 20 張</span></a>
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/sonnet-running-example.pptx">Sonnet 實例 <span class="ext">pptx</span></a>
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/function-calling-video.py">Manim 原始碼 <span class="ext">py</span></a>
-    </div>
-  </section>
-
-  <!-- ── Segment 4 ──────────────────────────────────────── -->
-  <section class="segment" id="segment-4">
-    <div class="meta-row">
-      <h2><span class="seg-num">04</span> 動手做</h2>
-      <span class="duration">50 min</span>
-      <span class="status">完成</span>
-    </div>
-    <span class="h2-accent"></span>
-    <p>整場 hands-on 主場：學員現場跑 <code>mini-project/</code>，三關 Lab 路徑——L1 換 JSON 做你領域的助理、L2 加搜尋工具、L3 呼叫外部 API。10 分鐘內就能讓 Segment 1–3 的概念在自己電腦上發生。</p>
-
-    <div class="resources">
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/04-hands-on-lab.pptx">講師開場投影片 <span class="ext">pptx · 15 張</span></a>
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/04-hands-on-lab.md">學員端 landing <span class="ext">md</span></a>
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/tree/main/mini-project">mini-project/ <span class="ext">code</span></a>
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/tree/main/mini-project/docs/labs">L1–L3 Lab 手冊 <span class="ext">md</span></a>
-    </div>
-  </section>
-
-  <!-- ── Segment 5 ──────────────────────────────────────── -->
-  <section class="segment" id="segment-5">
-    <div class="meta-row">
-      <h2><span class="seg-num">05</span> 實務考量</h2>
-      <span class="duration">10 min</span>
-      <span class="status">完成</span>
-    </div>
-    <span class="h2-accent"></span>
-    <p>四大支柱（從 mini-project 往外擴）：</p>
-    <ul>
-      <li><strong>Scale 質變</strong>：3 tools → 239 tools 的五個質變</li>
-      <li><strong>Tool-calling 品質</strong>：docstring 設計、邊界防禦、錯誤當資料</li>
-      <li><strong>模型選擇</strong>：task-complexity gradient、benchmark 佐證</li>
-      <li><strong>成本</strong>：10 人 workshop 真實帳、prompt caching、Anthropic Console 護欄</li>
-    </ul>
-    <p>10 分鐘塞不下四支柱，講師現場依聽眾屬性擇一深入 ~7 min，其餘各一句帶過。md 保留完整四節供課後閱讀。</p>
-
-    <div class="resources">
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/05-practical-considerations.md">收尾筆記 <span class="ext">md</span></a>
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/haiku-alignment-report.pptx">Haiku alignment 報告 <span class="ext">pptx</span></a>
-      <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/haiku-alignment-report.md">Haiku alignment 摘要 <span class="ext">md</span></a>
-    </div>
-  </section>
-
-  <!-- ── Hands-on subprojects ────────────────────────────── -->
   <section id="hands-on">
-    <h2>Hands-on 子專案</h2>
+    <p class="section-kicker">Code · 動手做</p>
+    <h2 class="serif">兩個可跑的子專案</h2>
     <span class="h2-accent"></span>
-    <p class="lead">兩個可跑的子專案：學員 hands-on 練習用的 <code>mini-project/</code>，以及現場小助教 <code>course-ta-agent/</code>。</p>
+    <p class="lead-p">學員 hands-on 練習用的 <code>mini-project/</code>,以及現場小助教 <code>course-ta-agent/</code>。架構刻意 mirror,看完一個就懂另一個。</p>
 
     <div class="grid-2">
       <div class="card">
-        <h3>mini-project/</h3>
-        <p class="desc">Express + Claude + FastMCP + 極簡 chat UI。3 支教學工具（hello / teachers / weather）+ 1 支 L3 練習 stub（arxiv）。</p>
+        <h3 class="serif">mini-project/</h3>
+        <p class="desc">Express + Claude + FastMCP + 極簡 chat UI。3 支教學工具 (hello / teachers / weather) + 1 支 L3 練習 stub (arxiv)。</p>
 <pre><code>cd mini-project
 cp .env.example .env
 vim .env       # 填 ANTHROPIC_API_KEY
@@ -602,10 +633,9 @@ cd backend-node && npm start
           <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/mini-project/README.md">README <span class="ext">md</span></a>
         </div>
       </div>
-
       <div class="card">
-        <h3>course-ta-agent/</h3>
-        <p class="desc">學員現場開 URL 直接問問題的 web bot。架構刻意 mirror mini-project；4 支 MCP tool：segment / search / lab handout / source file。</p>
+        <h3 class="serif">course-ta-agent/</h3>
+        <p class="desc">學員現場開 URL 直接問問題的 web bot。架構刻意 mirror mini-project;4 支 MCP tool。</p>
 <pre><code>cd course-ta-agent
 cp .env.example .env
 vim .env       # 填 ANTHROPIC_API_KEY
@@ -620,29 +650,16 @@ cd backend-node && npm start
     </div>
   </section>
 
-  <!-- ── Style spec ──────────────────────────────────────── -->
-  <section id="style">
-    <h2>視覺風格規範</h2>
-    <span class="h2-accent"></span>
-    <p class="lead">所有教材遵循 Ocean Gradient 色票與字型規範，影片以 Manim 渲染（早期的 HTML 互動動畫已全數移除）。</p>
-    <ul>
-      <li>配色：Navy <code>#1E2761</code> · Deep Blue <code>#065A82</code> · Teal <code>#1C7293</code> · 橘色 accent <code>#E8793A</code></li>
-      <li>字型：Arial Black（標題）／ Calibri（內文）／ Consolas（程式碼）</li>
-      <li>簡報以 <code>.pptx</code> 產出，部分可由 <code>tools/gen-*-slides.py</code> 程式化生成</li>
-      <li>動畫展示以 Manim 渲染為 <code>.mp4</code>，可直接上 YouTube</li>
-    </ul>
-  </section>
-
 </main>
 
 <footer>
   <p>
-    <span class="logo">NCHU MCP Workshop 2026</span>
-    · 教材整理：<a href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026">UDICatNCHU/nchu-mcp-workshop-2026</a>
-    · 案例來源：<a href="https://github.com/UDICatNCHU/claude-mcp-project">claude-mcp-project</a>
+    <span class="logo">NCHU MCP WORKSHOP 2026</span>
+    · 教材整理:<a href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026">UDICatNCHU/nchu-mcp-workshop-2026</a>
+    · 案例來源:<a href="https://github.com/UDICatNCHU/claude-mcp-project">claude-mcp-project</a>
   </p>
   <p style="margin-top: 8px; font-size: 12.5px; opacity: 0.7;">
-    本頁為 GitHub Pages 靜態 landing，內容隨 main 分支自動更新（影片透過 jsDelivr CDN 服務）
+    本頁為 GitHub Pages 靜態 landing,內容隨 main 分支自動更新(影片透過 jsDelivr CDN 服務)
   </p>
 </footer>
 
