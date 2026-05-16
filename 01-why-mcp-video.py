@@ -304,11 +304,11 @@ class WhyMCP(Scene):
                         font=CN_FONT, font_size=58, color=ORANGE, weight=BOLD)
         question.move_to(ORIGIN)
 
-        self.play(
-            FadeOut(walls),
-            FadeOut(llm_circle), FadeOut(llm_label),
-            run_time=0.7,
-        )
+        # llm_circle / llm_label were already faded out at end of Beat 1.1
+        # (line ~273). Re-fading removed mobjects makes Manim briefly restore
+        # them to opacity 1 before animating to 0, creating a ghost LLM that
+        # reappears in the wall area for ~0.7s during this transition.
+        self.play(FadeOut(walls), run_time=0.7)
         self.show_subtitle("核心問題")
         self.play(Write(question), run_time=1.4)
         self.wait(8.5)
