@@ -396,11 +396,16 @@ class WhyMCP(Scene):
         self.show_subtitle("給 LLM 一組「工具」")
         self.play(FadeIn(tu_title, shift=DOWN * 0.2), run_time=0.5)
 
-        # LLM in the middle (main subject — violet per design system)
-        llm_circle = Circle(radius=1.0, color=VIOLET, fill_opacity=0.20,
+        # LLM in the middle (main subject — violet per design system).
+        # Raised z-index + heavier fill so the violet disk visually breaks
+        # the row of co-linear tool/ds connector lines (was reading as one
+        # continuous line piercing through LLM).
+        llm_circle = Circle(radius=1.0, color=VIOLET, fill_opacity=0.55,
                             stroke_width=3).move_to(ORIGIN)
+        llm_circle.set_z_index(5)
         llm_lbl = Text("LLM", font=CN_FONT, font_size=34, color=INK,
                        weight=BOLD).move_to(llm_circle.get_center())
+        llm_lbl.set_z_index(6)
 
         # toolbox
         tool_data = [

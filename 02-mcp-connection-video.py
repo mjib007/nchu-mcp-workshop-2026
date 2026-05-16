@@ -640,7 +640,8 @@ class MCPConnection(Scene):
         call_pill = self._make_pill('search_new_books("新書")', ORANGE)
         call_pill.move_to(self.parent_box.get_center())
         self.play(FadeIn(call_pill, scale=0.7), run_time=0.5)
-        self.play(call_pill.animate.shift(UP * 1.15), run_time=0.4)
+        # Lift further above Parent box so the pill doesn't graze the box header
+        self.play(call_pill.animate.shift(UP * 1.5), run_time=0.4)
         self.wait(2.5)
 
         # 等候名單 icon — yellow, with id and timeout
@@ -654,8 +655,12 @@ class MCPConnection(Scene):
                         font_size=18, color=ORANGE, weight=BOLD)
         wait_lbl.move_to(wait_box.get_center())
         wait_group = VGroup(wait_box, wait_lbl)
-        # aligned_edge + small right shift keeps the group inside the frame
-        wait_group.next_to(self.parent_box, DOWN, buff=0.3, aligned_edge=LEFT)
+        # aligned_edge + right shift keeps the group inside the frame.
+        # buff bumped 0.3 → 1.0 so wait_group sits well below the message
+        # arrow track (cap_pill / result_pill at DOWN*1.4 from box edge);
+        # earlier buff=0.3 caused result_pill on its way back to collide with
+        # the wait_box at the same y level.
+        wait_group.next_to(self.parent_box, DOWN, buff=1.0, aligned_edge=LEFT)
         wait_group.shift(RIGHT * 0.5)
         self.play(FadeIn(wait_group, shift=UP * 0.15), run_time=0.5)
         self.wait(2.0)

@@ -364,12 +364,13 @@ class FunctionCalling(Scene):
         self.play(FadeIn(badge), run_time=0.3)
         self.show_subtitle("但 LLM 沒有手 — 它怎麼真的執行 find?")
 
-        # LLM "brain" entity at top
+        # LLM "brain" entity at top — moved from UP*2.5 to UP*1.9 to clear
+        # space for the flag_sub italic subtitle below the stop_reason ribbon.
         llm_box = RoundedRectangle(
             width=3.2, height=1.3, corner_radius=0.25,
             stroke_color=VIOLET_SOFT, stroke_width=3,
             fill_color=VIOLET, fill_opacity=0.35,
-        ).move_to(UP * 2.5)
+        ).move_to(UP * 1.9)
         llm_label = Text("LLM (Claude)", font=CN_FONT, font_size=24,
                          color=INK, weight=BOLD).move_to(llm_box.get_center())
         llm = VGroup(llm_box, llm_label)
@@ -388,7 +389,7 @@ class FunctionCalling(Scene):
         flag = VGroup(flag_box, flag_text).move_to(UP * 3.55)
         flag_sub = Text("LLM 自己舉旗:這次我不講話,我要呼叫工具",
                         font=CN_FONT, font_size=18, color=ORANGE,
-                        slant=ITALIC).next_to(flag, DOWN, buff=0.10)
+                        slant=ITALIC).next_to(flag, DOWN, buff=0.20)
         self.play(FadeIn(flag, shift=DOWN * 0.15), run_time=0.6)
         self.play(FadeIn(flag_sub), run_time=0.4)
         self.wait(0.3)
