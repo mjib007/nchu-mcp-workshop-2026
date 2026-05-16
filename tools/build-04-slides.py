@@ -11,7 +11,7 @@ from lib_newstyle import *  # noqa: E402,F401,F403
 REPO = Path(__file__).resolve().parent.parent
 PPTX = REPO / "04-hands-on-lab.pptx"
 
-TOTAL = 12
+TOTAL = 13
 
 
 def build_cover(prs):
@@ -263,6 +263,53 @@ def build_quick_start(prs):
     page_number(s, 7, TOTAL)
 
 
+def build_troubleshooting(prs):
+    """Slide 8 — 卡住了?5 個常見救援 cheat sheet.
+    Inserted between quick_start (slide 7) and llm_routes (slide 9 was 8)
+    to give 講師 + 學員 a single-screen reference when setup.sh fails."""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "02 · ⚠", "S E T U P · 卡住怎麼辦", accent=PINK)
+    slide_title(s, "卡住了?5 個常見救援", y=0.95, size=32)
+    slide_subtitle(s, "Setup 失敗 90% 是這 5 種,先看這頁再舉手", y=1.85)
+
+    items = [
+        ("①", "uv 未安裝",
+         "curl -LsSf https://astral.sh/uv/install.sh | sh",
+         PINK,   PINK_PASTEL),
+        ("②", "API key 沒填",
+         "nano .env → 填入 sk-ant-...(不要加引號)",
+         ORANGE, ORANGE_PASTEL),
+        ("③", "Port 3000 被佔",
+         "lsof -i :3000 → kill -9 <PID>",
+         VIOLET, VIOLET_PASTEL),
+        ("④", "npm install 失敗",
+         "cat /tmp/mini-npm.log → 多半是 --legacy-peer-deps",
+         TEAL,   TEAL_PASTEL),
+        ("⑤", "LLM 答錯",
+         "1) Ctrl+C 重啟 server   2) 把 docstring 寫更具體",
+         BLUE,   BLUE_PASTEL),
+    ]
+    row_h = 0.72
+    row_gap = 0.10
+    for i, (num, title, fix, accent, fill) in enumerate(items):
+        y = 2.55 + i * (row_h + row_gap)
+        _rounded(s, 0.85, y, 12.1, row_h, fill, line_color=accent, line_w=2)
+        _text(s, 1.0, y, 0.6, row_h, num,
+              font=FONT_TITLE, size=22, color=accent, bold=True,
+              anchor=MSO_ANCHOR.MIDDLE)
+        _text(s, 1.7, y, 3.5, row_h, title,
+              font=FONT_TITLE, size=15, color=INK, bold=True,
+              anchor=MSO_ANCHOR.MIDDLE)
+        _text(s, 5.3, y, 7.7, row_h, fix,
+              font=FONT_CODE, size=12, color=INK_SOFT,
+              anchor=MSO_ANCHOR.MIDDLE)
+
+    callout_box(s, 0.85, 6.85, 12, 0.45,
+                "完整故障排除見 04-live-demo-script.md(講師手冊)",
+                accent=MUTED, fill=SLATE_PASTEL, icon="i", size=12)
+    page_number(s, 8, TOTAL)
+
+
 def build_llm_routes(prs):
     s = _blank_slide(prs, BG_WHITE)
     metadata_bar(s, "02 · ②", "L L M   R O U T E   ·   1   L I N E   T O   S W I T C H",
@@ -299,7 +346,7 @@ def build_llm_routes(prs):
     callout_box(s, 0.85, 6.45, 12, 0.55,
                 "💎  N+M 的甜蜜:你的工具一支不變,adapter 差別只在 mcp-client.js 幾行",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="", size=13)
-    page_number(s, 8, TOTAL)
+    page_number(s, 9, TOTAL)
 
 
 def build_l1_overview(prs):
@@ -331,7 +378,7 @@ def build_l1_overview(prs):
     callout_box(s, 0.85, 6.5, 12, 0.5,
                 "產出:你的 AI 助理會回答你自己放進去的資料 — 不是英文中心 demo 了",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=13)
-    page_number(s, 9, TOTAL)
+    page_number(s, 10, TOTAL)
 
 
 def build_l1_step12(prs):
@@ -384,7 +431,7 @@ def build_l1_step12(prs):
         {"text": "python3 -m json.tool data/xxx.json",
          "font": FONT_CODE, "size": 11, "color": PINK_DEEP, "space_after": 0},
     ])
-    page_number(s, 10, TOTAL)
+    page_number(s, 11, TOTAL)
 
 
 def build_l1_step3(prs):
@@ -429,7 +476,7 @@ def build_l1_step3(prs):
     callout_box(s, 0.85, 6.45, 12, 0.55,
                 "影響 LLM 行為的 3 元素:使用情境(該不該叫) / Args 描述(怎麼填) / 跨工具線索(呼叫順序)",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=13)
-    page_number(s, 11, TOTAL)
+    page_number(s, 12, TOTAL)
 
 
 def build_l2_l3_preview(prs):
@@ -464,7 +511,7 @@ def build_l2_l3_preview(prs):
     callout_box(s, 0.85, 6.5, 12, 0.5,
                 "三關手冊:mini-project/docs/labs/L1-customize-your-data.md / L2 / L3",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=13)
-    page_number(s, 12, TOTAL)
+    page_number(s, 13, TOTAL)
 
 
 def main():
@@ -476,11 +523,12 @@ def main():
     build_agent_loop_code(prs)  # 5
     build_setup_steps(prs)      # 6
     build_quick_start(prs)      # 7
-    build_llm_routes(prs)       # 8
-    build_l1_overview(prs)      # 9
-    build_l1_step12(prs)        # 10
-    build_l1_step3(prs)         # 11
-    build_l2_l3_preview(prs)    # 12
+    build_troubleshooting(prs)  # 8 (NEW: 卡住怎麼辦 5 個救援)
+    build_llm_routes(prs)       # 9
+    build_l1_overview(prs)      # 10
+    build_l1_step12(prs)        # 11
+    build_l1_step3(prs)         # 12
+    build_l2_l3_preview(prs)    # 13
     prs.save(str(PPTX))
     print(f"saved → {PPTX.name} ({len(prs.slides)} slides)")
 
