@@ -45,7 +45,7 @@ config.pixel_height = 1080
 
 class MCPConnection(Scene):
     SUBTITLE_MAX_WIDTH = 14.0
-    TOTAL_SECONDS = 137.3   # ~2:17 — content-driven intro adds 2s preview motion
+    TOTAL_SECONDS = 136.3   # ~2:16 — R6 fixes net effect
 
     TITLE     = "MCP 握手"
     SUBTITLE  = "Parent / Child Process 怎麼開始講話"
@@ -114,12 +114,13 @@ class MCPConnection(Scene):
         return sub
 
     def show_subtitle(self, text, run_time=0.35):
+        # Sequential fade — out fully before in, prevents the ~0.15s visual
+        # ghost of two subtitles overlaying during cross-fade.
         new_sub = self._build_subtitle(text)
         if self._cur_subtitle is not None:
-            self.play(FadeOut(self._cur_subtitle), FadeIn(new_sub),
-                      run_time=run_time)
-        else:
-            self.play(FadeIn(new_sub), run_time=run_time)
+            self.play(FadeOut(self._cur_subtitle), run_time=run_time * 0.45)
+            self._cur_subtitle = None
+        self.play(FadeIn(new_sub), run_time=run_time * 0.55)
         self._cur_subtitle = new_sub
 
     def clear_subtitle(self, run_time=0.3):
@@ -374,23 +375,26 @@ class MCPConnection(Scene):
                   rate_func=linear, run_time=1.8)
 
         # Phase 4: fade out
+        self.wait(0.8)
         self.play(FadeOut(hero), FadeOut(title_stack), run_time=0.5)
-        self.advance_progress(5)
+        self.advance_progress(5.6)
 
     # ============================================================
     # ACT 1 — spawn (35s)
     # ============================================================
     def scene_act1(self):
         act_badge = self._make_act_badge("ACT 1")
-        self.play(FadeIn(act_badge), run_time=0.3)
+        # Bundle badge + subtitle so transition from scenario lands tighter
         self.show_subtitle("Node.js (Parent) × Python (Child)")
-        self.wait(3.0)
+        self.play(FadeIn(act_badge), run_time=0.3)
+        self.wait(1.5)
 
         # Beat 1.2 — spawn + stdio pipe (15s)
+        # Boxes aligned to same y so pipe is horizontal, not slanting down
         self.parent_box = self.make_process_box(
-            "Parent Process", "Node.js", BLUE, LEFT * 5.3 + UP * 1.4)
+            "Parent Process", "Node.js", BLUE, LEFT * 5.3 + UP * 0.8)
         self.child_box = self.make_process_box(
-            "Child Process", "Python MCP Server", TEAL, RIGHT * 5.3 + UP * 0.2)
+            "Child Process", "Python MCP Server", TEAL, RIGHT * 5.3 + UP * 0.8)
 
         spawn_call = Text("▶ 開出 Child",
                           font=CN_FONT, font_size=22,
@@ -506,15 +510,15 @@ class MCPConnection(Scene):
         # === Beat 2.2 — child responds ===
         self.show_subtitle("Child 回說「我能做什麼」")
 
-        arrow_cap = self.message_arrow('left', GREEN, y_offset=-1.0)
+        arrow_cap = self.message_arrow('left', GREEN, y_offset=-1.4)
         self.play(GrowArrow(arrow_cap), run_time=0.5)
 
         cap_pill = self._make_pill("能力清單 · ok", GREEN)
-        cap_pill.move_to(self.child_box.get_left() + LEFT * 0.55 + DOWN * 1.0)
+        cap_pill.move_to(self.child_box.get_left() + LEFT * 0.55 + DOWN * 1.4)
         self.play(FadeIn(cap_pill, scale=0.6), run_time=0.4)
         self.play(
             cap_pill.animate.move_to(
-                self.parent_box.get_right() + RIGHT * 0.55 + DOWN * 1.0
+                self.parent_box.get_right() + RIGHT * 0.55 + DOWN * 1.4
             ),
             run_time=1.4,
         )
@@ -568,6 +572,9 @@ class MCPConnection(Scene):
         self.play(FadeOut(arrow_tl), FadeOut(ask_lbl), run_time=0.4)
 
         # 3. response: green arrow + 8 dots flying back to parent
+        # Update subtitle so it matches what's now on screen (was previously
+        # stuck on "再問 Child 有哪些工具" while the response was already playing).
+        self.show_subtitle("Child 回傳工具清單")
         arrow_tl_res = self.message_arrow('left', GREEN, y_offset=0.0)
         self.play(GrowArrow(arrow_tl_res), run_time=0.5)
 
@@ -647,7 +654,9 @@ class MCPConnection(Scene):
                         font_size=18, color=ORANGE, weight=BOLD)
         wait_lbl.move_to(wait_box.get_center())
         wait_group = VGroup(wait_box, wait_lbl)
-        wait_group.next_to(self.parent_box, DOWN, buff=0.3)
+        # aligned_edge + small right shift keeps the group inside the frame
+        wait_group.next_to(self.parent_box, DOWN, buff=0.3, aligned_edge=LEFT)
+        wait_group.shift(RIGHT * 0.5)
         self.play(FadeIn(wait_group, shift=UP * 0.15), run_time=0.5)
         self.wait(2.0)
 
@@ -666,17 +675,17 @@ class MCPConnection(Scene):
         # === Beat 3.2 — child returns, waiting list resolves ===
         self.show_subtitle("Child 執行完 → 回傳結果")
 
-        arrow_res = self.message_arrow('left', GREEN, y_offset=-1.0)
+        arrow_res = self.message_arrow('left', GREEN, y_offset=-1.4)
         self.play(GrowArrow(arrow_res), run_time=0.4)
 
         result_pill = self._make_pill("結果 · 10 筆新書", GREEN)
         result_pill.move_to(
-            self.child_box.get_left() + LEFT * 0.55 + DOWN * 1.0
+            self.child_box.get_left() + LEFT * 0.55 + DOWN * 1.4
         )
         self.play(FadeIn(result_pill, scale=0.7), run_time=0.4)
         self.play(
             result_pill.animate.move_to(
-                self.parent_box.get_right() + RIGHT * 0.55 + DOWN * 1.0
+                self.parent_box.get_right() + RIGHT * 0.55 + DOWN * 1.4
             ),
             run_time=1.4,
         )

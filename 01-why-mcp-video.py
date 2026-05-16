@@ -46,7 +46,7 @@ config.pixel_height = 1080
 
 class WhyMCP(Scene):
     SUBTITLE_MAX_WIDTH = 14.0
-    TOTAL_SECONDS = 158.5   # ~2:38 — content-driven intro adds 2s preview motion
+    TOTAL_SECONDS = 157.6   # measured: intro hold +0.5s offset by Act transition tighten
 
     TITLE     = "Why MCP"
     SUBTITLE  = "LLM 為何需要一個統一協定"
@@ -103,12 +103,13 @@ class WhyMCP(Scene):
         return sub
 
     def show_subtitle(self, text, run_time=0.35):
+        # Sequential fade — out fully before in, prevents 0.15s visual ghost
+        # of two subtitles overlaying during cross-fade (R6-P0 fix).
         new_sub = self._build_subtitle(text)
         if self._cur_subtitle is not None:
-            self.play(FadeOut(self._cur_subtitle), FadeIn(new_sub),
-                      run_time=run_time)
-        else:
-            self.play(FadeIn(new_sub), run_time=run_time)
+            self.play(FadeOut(self._cur_subtitle), run_time=run_time * 0.45)
+            self._cur_subtitle = None
+        self.play(FadeIn(new_sub), run_time=run_time * 0.55)
         self._cur_subtitle = new_sub
 
     def clear_subtitle(self, run_time=0.3):
@@ -119,7 +120,7 @@ class WhyMCP(Scene):
     # ------------------------------------------------------------
     # Helper: act group cleanup
     # ------------------------------------------------------------
-    def end_act(self, act_group, run_time=0.7):
+    def end_act(self, act_group, run_time=0.5):
         fade_targets = [act_group]
         if self._cur_subtitle is not None:
             fade_targets.append(self._cur_subtitle)
@@ -201,13 +202,14 @@ class WhyMCP(Scene):
         self.play(GrowFromEdge(accent, LEFT), run_time=0.3)
         self.play(FadeIn(sub, shift=UP * 0.10), run_time=0.4)
 
-        # Phase 3: slow Ken Burns + hold
+        # Phase 3: slow Ken Burns + true hold so audience reads the stack
         self.play(hero.animate.scale(1.05 / 0.95).shift(LEFT * 0.15),
-                  rate_func=linear, run_time=1.8)
+                  rate_func=linear, run_time=1.4)
+        self.wait(1.0)
 
         # Phase 4: fade out
         self.play(FadeOut(hero), FadeOut(title_stack), run_time=0.5)
-        self.advance_progress(5)
+        self.advance_progress(5.6)
 
     # ============================================================
     # ACT 1 — LLM 的三道牆 (0:04–0:39, 35s)
@@ -321,14 +323,16 @@ class WhyMCP(Scene):
     # ============================================================
     def scene_act2(self):
         act_badge = self._make_act_badge("ACT 2")
-        self.play(FadeIn(act_badge), run_time=0.3)
 
         # === Beat 2.1 RAG (25s) ===
+        # Bundle badge + title into one play to tighten Act 1→2 transition
         rag_title = Text("策略 A：RAG（檢索增強生成）",
                          font=CN_FONT, font_size=34,
                          color=INK, weight=BOLD).move_to(UP * 3.2)
         self.show_subtitle("先讓 LLM「讀文件」")
-        self.play(FadeIn(rag_title, shift=DOWN * 0.2), run_time=0.5)
+        self.play(FadeIn(act_badge),
+                  FadeIn(rag_title, shift=DOWN * 0.2),
+                  run_time=0.5)
 
         # RAG pipeline boxes
         doc_box = self.make_box("校內文件", width=2.0, height=1.0,
@@ -362,12 +366,13 @@ class WhyMCP(Scene):
             if i < len(arrows):
                 self.play(GrowArrow(arrows[i]), run_time=0.25)
 
-        # answer pops
+        # answer pops — anchor under the whole pipeline (not just llm_box)
+        # so the group stays inside the frame.
         ans = Text("「圖書館有 12 本 AI 相關書」",
                    font=CN_FONT, font_size=26, color=GREEN, weight=BOLD)
         check = Text("✓", font=MONO_FONT, font_size=40, color=GREEN, weight=BOLD)
         ans_group = VGroup(ans, check).arrange(RIGHT, buff=0.3).next_to(
-            llm_box, DOWN, buff=0.6
+            pipeline, DOWN, buff=0.6
         )
 
         self.play(FadeIn(ans_group, shift=UP * 0.2), run_time=0.6)
@@ -528,14 +533,16 @@ class WhyMCP(Scene):
     # ============================================================
     def scene_act3(self):
         act_badge = self._make_act_badge("ACT 3")
-        self.play(FadeIn(act_badge), run_time=0.3)
 
         # === Beat 3.1 N×M → N+M (15s) ===
+        # Bundle badge + title into one play to tighten Act 2→3 transition
         title = Text("策略 C：MCP — 統一協定解耦",
                      font=CN_FONT, font_size=36,
                      color=ORANGE, weight=BOLD).move_to(UP * 3.2)
         self.show_subtitle("加一層 MCP，把 N×M 變成 N+M")
-        self.play(FadeIn(title, shift=DOWN * 0.2), run_time=0.5)
+        self.play(FadeIn(act_badge),
+                  FadeIn(title, shift=DOWN * 0.2),
+                  run_time=0.5)
 
         # 4 apps left
         apps_data = ["ChatGPT", "Claude", "Gemini", "自建 Agent"]
@@ -593,16 +600,14 @@ class WhyMCP(Scene):
         self.play(FadeIn(contrast, shift=UP * 0.2), run_time=0.5)
         self.wait(6.0)
 
-        # cleanup partial — keep mcp_layer visible for next beat
+        # cleanup — fade the whole decoupling figure including MCP layer.
+        # (Earlier version shrank mcp_layer to top as a persistent anchor,
+        # but the next beats never interacted with it so it ended up as
+        # decoration debris distracting from the new hero visual.)
         decoupling_group = VGroup(title, apps, srcs, left_lines, right_lines,
-                                  contrast, mcp_lbl_proto)
-        self.play(
-            FadeOut(decoupling_group),
-            mcp_layer.animate.scale(0.6).move_to(UP * 2.5),
-            mcp_lbl_top.animate.scale(0.6).move_to(UP * 2.5),
-            mcp_lbl_bot.animate.scale(0.6).move_to(UP * 2.5 + DOWN * 0.5),
-            run_time=0.7,
-        )
+                                  contrast, mcp_lbl_proto,
+                                  mcp_layer, mcp_lbl_top, mcp_lbl_bot)
+        self.play(FadeOut(decoupling_group), run_time=0.7)
 
         # === Beat 3.2 四大角色 (20s) ===
         title2 = Text("MCP 的四個角色",
@@ -710,10 +715,9 @@ class WhyMCP(Scene):
             self.play(FadeIn(s, shift=UP * 0.2), run_time=0.4)
         self.wait(6.0)
 
-        # cleanup act 3
-        act3_group = VGroup(case_title, stats, mcp_layer, mcp_lbl_top,
-                            mcp_lbl_bot, act_badge)
-        self.end_act(act3_group, run_time=0.7)
+        # cleanup act 3 — mcp_layer / mcp_lbl_* already faded in Beat 3.1
+        act3_group = VGroup(case_title, stats, act_badge)
+        self.end_act(act3_group, run_time=0.5)
         self.advance_progress(149)
 
     # ============================================================

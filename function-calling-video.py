@@ -53,7 +53,7 @@ config.pixel_height = 1080
 
 class FunctionCalling(Scene):
     SUBTITLE_MAX_WIDTH = 14.0
-    TOTAL_SECONDS = 88.2   # content-driven intro adds 2.7s preview motion
+    TOTAL_SECONDS = 87.2   # after R6 transition tighten
 
     TITLE     = "Function Calling 怎麼運作"
     SUBTITLE  = "LLM 只吐字串,真的執行的是外面的 harness"
@@ -115,12 +115,13 @@ class FunctionCalling(Scene):
         return sub
 
     def show_subtitle(self, text, run_time=0.35):
+        # Sequential fade — out fully before in, prevents the ~0.15s visual
+        # ghost of two subtitles overlaying during cross-fade.
         new_sub = self._build_subtitle(text)
         if self._cur_subtitle is not None:
-            self.play(FadeOut(self._cur_subtitle), FadeIn(new_sub),
-                      run_time=run_time)
-        else:
-            self.play(FadeIn(new_sub), run_time=run_time)
+            self.play(FadeOut(self._cur_subtitle), run_time=run_time * 0.45)
+            self._cur_subtitle = None
+        self.play(FadeIn(new_sub), run_time=run_time * 0.55)
         self._cur_subtitle = new_sub
 
     def clear_subtitle(self, run_time=0.3):
@@ -243,12 +244,13 @@ class FunctionCalling(Scene):
         self.play(GrowFromEdge(accent, LEFT), run_time=0.3)
         self.play(FadeIn(sub, shift=UP * 0.10), run_time=0.4)
 
-        # Phase 3: slow Ken Burns + hold (2.5–4.5s)
+        # Phase 3: slow Ken Burns + true hold so audience reads the cover
         self.play(hero.animate.scale(1.05 / 0.95).shift(LEFT * 0.15),
-                  rate_func=linear, run_time=1.8)
+                  rate_func=linear, run_time=1.4)
+        self.wait(0.8)
 
-        # Phase 4: fade out
-        self.play(FadeOut(hero), FadeOut(title_stack), run_time=0.5)
+        # Phase 4: fade out (tightened so transition to scenario doesn't stall)
+        self.play(FadeOut(hero), FadeOut(title_stack), run_time=0.35)
         self.advance_progress(5)
 
     # ============================================================
@@ -702,7 +704,7 @@ class FunctionCalling(Scene):
         self.play(FadeIn(user_label, shift=DOWN * 0.1),
                   FadeIn(user_group, shift=DOWN * 0.2),
                   run_time=0.6)
-        self.wait(0.8)
+        self.wait(0.3)
 
         # Build answer bubble first (positioned but not yet shown) so we can
         # aim the connector arrow exactly at its top edge.
