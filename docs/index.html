@@ -4,7 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MCP 入門工作坊 · 國立中興大學</title>
-<meta name="description" content="三小時 MCP 入門工作坊教材,受眾為大專院校教師。以興大 AI 學伴為實例,含投影片、Manim 動畫影片、可跑 mini-project 與 course TA agent。">
+<meta name="description" content="三小時 MCP 入門工作坊教材,受眾為大專院校教師。以興大 AI 學伴為實例,含投影片、Manim 動畫影片、可跑 mini-project 與 course TA agent。由 NAPAI 計畫 SIGAgent group 支持。">
+
+<!-- ── Favicon (inline violet dot) ────────────────────────── -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='42' fill='%237B5CF5'/%3E%3Ccircle cx='50' cy='50' r='42' fill='none' stroke='%239D85F7' stroke-width='4' opacity='0.5'/%3E%3C/svg%3E">
+
+<!-- ── Open Graph (LinkedIn / FB / Slack) ─────────────────── -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://udicatnchu.github.io/nchu-mcp-workshop-2026/">
+<meta property="og:title" content="MCP 入門工作坊 · 國立中興大學">
+<meta property="og:description" content="三小時 MCP 入門工作坊。RAG / Tool Use / MCP 三策略比較 + Manim 動畫影片 + 可跑 hands-on lab。由 NAPAI 計畫 SIGAgent group 支持。">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/UDICatNCHU/nchu-mcp-workshop-2026@main/docs/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<!-- ── Twitter / X ────────────────────────────────────────── -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MCP 入門工作坊 · 國立中興大學">
+<meta name="twitter:description" content="三小時 MCP 入門教材 · RAG / Tool Use / MCP 比較 · Manim 影片 · hands-on lab">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/UDICatNCHU/nchu-mcp-workshop-2026@main/docs/og-image.png">
 <style>
   :root {
     --bg:           #0a0a10;
@@ -416,6 +434,159 @@
   .card .desc { color: var(--muted); font-size: 14.5px; margin: 0 0 14px; }
   .card pre { font-size: 12.5px; padding: 12px 14px; }
 
+  /* ── Scroll progress bar (fixed top thin line) ──────── */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 3px; background: rgba(123,92,245,0.10);
+    z-index: 200; pointer-events: none;
+  }
+  .scroll-progress-bar {
+    height: 100%; width: 0;
+    background: linear-gradient(90deg, var(--violet), var(--orange));
+    transition: width .08s linear;
+  }
+
+  /* ── Sticky top nav ─────────────────────────────────── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10, 10, 16, 0.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+    padding: 12px 24px;
+  }
+  .topbar-inner {
+    max-width: 1300px; margin: 0 auto;
+    display: flex; align-items: center; gap: 24px;
+    justify-content: space-between;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 800; color: var(--ink);
+    border-bottom: none; font-size: 14.5px;
+    letter-spacing: 0.04em;
+  }
+  .brand:hover { color: var(--violet-soft); border-bottom-color: transparent; }
+  .brand-dot {
+    width: 10px; height: 10px;
+    background: var(--violet); border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(123,92,245,.20);
+  }
+  .top-nav { display: flex; gap: 22px; }
+  .top-nav a {
+    border-bottom: none; font-size: 13.5px;
+    color: var(--muted); font-weight: 500;
+  }
+  .top-nav a:hover { color: var(--violet-soft); }
+  @media (max-width: 720px) {
+    .top-nav { display: none; }
+  }
+  .top-cta {
+    padding: 8px 18px;
+    background: var(--violet); color: #FFF;
+    border-radius: 6px; font-weight: 700; font-size: 13.5px;
+    border-bottom: none; letter-spacing: 0.03em;
+    transition: background .15s, color .15s;
+  }
+  .top-cta:hover { background: #FFF; color: var(--violet); }
+
+  /* ── Hero video control button (play/pause) ─────────── */
+  .video-control-btn {
+    position: absolute;
+    bottom: 12px; right: 12px;
+    background: rgba(10,10,16,0.78);
+    color: #FFF;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    font-size: 13px;
+    transition: background .15s, border-color .15s, transform .15s;
+    z-index: 5;
+  }
+  .video-control-btn:hover {
+    background: var(--violet);
+    border-color: var(--violet);
+    transform: scale(1.08);
+  }
+
+  /* ── Timeline cards (replace outline table) ────────── */
+  .timeline {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; gap: 14px; flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  .timeline-card {
+    flex: 1 1 180px;
+    max-width: 220px;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px 24px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+    transition: transform .15s, box-shadow .15s, border-color .15s;
+  }
+  .timeline-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px rgba(123,92,245,.20);
+    border-color: var(--violet);
+    border-bottom-color: var(--violet);
+  }
+  .timeline-card.break {
+    background: var(--bg-elev);
+    border-style: dashed;
+    border-color: var(--violet-deep);
+    flex: 0 0 140px;
+  }
+  .timeline-card.break:hover {
+    transform: none; box-shadow: none;
+    border-color: var(--violet-deep);
+  }
+  .timeline-card .seg-num {
+    font-family: "JetBrains Mono", monospace;
+    color: var(--violet-soft); font-weight: 900;
+    font-size: 30px; line-height: 1;
+    margin-bottom: 6px;
+  }
+  .timeline-card.break .seg-num { color: var(--violet-deep); }
+  .timeline-card .seg-time {
+    color: var(--teal); font-weight: 700; font-size: 12.5px;
+    margin-bottom: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  .timeline-card.break .seg-time { color: var(--violet-soft); }
+  .timeline-card .seg-title {
+    font-weight: 800; color: #FFF;
+    font-size: 15px; margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .timeline-card.break .seg-title { color: var(--violet-soft); }
+  .timeline-card .seg-tag {
+    font-size: 12px; color: var(--muted); line-height: 1.4;
+  }
+
+  /* ── Prev/Next per segment ──────────────────────────── */
+  .seg-nav {
+    display: flex; justify-content: space-between;
+    gap: 12px; margin-top: 22px; padding-top: 18px;
+    border-top: 1px solid var(--line);
+    align-items: center;
+  }
+  .seg-nav a {
+    font-size: 13px; color: var(--muted);
+    border-bottom: none;
+    padding: 6px 12px; border-radius: 6px;
+    transition: background .15s, color .15s;
+    font-weight: 600;
+  }
+  .seg-nav a:hover {
+    background: var(--bg-elev);
+    color: var(--violet-soft);
+  }
+  .seg-nav .spacer { flex: 1; }
+
   footer {
     background: #050608;
     color: var(--muted);
@@ -437,6 +608,25 @@
 </head>
 <body>
 
+<!-- ── Scroll progress bar (fixed top) ─────────────────── -->
+<div class="scroll-progress"><div class="scroll-progress-bar" id="scrollProgressBar"></div></div>
+
+<!-- ── Sticky top nav ──────────────────────────────────── -->
+<nav class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#">
+      <span class="brand-dot"></span>
+      NCHU MCP Workshop
+    </a>
+    <div class="top-nav">
+      <a href="#overview">課程結構</a>
+      <a href="#segments">教學段落</a>
+      <a href="#hands-on">動手做</a>
+    </div>
+    <a class="top-cta" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026">GitHub →</a>
+  </div>
+</nav>
+
 <!-- ── Hero ────────────────────────────────────────────── -->
 <header class="hero">
   <div class="hero-grid">
@@ -445,7 +635,7 @@
       <h1 class="serif">MCP 入門<br>工作坊</h1>
       <div class="accent"></div>
       <p class="lead">讓 LLM 連上你的工具:從 RAG 到 MCP 的完整路徑。</p>
-      <p class="meta">三小時 · 大專院校教師 · 不必為資工背景</p>
+      <p class="meta">三小時 · 大專院校教師 · 不必為資工背景<br>由 NAPAI 計畫 SIGAgent group 支持</p>
       <div class="actions">
         <a class="btn btn-primary" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026">GitHub Repo</a>
         <a class="btn btn-ghost" href="#segments">瀏覽教材</a>
@@ -453,9 +643,10 @@
     </div>
     <div class="hero-right">
       <div class="hero-video">
-        <video autoplay muted loop playsinline preload="auto"
+        <video id="heroVideo" autoplay muted loop playsinline preload="auto"
                src="https://cdn.jsdelivr.net/gh/UDICatNCHU/nchu-mcp-workshop-2026@main/function-calling-video-preview.mp4">
         </video>
+        <button class="video-control-btn" id="heroVideoToggle" aria-label="Play/Pause hero video">⏸</button>
       </div>
     </div>
   </div>
@@ -484,20 +675,43 @@
       <a href="https://github.com/UDICatNCHU/claude-mcp-project">興大 AI 學伴</a>
       作為實際案例(~239 個 MCP 工具的 web chat 系統)。
     </p>
-    <div class="outline">
-      <table>
-        <thead>
-          <tr><th>段落</th><th>時間</th><th>主題</th><th>內容</th></tr>
-        </thead>
-        <tbody>
-          <tr><td class="num">01</td><td class="dur">50 min</td><td><a href="#segment-1">Why MCP</a></td><td>從 LLM 的限制 → RAG / Tool Use / MCP 三策略比較</td></tr>
-          <tr><td class="num">02</td><td class="dur">50 min</td><td><a href="#segment-2">How MCP Works</a></td><td>Parent / Child 兩階段握手、工具呼叫機制</td></tr>
-          <tr class="break"><td>—</td><td>10 min</td><td colspan="2">休息</td></tr>
-          <tr><td class="num">03</td><td class="dur">50 min</td><td><a href="#segment-3">Agentic Tool Loop</a></td><td>LLM 自主選工具、多輪迭代、強制回覆</td></tr>
-          <tr><td class="num">04</td><td class="dur">50 min</td><td><a href="#segment-4">動手做</a></td><td>mini-project 現場跑:換 JSON、加搜尋工具、呼叫外部 API</td></tr>
-          <tr><td class="num">05</td><td class="dur">10 min</td><td><a href="#segment-5">實務考量</a></td><td>規模 / 品質 / 模型選擇 / 成本</td></tr>
-        </tbody>
-      </table>
+    <div class="timeline">
+      <a class="timeline-card" href="#segment-1">
+        <div class="seg-num">01</div>
+        <div class="seg-time">50 min</div>
+        <div class="seg-title">Why MCP</div>
+        <div class="seg-tag">RAG / Tool Use / MCP 三策略比較</div>
+      </a>
+      <a class="timeline-card" href="#segment-2">
+        <div class="seg-num">02</div>
+        <div class="seg-time">50 min</div>
+        <div class="seg-title">How MCP Works</div>
+        <div class="seg-tag">Parent / Child 兩階段握手</div>
+      </a>
+      <div class="timeline-card break">
+        <div class="seg-num">—</div>
+        <div class="seg-time">10 min</div>
+        <div class="seg-title">休息</div>
+        <div class="seg-tag">stretch / water break</div>
+      </div>
+      <a class="timeline-card" href="#segment-3">
+        <div class="seg-num">03</div>
+        <div class="seg-time">50 min</div>
+        <div class="seg-title">Agentic Tool Loop</div>
+        <div class="seg-tag">LLM 自主選工具、多輪迭代</div>
+      </a>
+      <a class="timeline-card" href="#segment-4">
+        <div class="seg-num">04</div>
+        <div class="seg-time">50 min</div>
+        <div class="seg-title">動手做</div>
+        <div class="seg-tag">mini-project L1–L3 hands-on</div>
+      </a>
+      <a class="timeline-card" href="#segment-5">
+        <div class="seg-num">05</div>
+        <div class="seg-time">10 min</div>
+        <div class="seg-title">實務考量</div>
+        <div class="seg-tag">scale / 品質 / 模型 / 成本</div>
+      </a>
     </div>
   </section>
 
@@ -521,6 +735,11 @@
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/01-why-mcp.pptx">投影片 <span class="ext">pptx · 21 張</span></a>
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/01-why-mcp-video-youtube.md">YouTube 發佈素材 <span class="ext">md</span></a>
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/01-why-mcp-video.py">Manim 原始碼 <span class="ext">py</span></a>
+      </div>
+      <div class="seg-nav">
+        <a href="#overview">← 課程總覽</a>
+        <div class="spacer"></div>
+        <a href="#segment-2">下一段 · How MCP Works →</a>
       </div>
     </section>
 
@@ -549,6 +768,11 @@
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/02-mcp-connection-video-youtube.md">YouTube 發佈素材 <span class="ext">md</span></a>
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/02-mcp-connection-video.py">Manim 原始碼 <span class="ext">py</span></a>
       </div>
+      <div class="seg-nav">
+        <a href="#segment-1">← Why MCP</a>
+        <div class="spacer"></div>
+        <a href="#segment-3">下一段 · Agentic Tool Loop →</a>
+      </div>
     </section>
 
     <section class="segment" id="segment-3">
@@ -570,6 +794,11 @@
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/sonnet-running-example.pptx">Sonnet 實例 <span class="ext">pptx</span></a>
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/function-calling-video.py">Manim 原始碼 <span class="ext">py</span></a>
       </div>
+      <div class="seg-nav">
+        <a href="#segment-2">← How MCP Works</a>
+        <div class="spacer"></div>
+        <a href="#segment-4">下一段 · 動手做 →</a>
+      </div>
     </section>
 
     <section class="segment" id="segment-4">
@@ -585,6 +814,11 @@
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/04-hands-on-lab.md">學員端 landing <span class="ext">md</span></a>
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/tree/main/mini-project">mini-project/ <span class="ext">code</span></a>
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/tree/main/mini-project/docs/labs">L1–L3 Lab 手冊 <span class="ext">md</span></a>
+      </div>
+      <div class="seg-nav">
+        <a href="#segment-3">← Agentic Tool Loop</a>
+        <div class="spacer"></div>
+        <a href="#segment-5">下一段 · 實務考量 →</a>
       </div>
     </section>
 
@@ -607,6 +841,11 @@
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/05-practical-considerations.md">收尾筆記 <span class="ext">md</span></a>
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/haiku-alignment-report.pptx">Haiku alignment 報告 <span class="ext">pptx</span></a>
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/haiku-alignment-report.md">Haiku alignment 摘要 <span class="ext">md</span></a>
+      </div>
+      <div class="seg-nav">
+        <a href="#segment-4">← 動手做</a>
+        <div class="spacer"></div>
+        <a href="#hands-on">前往動手做子專案 →</a>
       </div>
     </section>
 
@@ -658,10 +897,53 @@ cd backend-node && npm start
     · 教材整理:<a href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026">UDICatNCHU/nchu-mcp-workshop-2026</a>
     · 案例來源:<a href="https://github.com/UDICatNCHU/claude-mcp-project">claude-mcp-project</a>
   </p>
+  <p style="margin-top: 12px; font-size: 13px; color: var(--violet-soft);">
+    Supported by  <strong>NAPAI 計畫 · SIGAgent group</strong>
+  </p>
   <p style="margin-top: 8px; font-size: 12.5px; opacity: 0.7;">
     本頁為 GitHub Pages 靜態 landing,內容隨 main 分支自動更新(影片透過 jsDelivr CDN 服務)
   </p>
 </footer>
+
+<script>
+  // ── Scroll progress bar ───────────────────────────────
+  (function() {
+    const bar = document.getElementById('scrollProgressBar');
+    if (!bar) return;
+    let ticking = false;
+    function update() {
+      const total = document.body.scrollHeight - window.innerHeight;
+      const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
+      bar.style.width = Math.min(100, Math.max(0, pct)) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(update);
+        ticking = true;
+      }
+    }, { passive: true });
+    update();
+  })();
+
+  // ── Hero video play/pause toggle ─────────────────────
+  (function() {
+    const v = document.getElementById('heroVideo');
+    const btn = document.getElementById('heroVideoToggle');
+    if (!v || !btn) return;
+    btn.addEventListener('click', () => {
+      if (v.paused) {
+        v.play();
+        btn.textContent = '⏸';
+        btn.setAttribute('aria-label', 'Pause hero video');
+      } else {
+        v.pause();
+        btn.textContent = '▶';
+        btn.setAttribute('aria-label', 'Play hero video');
+      }
+    });
+  })();
+</script>
 
 </body>
 </html>
