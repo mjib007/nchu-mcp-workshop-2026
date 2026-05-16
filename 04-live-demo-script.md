@@ -194,7 +194,41 @@ def get_lab_info(query: str) -> dict:
 
 ---
 
-## ⑦ 鋪陳 Segment 5(45–50 min)
+## ⑦ Windows 學員特別處理
+
+**約 30% 教師受眾用 Windows**。教師自己沒 Windows 環境的話,**最務實的 punt 方式是 Git Bash**:
+
+### 開場時的 30 秒公告
+
+> 「現場有用 Windows 的同學,請先裝 Git for Windows ([git-scm.com/download/win](https://git-scm.com/download/win)),裝完桌面會多『Git Bash』。
+>
+> 之後**所有指令請用 Git Bash 開**(不要用 cmd / PowerShell),Mac / Linux 跟 Windows 體驗就會 100% 一樣。」
+
+Git Bash 安裝約 3–5 分鐘,跟 setup.sh 第一段(uv 安裝)同時進行,**不會額外吃時間**。
+
+### 如果學員堅持用 PowerShell / cmd(很少)
+
+備用方案:repo 內有 `mini-project/setup.ps1`,5 個 section 跟 setup.sh 完全對應。
+講師建議:**指令對應快查表(投影片 slide 8 也有)**:
+
+| 做的事 | Mac / Linux / Git Bash | 純 PowerShell |
+|-------|----------------------|---------------|
+| 安裝 uv | `curl -LsSf https://astral.sh/uv/install.sh \| sh` | `irm https://astral.sh/uv/install.ps1 \| iex` |
+| 編輯 .env | `nano .env` | `notepad .env` |
+| 環境檢查 | `./setup.sh` | `.\setup.ps1` |
+| 啟動 backend | `cd backend-node && npm start` | `cd backend-node; npm start` |
+| 查 port 佔用 | `lsof -i :3000` | `netstat -ano \| findstr :3000` |
+| 殺進程 | `kill -9 <PID>` | `taskkill /F /PID <PID>` |
+
+### 預期 Windows 特有踩坑
+
+- **PowerShell execution policy 擋 .ps1**:`Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` 一次性放行
+- **中文編碼亂碼**:Git Bash 跟 cmd 中文顯示可能怪,**用 Windows Terminal**(免費 Microsoft Store)即可
+- **PATH 沒包含 uv 安裝路徑**:重開 PowerShell / Terminal 一次就好
+
+---
+
+## ⑧ 鋪陳 Segment 5(45–50 min)
 
 「OK 你已經親手做出一個會自己選 tool、用你資料回答的 AI 助理。
  接下來 10 分鐘 Segment 5,我們講**從這個 mini-project 到 production 中間還缺什麼**:

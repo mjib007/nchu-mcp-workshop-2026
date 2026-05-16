@@ -193,7 +193,7 @@ def build_agent_loop_code(prs):
     code_block(s, 0.85, 2.5, 12, 4.0, code_lines, size=11)
 
     callout_box(s, 0.85, 6.65, 12, 0.4,
-                "🛑 maxIterations=10 是護欄;整個 agent 沒有 magic — 就是 for-loop + if-else",
+                "△  maxIterations=10 是護欄;整個 agent 沒有 magic — 就是 for-loop + if-else",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="", size=12)
     page_number(s, 5, TOTAL)
 
@@ -244,9 +244,12 @@ def build_quick_start(prs):
         ("$ open http://localhost:3000           # 3. 瀏覽器",            CODE_FG),
     ], size=11)
 
-    pastel_card(s, 0.85, 4.55, 12, 2.0, accent=VIOLET, fill=VIOLET_PASTEL,
+    # Card height bumped 2.0 → 2.3 + code_block height 1.35 → 1.65 so
+    # the 7 code lines don't overflow the card bottom; bottom callout
+    # moved from y=6.65 → 6.95 to clear the new card boundary.
+    pastel_card(s, 0.85, 4.55, 12, 2.3, accent=VIOLET, fill=VIOLET_PASTEL,
                 title="▶  你應該看到")
-    code_block(s, 1.05, 5.15, 11.5, 1.35, [
+    code_block(s, 1.05, 5.15, 11.5, 1.65, [
         ("> mini-assistant@1.0.0 start",                              CODE_COMMENT),
         ("> node server.js",                                          CODE_COMMENT),
         ("",                                                          CODE_FG),
@@ -256,8 +259,10 @@ def build_quick_start(prs):
         ("→ Mini AI Assistant: http://localhost:3000",                CODE_ORANGE),
     ], size=10)
 
-    _text(s, 0.85, 6.65, 12, 0.3,
-          "🎉 三行 ✓ + URL → MCP server 都連上了",
+    # Bottom callout — removed 🎉 emoji (renders as missing-glyph box on
+    # server-side LibreOffice converters; the text is celebratory enough).
+    _text(s, 0.85, 7.05, 12, 0.3,
+          "★  三行 ✓ + URL → MCP server 都連上了",
           font=FONT_BODY, size=13, color=TEAL_DEEP, italic=True,
           align=PP_ALIGN.CENTER)
     page_number(s, 7, TOTAL)
@@ -268,45 +273,67 @@ def build_troubleshooting(prs):
     Inserted between quick_start (slide 7) and llm_routes (slide 9 was 8)
     to give 講師 + 學員 a single-screen reference when setup.sh fails."""
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "02 · ⚠", "S E T U P · 卡住怎麼辦", accent=PINK)
+    metadata_bar(s, "02 · !", "S E T U P · 卡住怎麼辦", accent=PINK)
     slide_title(s, "卡住了?5 個常見救援", y=0.95, size=32)
     slide_subtitle(s, "Setup 失敗 90% 是這 5 種,先看這頁再舉手", y=1.85)
 
+    # 5 issues × 2 commands (Mac/Linux row + Windows row in each card).
+    # Windows users: Git Bash 內也可以跑 Mac/Linux 指令(setup.sh 完整支援)
+    # 純 PowerShell / cmd 才需要看 Windows 那行。
     items = [
         ("①", "uv 未安裝",
          "curl -LsSf https://astral.sh/uv/install.sh | sh",
+         "irm https://astral.sh/uv/install.ps1 | iex",
          PINK,   PINK_PASTEL),
         ("②", "API key 沒填",
-         "nano .env → 填入 sk-ant-...(不要加引號)",
+         "nano .env  → 填入 sk-ant-...(不要加引號)",
+         "notepad .env  → 填入 sk-ant-...",
          ORANGE, ORANGE_PASTEL),
         ("③", "Port 3000 被佔",
-         "lsof -i :3000 → kill -9 <PID>",
+         "lsof -i :3000  → kill -9 <PID>",
+         "netstat -ano | findstr :3000  → taskkill /F /PID <PID>",
          VIOLET, VIOLET_PASTEL),
         ("④", "npm install 失敗",
-         "cat /tmp/mini-npm.log → 多半是 --legacy-peer-deps",
+         "cat /tmp/mini-npm.log  → --legacy-peer-deps",
+         "type %TEMP%\\mini-npm.log  → --legacy-peer-deps",
          TEAL,   TEAL_PASTEL),
         ("⑤", "LLM 答錯",
-         "1) Ctrl+C 重啟 server   2) 把 docstring 寫更具體",
+         "Ctrl+C 重啟 server  →  把 docstring 寫更具體",
+         "Ctrl+C 重啟 server  →  把 docstring 寫更具體",
          BLUE,   BLUE_PASTEL),
     ]
-    row_h = 0.72
-    row_gap = 0.10
-    for i, (num, title, fix, accent, fill) in enumerate(items):
-        y = 2.55 + i * (row_h + row_gap)
+    row_h = 0.78
+    row_gap = 0.07
+    for i, (num, title, mac, win, accent, fill) in enumerate(items):
+        y = 2.50 + i * (row_h + row_gap)
         _rounded(s, 0.85, y, 12.1, row_h, fill, line_color=accent, line_w=2)
         _text(s, 1.0, y, 0.6, row_h, num,
               font=FONT_TITLE, size=22, color=accent, bold=True,
               anchor=MSO_ANCHOR.MIDDLE)
-        _text(s, 1.7, y, 3.5, row_h, title,
-              font=FONT_TITLE, size=15, color=INK, bold=True,
+        _text(s, 1.7, y + 0.05, 3.3, 0.4, title,
+              font=FONT_TITLE, size=14, color=INK, bold=True,
               anchor=MSO_ANCHOR.MIDDLE)
-        _text(s, 5.3, y, 7.7, row_h, fix,
-              font=FONT_CODE, size=12, color=INK_SOFT,
+        # Mac/Linux row (top half)
+        _text(s, 1.7, y + 0.40, 1.0, 0.35, "Mac/Linux",
+              font=FONT_CODE, size=9, color=MUTED, bold=True,
+              anchor=MSO_ANCHOR.MIDDLE)
+        _text(s, 5.0, y + 0.05, 8.0, 0.35, mac,
+              font=FONT_CODE, size=11, color=INK_SOFT,
+              anchor=MSO_ANCHOR.MIDDLE)
+        # Windows row (bottom half)
+        _text(s, 1.7, y + 0.40, 1.0, 0.35, "",
+              font=FONT_CODE, size=9, color=MUTED, bold=True,
+              anchor=MSO_ANCHOR.MIDDLE)
+        _text(s, 5.0, y + 0.42, 0.85, 0.35, "Win",
+              font=FONT_CODE, size=9, color=BLUE, bold=True,
+              anchor=MSO_ANCHOR.MIDDLE)
+        _text(s, 5.85, y + 0.42, 7.15, 0.35, win,
+              font=FONT_CODE, size=11, color=INK_SOFT,
               anchor=MSO_ANCHOR.MIDDLE)
 
     callout_box(s, 0.85, 6.85, 12, 0.45,
-                "完整故障排除見 04-live-demo-script.md(講師手冊)",
-                accent=MUTED, fill=SLATE_PASTEL, icon="i", size=12)
+                "Windows 學員建議用 Git Bash:Mac/Linux 指令一律可跑(setup.sh 也直接用)",
+                accent=BLUE, fill=BLUE_PASTEL, icon="i", size=12)
     page_number(s, 8, TOTAL)
 
 
@@ -344,7 +371,7 @@ def build_llm_routes(prs):
     ], size=11)
 
     callout_box(s, 0.85, 6.45, 12, 0.55,
-                "💎  N+M 的甜蜜:你的工具一支不變,adapter 差別只在 mcp-client.js 幾行",
+                "★  N+M 的甜蜜:你的工具一支不變,adapter 差別只在 mcp-client.js 幾行",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="", size=13)
     page_number(s, 9, TOTAL)
 
@@ -425,7 +452,7 @@ def build_l1_step12(prs):
          "font": FONT_BODY, "size": 13, "color": INK_SOFT, "space_after": 2},
         {"text": "• 你系所的 FAQ / 研究成果清單",
          "font": FONT_BODY, "size": 13, "color": INK_SOFT, "space_after": 12},
-        {"text": "⚠ JSON 語法錯會卡住:",
+        {"text": "△  JSON 語法錯會卡住:",
          "font": FONT_BODY, "size": 12, "color": PINK_DEEP, "bold": True,
          "space_after": 2},
         {"text": "python3 -m json.tool data/xxx.json",

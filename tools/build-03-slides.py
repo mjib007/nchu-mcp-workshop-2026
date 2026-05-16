@@ -767,7 +767,7 @@ def build_strategy_callback(prs):
          ORANGE, ORANGE_PASTEL),
         ("Agentic Loop", "多輪迭代",
          "✓ 自己拆解問題\n✓ 多輪 + 結果驅動\n✓ Tool Use 完整版",
-         "⚠ 成本最高、難 debug",
+         "△  成本最高、難 debug",
          VIOLET, VIOLET_PASTEL),
     ]
     card_w = 3.95

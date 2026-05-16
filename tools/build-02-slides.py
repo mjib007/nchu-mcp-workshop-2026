@@ -514,7 +514,7 @@ def build_fc_stage4(prs):
     _rounded(s, 0.85, 6.25, 12, 0.85, PINK_PASTEL,
              line_color=PINK, line_w=2)
     _multi(s, 1.1, 6.3, 11.5, 0.8, [
-        {"text": "⚠   subprocess.run(LLM 輸出) 本質上就是 eval(LLM 輸出)",
+        {"text": "△   subprocess.run(LLM 輸出) 本質上就是 eval(LLM 輸出)",
          "font": FONT_BODY, "size": 15, "color": PINK_DEEP, "bold": True,
          "space_after": 2},
         {"text": "若 prompt injection 攻擊,LLM 會生出 rm -rf ~,harness 不長眼就會照跑。",

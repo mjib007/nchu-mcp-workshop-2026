@@ -51,6 +51,34 @@ cd backend-node && npm start
 
 瀏覽器打開 `http://localhost:3000`，輸入 `英文中心幾點開門？` 試試。
 
+### Windows 學員看這邊
+
+**最簡單路徑：裝 Git for Windows**（[git-scm.com/download/win](https://git-scm.com/download/win)），完成後用桌面的 **Git Bash** 跑上面 4 步，**體驗 100% 跟 Mac/Linux 一樣**（包括 `./setup.sh`）。
+
+**純 PowerShell 路徑**（不裝 Git Bash 的話）：
+
+```powershell
+# 0. 先放行 PowerShell 跑 .ps1（一次性）
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+# 1. 環境預檢（對等 ./setup.sh）
+.\setup.ps1
+
+# 2. 啟動
+cd backend-node; npm start
+```
+
+Windows 常見指令對照：
+
+| 做的事 | Mac / Linux / Git Bash | PowerShell |
+|-------|----------------------|------------|
+| 安裝 uv | `curl -LsSf https://astral.sh/uv/install.sh \| sh` | `irm https://astral.sh/uv/install.ps1 \| iex` |
+| 編輯 .env | `nano .env` | `notepad .env` |
+| 複製檔案 | `cp .env.example .env` | `Copy-Item .env.example .env` |
+| 環境預檢 | `./setup.sh` | `.\setup.ps1` |
+| 查 port | `lsof -i :3000` | `netstat -ano \| findstr :3000` |
+| 殺進程 | `kill -9 <PID>` | `taskkill /F /PID <PID>` |
+
 ## 核心程式路徑
 
 使用者送訊息後，資料流如下：
