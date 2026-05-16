@@ -351,6 +351,39 @@ def build_fc_intro(prs):
     page_number(s, 3, TOTAL)
 
 
+def build_fc_sequence(prs):
+    """Slide 4 — Function Calling 完整訊息流 sequence diagram (1 page roadmap).
+    Inserts the user-provided 4-lane sequence diagram so the audience has
+    a roadmap before zooming into Stage 1+2, Stage 3, Stage 4, Stage 5+6."""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "01 · ⓪", "F U N C T I O N   C A L L I N G   ·   F L O W",
+                 accent=ORANGE)
+    slide_title(s, "Function Calling 完整訊息流", y=0.85, size=34)
+    slide_subtitle(s,
+                   "4 lanes · 8 道箭頭 ── 從使用者問題 一路追到 真正執行 再回到 自然語言回答",
+                   y=1.65, size=17)
+
+    # PNG aspect ratio ~ 1.417 (680×480 viewBox). Height-fit to canvas.
+    pic_path = REPO / "intro-assets" / "fc-sequence-diagram.png"
+    pic_h = 4.55
+    pic_w = pic_h * 1.417
+    pic_x = (13.333 - pic_w) / 2  # center horizontally
+    pic_y = 2.20
+    s.shapes.add_picture(str(pic_path),
+                         _I(pic_x), _I(pic_y),
+                         _I(pic_w), _I(pic_h))
+
+    # Stage markers under the diagram — light callback that the next 4 slides
+    # zoom into ①②③④ stages of this same flow
+    _text(s, 0.85, 6.95, 10.5, 0.35,
+          "▶  接下來各放大一個 Stage:"
+          "①  送 API  →  ②  LLM 回 JSON  →  ③  harness 執行  →  ④  整合回答",
+          font=FONT_BODY, size=12, color=ORANGE, bold=True,
+          align=PP_ALIGN.CENTER)
+
+    page_number(s, 4, TOTAL)
+
+
 def build_fc_stage12(prs):
     s = _blank_slide(prs, BG_WHITE)
     metadata_bar(s, "01 · ①", "F U N C T I O N   C A L L I N G   ·   S T A G E   1 + 2",
@@ -404,7 +437,7 @@ def build_fc_stage12(prs):
          "font": FONT_BODY, "size": 13, "color": TEAL_DEEP,
          "italic": True, "space_after": 0},
     ])
-    page_number(s, 4, TOTAL)
+    page_number(s, 5, TOTAL)
 
 
 def build_fc_stage3(prs):
@@ -453,14 +486,14 @@ def build_fc_stage3(prs):
          "italic": True, "space_after": 0},
     ])
 
-    # Punchline at bottom
-    _rounded(s, 0.85, 6.45, 12, 0.6, ORANGE_PASTEL,
+    # Punchline at bottom (raised to avoid colliding with page_number)
+    _rounded(s, 0.85, 6.30, 12, 0.55, ORANGE_PASTEL,
              line_color=ORANGE, line_w=2)
-    _text(s, 0.85, 6.45, 12, 0.6,
+    _text(s, 0.85, 6.30, 12, 0.55,
           "LLM 從來沒有「呼叫」過任何工具 —— 它就是吐了一段 JSON 字串",
           font=FONT_TITLE, size=18, color=ORANGE, bold=True,
           align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
-    page_number(s, 5, TOTAL)
+    page_number(s, 6, TOTAL)
 
 
 def build_fc_stage4(prs):
@@ -520,7 +553,7 @@ def build_fc_stage4(prs):
         {"text": "若 prompt injection 攻擊,LLM 會生出 rm -rf ~,harness 不長眼就會照跑。",
          "font": FONT_BODY, "size": 12, "color": INK, "space_after": 0},
     ])
-    page_number(s, 6, TOTAL)
+    page_number(s, 7, TOTAL)
 
 
 def build_fc_stage56(prs):
@@ -569,7 +602,7 @@ def build_fc_stage56(prs):
           "可能跑很多輪 —— LLM 可以連續呼叫多個工具,直到它覺得夠了。",
           font=FONT_BODY, size=14, color=MUTED, italic=True,
           align=PP_ALIGN.CENTER)
-    page_number(s, 7, TOTAL)
+    page_number(s, 8, TOTAL)
 
 
 def build_fc_takeaway(prs):
@@ -618,7 +651,81 @@ def build_fc_takeaway(prs):
     callout_box(s, 0.85, 6.4, 12, 0.65,
                 "MCP = 把 harness ↔ tool 的協定標準化,抽到獨立 process",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=15)
-    page_number(s, 8, TOTAL)
+    page_number(s, 9, TOTAL)
+
+
+def build_fc_to_network(prs):
+    """Slide 10 (NEW) — Bridge from local tools to network tools.
+    Acknowledges that the running execute_bash example uses subprocess.run
+    (effectively local IPC), and motivates the next section by showing what
+    happens when the tool lives on the network. Light callback to Seg 1 N×M."""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "01 · ⑥", "F R O M   L O C A L   T O   N E T W O R K",
+                 accent=VIOLET)
+    slide_title(s, "subprocess.run 的甜蜜期到此", y=0.85, size=34)
+    slide_subtitle(s,
+                   "本地工具一行搞定 —— 但真實工具住在遠端,每支都要自己 wire",
+                   y=1.65, size=17)
+
+    # LEFT: Local (current example) — TEAL
+    pastel_card(s, 0.85, 2.50, 5.90, 3.55,
+                accent=TEAL, fill=TEAL_PASTEL,
+                title="本地工具(剛剛的例子)")
+    _multi(s, 1.10, 3.10, 5.50, 2.95, [
+        {"text": "execute_bash:",
+         "font": FONT_BODY, "size": 14, "color": INK,
+         "bold": True, "space_after": 4},
+        {"text": "  subprocess.run([cmd], …)",
+         "font": FONT_CODE, "size": 13, "color": TEAL_DEEP,
+         "space_after": 10},
+        {"text": "OS shell 在同一台機器,POSIX 已經幫你解了:",
+         "font": FONT_BODY, "size": 13, "color": INK, "space_after": 6},
+        {"text": "✓  pipe / 環境變數 / exit code",
+         "font": FONT_BODY, "size": 13, "color": INK, "space_after": 3},
+        {"text": "✓  錯誤就回 stderr,直接吃",
+         "font": FONT_BODY, "size": 13, "color": INK, "space_after": 8},
+        {"text": "→ Function Calling 的甜蜜期",
+         "font": FONT_BODY, "size": 13, "color": TEAL_DEEP,
+         "italic": True, "bold": True, "space_after": 0},
+    ])
+
+    # RIGHT: Network — PINK (the pain)
+    pastel_card(s, 7.05, 2.50, 5.85, 3.55,
+                accent=PINK, fill=PINK_PASTEL,
+                title="網路工具(真實世界)")
+    _multi(s, 7.30, 3.10, 5.45, 2.95, [
+        {"text": "search_library_new_books:",
+         "font": FONT_BODY, "size": 14, "color": INK,
+         "bold": True, "space_after": 4},
+        {"text": "  requests.post(url, headers=…, json=…)",
+         "font": FONT_CODE, "size": 12, "color": PINK_DEEP,
+         "space_after": 10},
+        {"text": "光是「呼叫一支工具」就要自己處理:",
+         "font": FONT_BODY, "size": 13, "color": INK, "space_after": 6},
+        {"text": "△  HTTP client / auth token / retry",
+         "font": FONT_BODY, "size": 13, "color": INK, "space_after": 3},
+        {"text": "△  response schema 解析 / 錯誤碼分流",
+         "font": FONT_BODY, "size": 13, "color": INK, "space_after": 8},
+        {"text": "→ 每支工具都要自己造一輪",
+         "font": FONT_BODY, "size": 13, "color": PINK_DEEP,
+         "italic": True, "bold": True, "space_after": 0},
+    ])
+
+    # Bottom callout — light Seg 1 callback + forward bridge
+    _rounded(s, 0.85, 6.25, 12, 0.95, VIOLET_PASTEL,
+             line_color=VIOLET, line_w=2)
+    _multi(s, 1.10, 6.30, 11.5, 0.95, [
+        {"text": "▶  上一段提過的 N × M 在這裡爆炸 ── "
+                 "100 app × 100 網路工具 = 自己接 10,000 套",
+         "font": FONT_BODY, "size": 14, "color": VIOLET,
+         "bold": True, "space_after": 2},
+        {"text": "接下來看一個網路工具場景:LLM 想查圖書館新書 ── "
+                 "Parent / Child / JSON-RPC 怎麼接上",
+         "font": FONT_BODY, "size": 13, "color": INK,
+         "italic": True, "space_after": 0},
+    ], anchor=MSO_ANCHOR.MIDDLE)
+
+    page_number(s, 10, TOTAL)
 
 
 # ── Section 02: 從一個查詢開始 ─────────────────────────────────────
@@ -653,7 +760,7 @@ def build_scenario(prs):
     callout_box(s, 0.85, 6.5, 12, 0.55,
                 "但 LLM 自己不會呼叫 —— 要靠 Parent 程序去跟 Child 程序講話",
                 accent=PINK, fill=PINK_PASTEL, icon="!", size=15)
-    page_number(s, 9, TOTAL)
+    page_number(s, 11, TOTAL)
 
 
 def build_act1(prs):
@@ -715,7 +822,7 @@ def build_act1(prs):
         {"text": "③  兩條 stdio pipe → Parent ⇄ Child 可以雙向講話",
          "font": FONT_BODY, "size": 16, "color": INK, "space_after": 0},
     ])
-    page_number(s, 10, TOTAL)
+    page_number(s, 12, TOTAL)
 
 
 def build_act2(prs):
@@ -780,7 +887,7 @@ def build_act2(prs):
           "中間時刻 (Step 1 ✓ 但 Step 2 ✗) Parent 還不知道工具清單,送 tool call 也沒用。",
           font=FONT_BODY, size=13, color=MUTED, italic=True,
           align=PP_ALIGN.CENTER)
-    page_number(s, 11, TOTAL)
+    page_number(s, 13, TOTAL)
 
 
 def build_act3(prs):
@@ -818,7 +925,7 @@ def build_act3(prs):
     callout_box(s, 0.85, 6.25, 12, 0.65,
                 "「第 4 個請求」是 JSON-RPC 給每個 request 的編號,讓 response 對得回來",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=14)
-    page_number(s, 12, TOTAL)
+    page_number(s, 14, TOTAL)
 
 
 def build_video_cue(prs):
@@ -847,7 +954,7 @@ def build_video_cue(prs):
         {"text": "5. Frame closure — 「新書」一路回到使用者",
          "font": FONT_BODY, "size": 13, "color": CODE_FG, "space_after": 0},
     ])
-    page_number(s, 13, TOTAL)
+    page_number(s, 15, TOTAL)
 
 
 # ── Section 03: Tool 註冊與描述 ─────────────────────────────────────
@@ -877,7 +984,7 @@ def build_tools_list(prs):
         ('] }, "id": 2 }',                                 CODE_FG),
     ]
     code_block(s, 0.85, 2.5, 12, 4.3, code_lines, size=11)
-    page_number(s, 14, TOTAL)
+    page_number(s, 16, TOTAL)
 
 
 def build_three_fields(prs):
@@ -917,7 +1024,7 @@ def build_three_fields(prs):
               anchor=MSO_ANCHOR.MIDDLE)
         _text(s, x + 0.2, 5.75, card_w - 0.4, 1.05, footnote,
               font=FONT_BODY, size=12, color=INK_SOFT, italic=True)
-    page_number(s, 15, TOTAL)
+    page_number(s, 17, TOTAL)
 
 
 def build_desc_quality(prs):
@@ -972,7 +1079,7 @@ def build_desc_quality(prs):
          "font": FONT_BODY, "size": 15, "color": CODE_FG, "bold": True,
          "space_after": 0},
     ])
-    page_number(s, 16, TOTAL)
+    page_number(s, 18, TOTAL)
 
 
 # ── Section 04: Client 整合機制 + 整體架構 ──────────────────────────
@@ -1020,7 +1127,7 @@ def build_client_integration(prs):
         ("});",                                            CODE_FG),
     ]
     code_block(s, 0.85, 4.2, 12, 2.7, code_lines, size=11)
-    page_number(s, 17, TOTAL)
+    page_number(s, 19, TOTAL)
 
 
 def build_llm_view(prs):
@@ -1075,7 +1182,7 @@ def build_llm_view(prs):
         {"text": "✗  JSON-RPC 細節",
          "font": FONT_BODY, "size": 15, "color": INK, "space_after": 0},
     ])
-    page_number(s, 18, TOTAL)
+    page_number(s, 20, TOTAL)
 
 
 def build_architecture(prs):
@@ -1106,7 +1213,7 @@ def build_architecture(prs):
         _text(s, 8.2, y, 4.6, band_h, ex,
               font=FONT_CODE, size=12, color=MUTED, italic=True,
               anchor=MSO_ANCHOR.MIDDLE)
-    page_number(s, 19, TOTAL)
+    page_number(s, 21, TOTAL)
 
 
 def build_finale(prs):
@@ -1134,7 +1241,7 @@ def build_finale(prs):
          "font": FONT_CODE, "size": 14, "color": CODE_FG, "bold": True,
          "space_after": 0},
     ])
-    page_number(s, 20, TOTAL)
+    page_number(s, 22, TOTAL)
 
 
 # ── Appendix: REST vs JSON-RPC ─────────────────────────────────────
@@ -1185,7 +1292,7 @@ def build_appendix_intro(prs):
     callout_box(s, 0.85, 6.45, 12, 0.55,
                 "MCP 選 JSON-RPC:傳輸層不綁 HTTP(可用 stdio),語意是「呼叫工具」而非「操作資源」",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=14)
-    page_number(s, 21, TOTAL)
+    page_number(s, 23, TOTAL)
 
 
 def build_jsonrpc_types(prs):
@@ -1223,7 +1330,7 @@ def build_jsonrpc_types(prs):
                [{"text": line, "font": FONT_CODE, "size": 11,
                  "color": CODE_STRING if i != 2 else CODE_FG,
                  "space_after": 2} for line in example.split("\n")])
-    page_number(s, 22, TOTAL)
+    page_number(s, 24, TOTAL)
 
 
 # ── Main ───────────────────────────────────────────────────────────
@@ -1236,30 +1343,32 @@ def main():
     build_agenda(prs)            # 2
 
     build_fc_intro(prs)          # 3
-    build_fc_stage12(prs)        # 4
-    build_fc_stage3(prs)         # 5
-    build_fc_stage4(prs)         # 6
-    build_fc_stage56(prs)        # 7
-    build_fc_takeaway(prs)       # 8
+    build_fc_sequence(prs)       # 4  NEW — sequence diagram roadmap
+    build_fc_stage12(prs)        # 5
+    build_fc_stage3(prs)         # 6
+    build_fc_stage4(prs)         # 7
+    build_fc_stage56(prs)        # 8
+    build_fc_takeaway(prs)       # 9
+    build_fc_to_network(prs)     # 10 NEW — bridge local→network, light Seg 1 callback
 
-    build_scenario(prs)          # 9
-    build_act1(prs)              # 10
-    build_act2(prs)              # 11
-    build_act3(prs)              # 12
-    build_video_cue(prs)         # 13
+    build_scenario(prs)          # 11
+    build_act1(prs)              # 12
+    build_act2(prs)              # 13
+    build_act3(prs)              # 14
+    build_video_cue(prs)         # 15
 
-    build_tools_list(prs)        # 14
-    build_three_fields(prs)      # 15
-    build_desc_quality(prs)      # 16
+    build_tools_list(prs)        # 16
+    build_three_fields(prs)      # 17
+    build_desc_quality(prs)      # 18
 
-    build_client_integration(prs)  # 17
-    build_llm_view(prs)            # 18
-    build_architecture(prs)        # 19
+    build_client_integration(prs)  # 19
+    build_llm_view(prs)            # 20
+    build_architecture(prs)        # 21
 
-    build_finale(prs)              # 20
+    build_finale(prs)              # 22
 
-    build_appendix_intro(prs)      # 21
-    build_jsonrpc_types(prs)       # 22
+    build_appendix_intro(prs)      # 23
+    build_jsonrpc_types(prs)       # 24
 
     prs.save(str(PPTX))
     print(f"saved → {PPTX.name} ({len(prs.slides)} slides)")
