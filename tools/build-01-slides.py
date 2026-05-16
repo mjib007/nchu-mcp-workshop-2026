@@ -11,7 +11,7 @@ from lib_newstyle import *  # noqa: E402,F401,F403
 REPO = Path(__file__).resolve().parent.parent
 PPTX = REPO / "01-why-mcp.pptx"
 
-TOTAL = 18
+TOTAL = 21
 
 
 def build_cover(prs):
@@ -119,6 +119,58 @@ def build_llm_cannot(prs):
     page_number(s, 4, TOTAL)
 
 
+def build_strategy_overview(prs):
+    """Slide 5 — 三條策略 overview before diving into each in detail.
+    Bridges from 'LLM 天花板' (slide 4) to '策略 A RAG' (slide 6).
+    Audience gets a roadmap before the deep dive."""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "02 · 0", "S T R A T E G I E S · 三 條 路 概 覽", accent=VIOLET)
+    slide_title(s, "三條打破天花板的路", y=0.95, size=36)
+    slide_subtitle(s, "接下來逐條深入比較,最後看哪條最適合你的情境", y=1.85)
+
+    items = [
+        ("A", "RAG",          "檢索增強生成",
+         "把私有文件\n檢索後塞進 prompt",
+         "解知識截止 + 私有資料",
+         BLUE, BLUE_PASTEL),
+        ("B", "Tool Use",     "工具呼叫",
+         "LLM 自己決定\n呼叫哪個 API/函式",
+         "解執行動作 + 即時資料",
+         ORANGE, ORANGE_PASTEL),
+        ("C", "MCP",          "統一協定解耦",
+         "工具獨立於 LLM,\n協定當橋",
+         "解整合爆炸 + 跨應用重用",
+         VIOLET, VIOLET_PASTEL),
+    ]
+    card_w = 3.95
+    for i, (tag, name, sub, method, solves, accent, fill) in enumerate(items):
+        x = 0.55 + i * (card_w + 0.20)
+        _rounded(s, x, 2.7, card_w, 4.0, fill, line_color=accent, line_w=2)
+        # 策略 tag (大字 A/B/C)
+        _text(s, x + 0.25, 2.85, 0.7, 0.55, tag,
+              font=FONT_TITLE, size=32, color=accent, bold=True)
+        # name
+        _text(s, x + 1.1, 2.95, card_w - 1.3, 0.55, name,
+              font=FONT_TITLE, size=22, color=INK, bold=True)
+        # subtitle (中文小字)
+        _text(s, x + 1.1, 3.55, card_w - 1.3, 0.4, sub,
+              font=FONT_BODY, size=13, color=MUTED, italic=True)
+        # method
+        _text(s, x + 0.25, 4.20, card_w - 0.5, 1.2, method,
+              font=FONT_BODY, size=14, color=INK)
+        # solves (bottom strip)
+        _rect(s, x + 0.25, 5.85, card_w - 0.5, 0.55, BG_WHITE,
+              line_color=accent, line_w=1)
+        _text(s, x + 0.25, 5.85, card_w - 0.5, 0.55, solves,
+              font=FONT_BODY, size=13, color=accent, bold=True,
+              align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+
+    callout_box(s, 0.85, 6.95, 12, 0.50,
+                "三者不互斥 — MCP server 內部可以放 RAG 檢索 + Tool Use 函式",
+                accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=14)
+    page_number(s, 5, TOTAL)
+
+
 def build_rag(prs):
     s = _blank_slide(prs, BG_WHITE)
     metadata_bar(s, "02 · A", "S T R A T E G Y   ·   R A G", accent=VIOLET)
@@ -160,7 +212,7 @@ def build_rag(prs):
         {"text": "✗  結構化查詢(如 SQL)支援差",
          "font": FONT_BODY, "size": 14, "color": INK, "space_after": 0},
     ])
-    page_number(s, 5, TOTAL)
+    page_number(s, 6, TOTAL)
 
 
 def build_rag_code(prs):
@@ -182,7 +234,7 @@ def build_rag_code(prs):
         ("response = llm.generate(prompt)",                                    CODE_FG),
     ]
     code_block(s, 0.85, 2.7, 12, 3.6, code_lines, size=13)
-    page_number(s, 6, TOTAL)
+    page_number(s, 7, TOTAL)
 
 
 def build_tooluse(prs):
@@ -222,7 +274,7 @@ def build_tooluse(prs):
         {"text": "✗  工具要寫死在應用程式裡",
          "font": FONT_BODY, "size": 14, "color": INK, "space_after": 0},
     ])
-    page_number(s, 7, TOTAL)
+    page_number(s, 8, TOTAL)
 
 
 def build_fc_picture(prs):
@@ -326,7 +378,49 @@ def build_fc_picture(prs):
     callout_box(s, 0.85, 6.95, 12, 0.45,
                 "Segment 02 會深入 tool_use / tool_result 的 JSON 結構;這頁先建立直覺",
                 accent=MUTED, fill=SLATE_PASTEL, icon="i", size=12)
-    page_number(s, 8, TOTAL)
+    page_number(s, 9, TOTAL)
+
+
+def build_fc_code(prs):
+    """Slide 10 — Function Calling 概念程式碼 (對位 rag_code 的角色).
+    After fc_picture (一張圖看懂), give the audience concept-level code
+    before showing Claude vs ChatGPT API vendor lock-in next."""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "02 · B", "F U N C T I O N   C A L L I N G · C O D E",
+                 accent=ORANGE)
+    slide_title(s, "Function Calling 概念程式碼", y=0.95)
+    slide_subtitle(s, "四步驟:定義 tool → API call → 執行 → 結果送回 LLM", y=1.85)
+
+    code_lines = [
+        ("# 1. 定義工具給 LLM 看(schema)",                                  CODE_COMMENT),
+        ("tools = [{",                                                          CODE_FG),
+        ('  "name": "get_weather",',                                            CODE_STRING),
+        ('  "description": "查詢某城市的當前天氣",',                            CODE_STRING),
+        ('  "input_schema": {"type": "object",',                                CODE_FG),
+        ('                   "properties": {"city": {"type": "string"}}}',      CODE_FG),
+        ("}]",                                                                  CODE_FG),
+        ("",                                                                    CODE_FG),
+        ("# 2. 帶 tools 呼叫 Claude API",                                       CODE_COMMENT),
+        ("response = anthropic.messages.create(",                               CODE_FG),
+        ('    model="claude-sonnet-4", tools=tools,',                           CODE_ORANGE),
+        ('    messages=[{"role": "user", "content": "今天台中天氣?"}])',        CODE_FG),
+        ("",                                                                    CODE_FG),
+        ("# 3. LLM 決定呼叫 tool → 你執行它",                                   CODE_COMMENT),
+        ('if response.stop_reason == "tool_use":',                              CODE_FG),
+        ("    tool_use = response.content[-1]   # {name, input, id}",           CODE_FG),
+        ('    result = weather_api(tool_use.input["city"])  # 你寫的 function', CODE_ORANGE),
+        ("",                                                                    CODE_FG),
+        ("    # 4. 結果送回 LLM,讓它整合成自然語言",                            CODE_COMMENT),
+        ("    final = anthropic.messages.create(messages=[...prev,",            CODE_FG),
+        ('        {"role": "user", "content": [{"type": "tool_result",',       CODE_FG),
+        ('         "tool_use_id": tool_use.id, "content": str(result)}]}])',   CODE_FG),
+    ]
+    code_block(s, 0.85, 2.45, 12, 4.55, code_lines, size=10)
+
+    callout_box(s, 0.85, 7.1, 12, 0.40,
+                "RAG 是「拼字串給 LLM」;Function Calling 是「LLM 選工具叫你執行」",
+                accent=ORANGE, fill=ORANGE_PASTEL, icon="▶", size=13)
+    page_number(s, 10, TOTAL)
 
 
 def build_tooluse_code(prs):
@@ -369,7 +463,48 @@ def build_tooluse_code(prs):
         ('  }',                             CODE_FG),
         ('}]',                              CODE_FG),
     ], size=10)
-    page_number(s, 9, TOTAL)
+    page_number(s, 11, TOTAL)
+
+
+def build_mcp_teaser(prs):
+    """Slide 12 — 策略 C MCP 預告.
+    Before pain_nxm deep dive, give audience the frame: 'There's a third
+    option called MCP, and what you're about to see is the problem it
+    solves.' Avoids the audience reading pain_nxm as 'another complaint'
+    without knowing where it leads."""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "02 · C", "S T R A T E G Y · M C P 預 告", accent=VIOLET)
+    slide_title(s, "等等 — 還有策略 C", y=0.95)
+    slide_subtitle(s,
+                   "Tool Use 看完了。在看它撞牆之前,先預告:MCP 就是來解這個的",
+                   y=1.85)
+
+    # Big violet card: MCP at a glance
+    pastel_card(s, 0.85, 2.7, 12.1, 3.3, accent=VIOLET, fill=VIOLET_PASTEL)
+    _text(s, 1.1, 2.95, 11.6, 0.6, "★  MCP — Model Context Protocol",
+          font=FONT_TITLE, size=28, color=VIOLET_DEEP, bold=True)
+    _text(s, 1.1, 3.65, 11.6, 0.5,
+          "Anthropic 2024 推出的「LLM 端工具」統一協定",
+          font=FONT_BODY, size=18, color=INK, italic=True)
+    _multi(s, 1.1, 4.30, 11.6, 1.55, [
+        {"text": "▸  寫一次 MCP server,所有支援 MCP 的 LLM 應用都能用",
+         "font": FONT_BODY, "size": 15, "color": INK, "space_after": 8},
+        {"text": "▸  工具跟 LLM 之間用 JSON-RPC 標準訊息,跨 vendor 通用",
+         "font": FONT_BODY, "size": 15, "color": INK, "space_after": 8},
+        {"text": "▸  類比:USB-C 之於外接周邊 — 一條協定打通所有設備",
+         "font": FONT_BODY, "size": 15, "color": INK, "space_after": 0},
+    ])
+
+    # Bridge arrow into pain_nxm
+    _text(s, 0.85, 6.25, 12, 0.55,
+          "↓  在看 MCP 怎麼運作之前,先看看 Tool Use 為什麼會撞牆",
+          font=FONT_BODY, size=16, color=ORANGE, bold=True, italic=True,
+          align=PP_ALIGN.CENTER)
+
+    callout_box(s, 0.85, 7.0, 12, 0.45,
+                "把接下來「Tool Use 痛點」當成「MCP 要解的問題」來看",
+                accent=ORANGE, fill=ORANGE_PASTEL, icon="▶", size=13)
+    page_number(s, 12, TOTAL)
 
 
 def build_pain_nxm(prs):
@@ -415,7 +550,7 @@ def build_pain_nxm(prs):
     callout_box(s, 0.85, 6.3, 12, 0.65,
                 "每加一個 AI 應用或一個資料源,connector 數量爆炸成長",
                 accent=PINK, fill=PINK_PASTEL, icon="!", size=14)
-    page_number(s, 10, TOTAL)
+    page_number(s, 13, TOTAL)
 
 
 def build_mcp_intro(prs):
@@ -460,7 +595,7 @@ def build_mcp_intro(prs):
               font=FONT_BODY, size=12, color=TEAL_DEEP, bold=True,
               align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
 
-    page_number(s, 11, TOTAL)
+    page_number(s, 14, TOTAL)
 
 
 def build_compare(prs):
@@ -508,7 +643,7 @@ def build_compare(prs):
     callout_box(s, 0.85, 6.45, 12, 0.55,
                 "MCP 不是「取代」前兩者 —— MCP Server 內部可以同時放 RAG 檢索 + Tool Use 函式",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=13)
-    page_number(s, 12, TOTAL)
+    page_number(s, 15, TOTAL)
 
 
 def build_when_what(prs):
@@ -538,7 +673,7 @@ def build_when_what(prs):
         _text(s, x + 0.25, 5.95, card_w - 0.5, 0.6,
               f"★  {best}",
               font=FONT_BODY, size=13, color=accent, bold=True, italic=True)
-    page_number(s, 13, TOTAL)
+    page_number(s, 16, TOTAL)
 
 
 def build_mcp_roles(prs):
@@ -567,7 +702,7 @@ def build_mcp_roles(prs):
         _text(s, 7.7, y, 5.1, band_h, ex,
               font=FONT_CODE, size=12, color=MUTED, italic=True,
               anchor=MSO_ANCHOR.MIDDLE)
-    page_number(s, 14, TOTAL)
+    page_number(s, 17, TOTAL)
 
 
 def build_jsonrpc(prs):
@@ -612,7 +747,7 @@ def build_jsonrpc(prs):
     callout_box(s, 0.85, 6.45, 12, 0.55,
                 "標準化 · 雙向 · 傳輸無關(支援 stdio、HTTP+SSE、WebSocket)",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=13)
-    page_number(s, 15, TOTAL)
+    page_number(s, 18, TOTAL)
 
 
 def build_nchu_case(prs):
@@ -648,7 +783,7 @@ def build_nchu_case(prs):
                [{"text": line, "font": FONT_CODE, "size": 11,
                  "color": INK_SOFT, "space_after": 2}
                 for line in tools.split("\n")])
-    page_number(s, 16, TOTAL)
+    page_number(s, 19, TOTAL)
 
 
 def build_finale(prs):
@@ -673,7 +808,7 @@ def build_finale(prs):
          "font": FONT_CODE, "size": 14, "color": CODE_FG, "bold": True,
          "space_after": 0},
     ])
-    page_number(s, 17, TOTAL)
+    page_number(s, 20, TOTAL)
 
 
 def build_recap(prs):
@@ -696,30 +831,33 @@ def build_recap(prs):
               font=FONT_BODY, size=17, color=INK,
               anchor=MSO_ANCHOR.MIDDLE)
         y += 0.75
-    page_number(s, 18, TOTAL)
+    page_number(s, 21, TOTAL)
 
 
 # ── Main ───────────────────────────────────────────────────────────
 def main():
     prs = make_presentation()
-    build_cover(prs)        # 1
-    build_agenda(prs)       # 2
-    build_llm_can(prs)      # 3
-    build_llm_cannot(prs)   # 4
-    build_rag(prs)          # 5
-    build_rag_code(prs)     # 6
-    build_tooluse(prs)      # 7
-    build_fc_picture(prs)   # 8  (NEW — concrete picture of function calling)
-    build_tooluse_code(prs) # 9  (was 8)
-    build_pain_nxm(prs)     # 10
-    build_mcp_intro(prs)    # 11
-    build_compare(prs)      # 12
-    build_when_what(prs)    # 13
-    build_mcp_roles(prs)    # 14
-    build_jsonrpc(prs)      # 15
-    build_nchu_case(prs)    # 16
-    build_finale(prs)       # 17
-    build_recap(prs)        # 18
+    build_cover(prs)             # 1
+    build_agenda(prs)            # 2
+    build_llm_can(prs)           # 3
+    build_llm_cannot(prs)        # 4
+    build_strategy_overview(prs) # 5  NEW — 三策略 overview
+    build_rag(prs)               # 6
+    build_rag_code(prs)          # 7
+    build_tooluse(prs)           # 8
+    build_fc_picture(prs)        # 9
+    build_fc_code(prs)           # 10 NEW — Function Calling 概念程式碼
+    build_tooluse_code(prs)      # 11
+    build_mcp_teaser(prs)        # 12 NEW — MCP 預告 (frame next slide as MCP's problem)
+    build_pain_nxm(prs)          # 13
+    build_mcp_intro(prs)         # 14
+    build_compare(prs)           # 15
+    build_when_what(prs)         # 16
+    build_mcp_roles(prs)         # 17
+    build_jsonrpc(prs)           # 18
+    build_nchu_case(prs)         # 19
+    build_finale(prs)            # 20
+    build_recap(prs)             # 21
 
     prs.save(str(PPTX))
     print(f"saved → {PPTX.name} ({len(prs.slides)} slides)")
