@@ -14,20 +14,20 @@ This file provides guidance to Claude Code / Claude Agent SDK clients when worki
 - 聽眾不一定每天寫程式，技術細節需「概念為主、關鍵程式片段佐證」，避免逐行解釋
 - 期望聽眾課後能自行判斷：自己的研究／教學情境，該選 RAG、Tool Use 還是 MCP
 
-## 課程結構（總 220 min，含 10 min 休息）
+## 課程結構（總 180 min = 3 小時，含 10 min 休息）
 
 | 段落 | 時間 | 主題 | 主要檔案 | 狀態 |
 |------|------|------|---------|------|
-| 第一段 | 50 min | **Why MCP** | `01-why-mcp.pptx`、`01-why-mcp-video.mp4`（3 min Manim 長片） | ✅ 初稿完成（17 張 + v2 影片）|
-| 第二段 | 50 min | **How MCP Works** | `02-how-mcp-works.pptx`（22 張，含附錄）、`02-mcp-connection-video.mp4`（2:17 Manim 影片） | ✅ v3 完成（pptx 與影片已對齊）|
+| 第一段 | 40 min | **Why MCP** | `01-why-mcp.pptx`、`01-why-mcp-video.mp4`（3 min Manim 長片） | ✅ 初稿完成（17 張 + v2 影片）|
+| 第二段 | 40 min | **How MCP Works** | `02-how-mcp-works.pptx`（22 張，含附錄）、`02-mcp-connection-video.mp4`（2:17 Manim 影片） | ✅ v3 完成（pptx 與影片已對齊）|
 | 休息 | 10 min | | | |
-| 第三段 | 50 min | **Agentic Tool Loop** | `03-agentic-tool-loop.pptx`（16 張）、`sonnet-running-example.pptx` | 🔨 初稿完成（HTML 動畫已移除，預計改 Manim 影片） |
-| 第四段 | 50 min | **動手做（mini-project 實作）** | `04-hands-on-lab.pptx`（12 張）、`04-hands-on-lab.md` + `mini-project/` + `infra/` | ✅ 完成 |
+| 第三段 | 35 min | **Agentic Tool Loop** | `03-agentic-tool-loop.pptx`（8 張，A2 cut）、`03-agentic-loop-video.mp4`（1:07 Manim 影片）、`sonnet-running-example.pptx` | ✅ pptx + 影片 D 方案完成 |
+| 第四段 | 45 min | **動手做（mini-project 實作）** | `04-hands-on-lab.pptx`（12 張）、`04-hands-on-lab.md` + `mini-project/` + `infra/` | ✅ 完成 |
 | 第五段 | 10 min | **實務考量（收尾）** | `05-practical-considerations.md`、`haiku-alignment-report.pptx` | ✅ 完成（md 版本，HTML 動畫已移除） |
 
 ## 各段內容規劃
 
-### 第一段：Why MCP（50 min）
+### 第一段：Why MCP（40 min）
 - LLM 擅長的事（語言理解、推理、程式碼生成、知識回答）
 - LLM 的天花板（知識截止、無私有資料、不能執行動作、幻覺）
 - 策略 A：RAG — 概念 + 流程圖 + 概念程式碼 + 優缺點
@@ -39,7 +39,7 @@ This file provides guidance to Claude Code / Claude Agent SDK clients when worki
 - MCP 通訊協定（JSON-RPC 2.0 範例）
 - 興大 AI 學伴案例引子（33 工具、9 大分類）
 
-### 第二段：How MCP Works（50 min）
+### 第二段：How MCP Works（40 min）
 - **結構（v4）**：先講 function calling 底層，再用 frame story 串 MCP
   - Section 01 Function Calling 怎麼運作（LLM 只吐字串、subprocess.run 那道門、安全警告、LLM ↔ Harness 職責分工）
   - Section 02 從一個查詢開始（場景 → Parent 開出 Child → 兩階段握手 → 工具呼叫）
@@ -49,25 +49,25 @@ This file provides guidance to Claude Code / Claude Agent SDK clients when worki
 - 搭配影片：`02-mcp-connection-video.mp4`（2:17，Parent / Child / 兩階段握手 checkbox / 第 4 個請求 / frame closure）
 - pptx 重生工具：`tools/build-02-slides.py`（程式化生成，import `lib_newstyle`，避免手動同步影片內容）
 
-### 第三段：Agentic Tool Loop（50 min）
+### 第三段：Agentic Tool Loop（35 min）
 - 完整查詢流程 walk-through（使用者提問 → 最終回覆）
 - LLM 自主選工具（`tool_use` block → `tool_result` → 多輪迭代）
 - `maxIterations` 限制與最後一輪強制回覆機制
 - Live Demo：現場操作系統
 - 搭配素材：`sonnet-running-example.pptx`（HTML 動畫已移除，預計改 Manim 影片）
 
-### 第四段：動手做（50 min，hands-on 主場）
+### 第四段：動手做（45 min，hands-on 主場）
 
 現版 `04-hands-on-lab.md` 是學員端 landing page，指向可跑的 `mini-project/`。`04-hands-on-lab.pptx`（12 張）是**現場講師開場用**的投影片，涵蓋本節目標、時間配置、架構回顧、Quick Start、L1 四步驟分解、卡點速查、收尾鋪陳 Segment 5；由 `tools/build-04-slides.py` 以 python-pptx 自動生成（共用 `tools/lib_newstyle.py` 設計系統），視覺遵循 repo 的 violet primary + pastel cards 風格規範。
 
 **作為工作坊的 hands-on 主場**，學員現場完成 L1（換自己領域的 JSON），讓 Segment 1–3 的概念在自己電腦上發生。
 
-**50 分鐘時間配置**：
-- 0–10 min：講師 demo + 學員同步 `setup.sh`
-- 10–20 min：L1 Step 1–2（觀察 + 換 JSON）
-- 20–35 min：L1 Step 3–4（改 docstring + 重啟驗證）
-- 35–45 min：交叉展示 — 幾位老師用自己領域資料 demo
-- 45–50 min：Q&A + 鋪陳 Segment 5
+**45 分鐘時間配置**：
+- 0–8 min：講師 demo + 學員同步 `setup.sh`
+- 8–18 min：L1 Step 1–2（觀察 + 換 JSON）
+- 18–32 min：L1 Step 3–4（改 docstring + 重啟驗證）
+- 32–40 min：交叉展示 — 幾位老師用自己領域資料 demo
+- 40–45 min：Q&A + 鋪陳 Segment 5
 
 三關 Lab 路徑：
 - **L1**：換 JSON 做你領域的助理（**課堂現場必做**）

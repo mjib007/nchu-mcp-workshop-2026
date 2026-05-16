@@ -1,6 +1,6 @@
 # Segment 4 — 動手做（Hands-on Lab）
 
-> 對應課綱 Segment 4「動手做（mini-project 實作）」。本節 **50 分鐘，是本工作坊的 hands-on 主場**：Segment 1–3 建立的概念，這一節要在你自己的電腦上跑起來。
+> 對應課綱 Segment 4「動手做（mini-project 實作）」。本節 **45 分鐘，是本工作坊的 hands-on 主場**：Segment 1–3 建立的概念，這一節要在你自己的電腦上跑起來。
 >
 > **定位**：不是「指引閱讀」、不是「Demo 欣賞」，而是**現場動手實作** mini-project，完成 L1 並看到 agent 真的回答你自己塞的資料。
 
@@ -51,17 +51,17 @@ cd backend-node && npm start
 
 ---
 
-## ⏱ 50 分鐘的時間配置（建議）
+## ⏱ 45 分鐘的時間配置（建議）
 
 | 時段 | 做什麼 | 產出 |
 |------|--------|------|
-| 0–10 min | 講師 demo 跑一次 + 學員同步跑 `setup.sh` | 5/5 ✅ |
-| 10–20 min | L1 Step 1（觀察） + Step 2（換自己 JSON） | data/your.json |
-| 20–35 min | L1 Step 3（改 docstring） + Step 4（重啟驗證） | 問你自己的資料會答 |
-| 35–45 min | 交叉展示：邀 3–4 位老師用自己領域資料 demo | 見識不同領域如何落地 |
-| 45–50 min | Q&A + 為 L2/L3 / Segment 5 作鋪陳 | 清楚下一步 |
+| 0–8 min | 講師 demo 跑一次 + 學員同步跑 `setup.sh` | 5/5 ✅ |
+| 8–18 min | L1 Step 1（觀察） + Step 2（換自己 JSON） | data/your.json |
+| 18–32 min | L1 Step 3（改 docstring） + Step 4（重啟驗證） | 問你自己的資料會答 |
+| 32–40 min | 交叉展示：邀 3–4 位老師用自己領域資料 demo | 見識不同領域如何落地 |
+| 40–45 min | Q&A + 為 L2/L3 / Segment 5 作鋪陳 | 清楚下一步 |
 
-講師動向：10 min 講解 + 40 min 巡場陪跑 + 現場除錯（預計 80% 的時間在幫卡住的老師）。
+講師動向：8 min 講解 + 37 min 巡場陪跑 + 現場除錯（預計 80% 的時間在幫卡住的老師）。
 
 ---
 
