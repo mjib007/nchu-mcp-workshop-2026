@@ -229,12 +229,15 @@ class AgenticLoop(Scene):
         self.show_subtitle("從一個複合請求開始")
 
         u_chip = self._role_chip("user", BLUE)
+        # Bubble width unified with the assistant/tool_result bubbles below
+        # so the loop section reads as a consistent chat thread, not a mix
+        # of wide top + narrow rows.
         u_bub = self._bubble(
             "「我下學期能修哪些 AI 課?這些老師最近有什麼論文?」",
-            BLUE, fill_opacity=0.32, width=13.0, height=1.0, size=24,
+            BLUE, fill_opacity=0.32, width=11.5, height=1.0, size=22,
         )
         u_chip.move_to(LEFT * 6.5 + UP * 1.5)
-        u_bub.move_to(RIGHT * 0.2 + UP * 1.5)
+        u_bub.move_to(RIGHT * 0.4 + UP * 1.5)
 
         self.play(FadeIn(u_chip, shift=RIGHT * 0.15),
                   FadeIn(u_bub, shift=DOWN * 0.15),
@@ -260,19 +263,27 @@ class AgenticLoop(Scene):
         self.play(FadeIn(badge), run_time=0.3)
 
         # Shift user bubble up to make room for the loop stack
-        self.play(self.user_chip.animate.scale(0.7).move_to(LEFT * 6.5 + UP * 3.3),
-                  self.user_bub.animate.scale(0.65).move_to(RIGHT * 0.5 + UP * 3.3),
+        # (lighter scale so user bubble stays a similar width to assistant/result)
+        self.play(self.user_chip.animate.scale(0.75).move_to(LEFT * 6.5 + UP * 3.3),
+                  self.user_bub.animate.scale(0.85).move_to(RIGHT * 0.4 + UP * 3.3),
                   run_time=0.5)
 
         # ----- Round 1: assistant decides + tool_use ---------------
         self.show_subtitle("Round 1 · LLM 拆解 → 第一個工具")
 
+        # Round 1 label on left edge, shared by assistant + tool_result rows
+        r1_label = Text("Round 1", font=MONO_FONT, font_size=15,
+                        color=VIOLET_SOFT, weight=BOLD).move_to(
+                            LEFT * 7.4 + UP * 1.2)
+
         r1_assistant_chip = self._role_chip("assistant", VIOLET)
         r1_assistant_bub = self._bubble(
-            "「先查 AI 課程」", VIOLET, fill_opacity=0.18, height=0.85, size=20,
+            "「先查 AI 課程」", VIOLET, fill_opacity=0.18,
+            width=11.5, height=0.85, size=20,
         )
         r1_assistant_chip.move_to(LEFT * 6.5 + UP * 2.0)
-        r1_assistant_bub.move_to(RIGHT * 0.5 + UP * 2.0)
+        r1_assistant_bub.move_to(RIGHT * 0.4 + UP * 2.0)
+        self.play(FadeIn(r1_label), run_time=0.25)
 
         r1_tool_use = RoundedRectangle(
             width=2.4, height=0.40, corner_radius=0.20,
@@ -282,8 +293,11 @@ class AgenticLoop(Scene):
         r1_tool_use_text = Text("+ tool_use", font=MONO_FONT, font_size=13,
                                 color=ORANGE, weight=BOLD).move_to(
                                     r1_tool_use.get_center())
+        # Place badge fully INSIDE the bubble, vertically centered, near
+        # right edge — avoids the "sticker glued onto corner" look that
+        # clipped the bubble's rounded corner outline.
         r1_tool_badge = VGroup(r1_tool_use, r1_tool_use_text).move_to(
-            r1_assistant_bub.get_corner(UR) + DOWN * 0.05 + LEFT * 1.3
+            r1_assistant_bub.get_right() + LEFT * 1.35
         )
 
         self.play(FadeIn(r1_assistant_chip, shift=RIGHT * 0.15),
@@ -303,10 +317,11 @@ class AgenticLoop(Scene):
         r1_result_chip = self._role_chip("tool_result", TEAL_BRIGHT, width=1.8)
         r1_result_bub = self._bubble(
             "5 門 AI 課,老師:張、李、范、林、王",
-            TEAL_BRIGHT, fill_opacity=0.18, height=0.85, size=20,
+            TEAL_BRIGHT, fill_opacity=0.18,
+            width=11.5, height=0.85, size=20,
         )
         r1_result_chip.move_to(LEFT * 6.4 + UP * 0.4)
-        r1_result_bub.move_to(RIGHT * 0.5 + UP * 0.4)
+        r1_result_bub.move_to(RIGHT * 0.4 + UP * 0.4)
 
         self.play(FadeOut(r1_tool_call), run_time=0.3)
         self.play(FadeIn(r1_result_chip, shift=RIGHT * 0.15),
@@ -317,13 +332,18 @@ class AgenticLoop(Scene):
         # ----- Round 2: LLM sees results, parallel tool_use --------
         self.show_subtitle("Round 2 · LLM 看清單 → 5 次 parallel tool call")
 
+        r2_label = Text("Round 2", font=MONO_FONT, font_size=15,
+                        color=VIOLET_SOFT, weight=BOLD).move_to(
+                            LEFT * 7.4 + DOWN * 1.8)
+
         r2_assistant_chip = self._role_chip("assistant", VIOLET)
         r2_assistant_bub = self._bubble(
             "「查每位老師最近論文」", VIOLET, fill_opacity=0.18,
-            height=0.85, size=20,
+            width=11.5, height=0.85, size=20,
         )
         r2_assistant_chip.move_to(LEFT * 6.5 + DOWN * 1.1)
-        r2_assistant_bub.move_to(RIGHT * 0.5 + DOWN * 1.1)
+        r2_assistant_bub.move_to(RIGHT * 0.4 + DOWN * 1.1)
+        self.play(FadeIn(r2_label), run_time=0.25)
 
         r2_tool_use = RoundedRectangle(
             width=3.0, height=0.40, corner_radius=0.20,
@@ -334,7 +354,7 @@ class AgenticLoop(Scene):
                                 color=ORANGE, weight=BOLD).move_to(
                                     r2_tool_use.get_center())
         r2_tool_badge = VGroup(r2_tool_use, r2_tool_use_text).move_to(
-            r2_assistant_bub.get_corner(UR) + DOWN * 0.05 + LEFT * 1.65
+            r2_assistant_bub.get_right() + LEFT * 1.65
         )
 
         self.play(FadeIn(r2_assistant_chip, shift=RIGHT * 0.15),
@@ -364,10 +384,11 @@ class AgenticLoop(Scene):
         r2_result_chip = self._role_chip("tool_result × 5", TEAL_BRIGHT, width=2.4)
         r2_result_bub = self._bubble(
             "5 位老師最近論文清單(各 3-5 篇)",
-            TEAL_BRIGHT, fill_opacity=0.18, height=0.85, size=20,
+            TEAL_BRIGHT, fill_opacity=0.18,
+            width=11.5, height=0.85, size=20,
         )
-        r2_result_chip.scale(0.85).move_to(LEFT * 6.2 + DOWN * 2.4)
-        r2_result_bub.scale(0.85).move_to(RIGHT * 0.5 + DOWN * 2.4)
+        r2_result_chip.move_to(LEFT * 6.2 + DOWN * 2.4)
+        r2_result_bub.move_to(RIGHT * 0.4 + DOWN * 2.4)
         self.play(FadeIn(r2_result_chip, shift=RIGHT * 0.15),
                   FadeIn(r2_result_bub, shift=DOWN * 0.15),
                   run_time=0.5)
@@ -375,6 +396,7 @@ class AgenticLoop(Scene):
 
         # ----- Round 3: integrate + end_turn -----------------------
         loop_so_far = VGroup(
+            r1_label, r2_label,
             r1_assistant_chip, r1_assistant_bub, r1_tool_badge,
             r1_result_chip, r1_result_bub,
             r2_assistant_chip, r2_assistant_bub, r2_tool_badge,
@@ -400,7 +422,7 @@ class AgenticLoop(Scene):
         end_turn_text = Text("✓ end_turn", font=MONO_FONT, font_size=14,
                              color=BG, weight=BOLD).move_to(end_turn_box.get_center())
         end_turn_chip = VGroup(end_turn_box, end_turn_text).move_to(
-            final_bub.get_corner(UR) + DOWN * 0.05 + LEFT * 1.10
+            final_bub.get_right() + LEFT * 1.15
         )
 
         self.play(FadeIn(final_chip, shift=RIGHT * 0.15),
