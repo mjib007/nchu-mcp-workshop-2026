@@ -11,7 +11,7 @@ from lib_newstyle import *  # noqa: E402,F401,F403
 REPO = Path(__file__).resolve().parent.parent
 PPTX = REPO / "03-agentic-tool-loop.pptx"
 
-TOTAL = 16
+TOTAL = 18
 
 
 def build_cover(prs):
@@ -106,7 +106,7 @@ def build_traditional_vs_agentic(prs):
         {"text": "✓  存取外部系統、執行動作",
          "font": FONT_BODY, "size": 13, "color": TEAL_DEEP, "space_after": 0},
     ])
-    page_number(s, 3, TOTAL)
+    page_number(s, 4, TOTAL)
 
 
 def build_loop_diagram(prs):
@@ -152,7 +152,7 @@ def build_loop_diagram(prs):
     _text(s, 7.3, 5.55, 5.4, 1.15,
           "→  跳出迴圈,把最終文字回給使用者",
           font=FONT_BODY, size=14, color=INK, anchor=MSO_ANCHOR.MIDDLE)
-    page_number(s, 4, TOTAL)
+    page_number(s, 6, TOTAL)
 
 
 def build_stop_reasons(prs):
@@ -182,7 +182,7 @@ def build_stop_reasons(prs):
           'while (stop_reason === "tool_use" && iteration < maxIterations) { … }',
           font=FONT_CODE, size=15, color=CODE_FG, bold=True,
           anchor=MSO_ANCHOR.MIDDLE)
-    page_number(s, 5, TOTAL)
+    page_number(s, 7, TOTAL)
 
 
 def build_tool_use_block(prs):
@@ -222,7 +222,7 @@ def build_tool_use_block(prs):
     _text(s, 8.35, 6.2, 4.4, 0.95,
           "LLM 根據 JSON Schema 自動生成的參數",
           font=FONT_BODY, size=12, color=INK)
-    page_number(s, 6, TOTAL)
+    page_number(s, 8, TOTAL)
 
 
 def build_tool_result(prs):
@@ -265,7 +265,7 @@ def build_tool_result(prs):
     _text(s, 8.85, 6.1, 4.0, 0.85,
           "true 時 LLM 會嘗試錯誤處理或換工具",
           font=FONT_BODY, size=12, color=INK)
-    page_number(s, 7, TOTAL)
+    page_number(s, 9, TOTAL)
 
 
 def build_messages_growth(prs):
@@ -300,7 +300,7 @@ def build_messages_growth(prs):
         if i == 4:
             _text(s, 11.6, y + 0.3, 1.3, 0.4, "第 2 輪",
                   font=FONT_BODY, size=12, color=ORANGE, italic=True, bold=True)
-    page_number(s, 8, TOTAL)
+    page_number(s, 10, TOTAL)
 
 
 def build_parallel_tools(prs):
@@ -329,7 +329,7 @@ def build_parallel_tools(prs):
     callout_box(s, 0.85, 6.35, 12, 0.65,
                 "興大 AI 學伴:「幫我查 AI 課程和相關書籍」→ 一輪同時呼叫 search_courses + search_library_books",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=13)
-    page_number(s, 9, TOTAL)
+    page_number(s, 11, TOTAL)
 
 
 def build_core_loop_code(prs):
@@ -358,7 +358,7 @@ def build_core_loop_code(prs):
         ("}",                                                            CODE_FG),
     ]
     code_block(s, 0.85, 2.5, 12, 4.3, code_lines, size=11)
-    page_number(s, 10, TOTAL)
+    page_number(s, 12, TOTAL)
 
 
 def build_max_iter(prs):
@@ -398,7 +398,7 @@ def build_max_iter(prs):
          "font": FONT_CODE, "size": 12, "color": TEAL_DEEP, "bold": True,
          "italic": True, "space_after": 0},
     ])
-    page_number(s, 11, TOTAL)
+    page_number(s, 13, TOTAL)
 
 
 def build_metadata_tracking(prs):
@@ -496,7 +496,7 @@ def build_demo_cue(prs):
         {"text": "5.  SSE 串流回傳完整回覆",
          "font": FONT_BODY, "size": 13, "color": CODE_FG, "space_after": 0},
     ])
-    page_number(s, 14, TOTAL)
+    page_number(s, 15, TOTAL)
 
 
 def build_finale(prs):
@@ -521,7 +521,7 @@ def build_finale(prs):
          "font": FONT_BODY, "size": 14, "color": CODE_FG, "bold": True,
          "space_after": 0},
     ])
-    page_number(s, 15, TOTAL)
+    page_number(s, 16, TOTAL)
 
 
 def build_recap(prs):
@@ -548,27 +548,198 @@ def build_recap(prs):
         _text(s, 1.7, y + 0.4, 11.2, 0.5, body,
               font=FONT_BODY, size=14, color=INK_SOFT)
         y += 0.92
-    page_number(s, 16, TOTAL)
+    page_number(s, 18, TOTAL)
+
+
+def build_single_turn_pain(prs):
+    """§1 · ① — Single-turn LLM 解不了的問題類型 (3 個例子)"""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "01 · ①", "S I N G L E - T U R N   解 不 了", accent=PINK)
+    slide_title(s, "為什麼需要 Agentic Loop?", y=0.95)
+    slide_subtitle(s, "single-turn LLM(就算有 tool)解不了的三類問題", y=1.85)
+
+    items = [
+        ("跨領域複合查詢",
+         "「找最近圖書館新書,順便看星期一台中天氣」",
+         "需要兩個不相關的工具同時呼叫",
+         ORANGE, ORANGE_PASTEL),
+        ("結果驅動的後續查詢",
+         "「資工系 AI 課的老師有什麼論文?」",
+         "先要拿到老師清單,才能查論文",
+         VIOLET, VIOLET_PASTEL),
+        ("動態判斷要不要用 tool",
+         "「圖書館有幾本 AI 書?順便比較 Claude vs GPT-4」",
+         "第一部分要 tool,第二部分用訓練資料就好",
+         TEAL, TEAL_PASTEL),
+    ]
+    card_w = 3.95
+    for i, (title, example, why, accent, fill) in enumerate(items):
+        x = 0.55 + i * (card_w + 0.20)
+        _rounded(s, x, 2.7, card_w, 3.7, fill, line_color=accent, line_w=2)
+        _text(s, x + 0.25, 2.9, card_w - 0.5, 0.5, title,
+              font=FONT_TITLE, size=15, color=accent, bold=True)
+        _text(s, x + 0.25, 3.55, card_w - 0.5, 1.4, example,
+              font=FONT_BODY, size=13, color=INK, italic=True)
+        _text(s, x + 0.25, 5.1, card_w - 0.5, 1.2, why,
+              font=FONT_BODY, size=13, color=INK_SOFT)
+
+    callout_box(s, 0.85, 6.6, 12, 0.55,
+                "Agentic Loop = LLM 自己決定何時、用什麼工具,以及要重複幾輪",
+                accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=14)
+    page_number(s, 3, TOTAL)
+
+
+def build_agentic_walkthrough(prs):
+    """§1 · ③ — 4-step preview of how agentic resolves a composite query"""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "01 · ③", "A G E N T I C   解 法   預 覽", accent=ORANGE)
+    slide_title(s, "Agentic 怎麼解 — 一個 query 的 4 步走法", y=0.95, size=30)
+    slide_subtitle(s, '範例:"找 AI 課程 + 看這些老師最近的論文"', y=1.85)
+
+    steps = [
+        ("STEP 1", "拆解",
+         "LLM 看問題 →\n想到要做兩件事:\n找課程 + 找論文",
+         "拆解能力 = 預訓練自帶",
+         ORANGE),
+        ("STEP 2", "第一輪 tool call",
+         "search_courses\n  (keyword='AI')\n→ 拿到 5 門課",
+         'stop_reason = "tool_use"',
+         VIOLET),
+        ("STEP 3", "第二輪 tool call",
+         "看到課的老師後:\nfor each 老師 →\narxiv_search (parallel)",
+         "結果驅動的後續決定",
+         TEAL),
+        ("STEP 4", "整合 + end_turn",
+         "LLM 整合課 + 論文\n→ 完整自然語言回覆",
+         'stop_reason = "end_turn"',
+         TEAL_DEEP),
+    ]
+    card_w = 2.95
+    for i, (step, title, body, note, accent) in enumerate(steps):
+        x = 0.55 + i * (card_w + 0.15)
+        fill = pastel_for(accent)
+        _rounded(s, x, 2.7, card_w, 3.85, fill, line_color=accent, line_w=2)
+        _rect(s, x + 0.25, 2.85, 1.0, 0.32, accent)
+        _text(s, x + 0.25, 2.85, 1.0, 0.32, step,
+              font=FONT_CODE, size=10, color=BG_WHITE, bold=True,
+              align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+        _text(s, x + 0.25, 3.30, card_w - 0.5, 0.5, title,
+              font=FONT_TITLE, size=18, color=INK, bold=True)
+        _text(s, x + 0.25, 3.90, card_w - 0.5, 1.9, body,
+              font=FONT_BODY, size=12, color=INK)
+        _text(s, x + 0.25, 6.05, card_w - 0.5, 0.45, note,
+              font=FONT_CODE, size=10, color=accent, italic=True, bold=True)
+    page_number(s, 5, TOTAL)
+
+
+def build_engineering_footnotes(prs):
+    """§3 · 收尾 — 把 metadata + SSE 合併成 1 頁註腳"""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "03 · ④", "工 程 細 節  ·  一 頁 帶 過", accent=TEAL)
+    slide_title(s, "支撐 Loop 的工程細節", y=0.95, size=30)
+    slide_subtitle(s, "Production 才需要;教師受眾知道有就好,不深入", y=1.85)
+
+    pastel_card(s, 0.85, 2.7, 5.95, 3.8, accent=VIOLET, fill=VIOLET_PASTEL,
+                title="Metadata 追蹤")
+    _multi(s, 1.1, 3.35, 5.5, 3.0, [
+        {"text": "每一輪 tool_use / tool_result 記下:",
+         "font": FONT_BODY, "size": 13, "color": INK, "space_after": 6},
+        {"text": "•  用了哪個 model (Sonnet / Haiku)",
+         "font": FONT_BODY, "size": 12, "color": INK_SOFT, "space_after": 3},
+        {"text": "•  消耗多少 token (in / out / cache)",
+         "font": FONT_BODY, "size": 12, "color": INK_SOFT, "space_after": 3},
+        {"text": "•  stop_reason 是什麼",
+         "font": FONT_BODY, "size": 12, "color": INK_SOFT, "space_after": 14},
+        {"text": "為什麼:",
+         "font": FONT_BODY, "size": 13, "color": INK, "bold": True, "space_after": 4},
+        {"text": "Debug、計費、未來 fine-tune 模型用",
+         "font": FONT_BODY, "size": 12, "color": INK_SOFT},
+    ])
+
+    pastel_card(s, 7.05, 2.7, 5.85, 3.8, accent=TEAL, fill=TEAL_PASTEL,
+                title="SSE 串流回饋")
+    _multi(s, 7.3, 3.35, 5.4, 3.0, [
+        {"text": "Loop 跑時別讓使用者乾等:",
+         "font": FONT_BODY, "size": 13, "color": INK, "space_after": 6},
+        {"text": "•  thinking_start  → 「思考中…」",
+         "font": FONT_BODY, "size": 12, "color": INK_SOFT, "space_after": 3},
+        {"text": "•  tool_executing  → 「正在查圖書館…」",
+         "font": FONT_BODY, "size": 12, "color": INK_SOFT, "space_after": 3},
+        {"text": "•  text_chunk      → 逐字回傳",
+         "font": FONT_BODY, "size": 12, "color": INK_SOFT, "space_after": 14},
+        {"text": "為什麼:",
+         "font": FONT_BODY, "size": 13, "color": INK, "bold": True, "space_after": 4},
+        {"text": "Server-Sent Events 讓 chat 像「邊想邊講」",
+         "font": FONT_BODY, "size": 12, "color": INK_SOFT},
+    ])
+
+    callout_box(s, 0.85, 6.7, 12, 0.5,
+                "這頁是 production 才關心的;Segment 5 會深入,這裡一語帶過",
+                accent=MUTED, fill=SLATE_PASTEL, icon="i", size=12)
+    page_number(s, 14, TOTAL)
+
+
+def build_strategy_callback(prs):
+    """§5 · ① — 回頭跟 Segment 1 的 RAG / Tool Use / Agentic Loop 比較"""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "05 · ①", "S T R A T E G I E S   ·   回 看", accent=VIOLET)
+    slide_title(s, "回頭看三種策略 — Agentic Loop 站在哪", y=0.95, size=28)
+    slide_subtitle(s, "Segment 1 介紹的三條路,Agentic Loop 是其中能力最完整的一條", y=1.85)
+
+    items = [
+        ("RAG", "檢索增強生成",
+         "✓ 解知識截止\n✓ 讀私有文件",
+         "✗ 不能執行動作\n✗ 單輪",
+         BLUE, BLUE_PASTEL),
+        ("Tool Use", "工具呼叫",
+         "✓ 能執行動作\n✓ 接 API",
+         "✗ 典型 1-2 輪\n✗ 不主動拆解",
+         ORANGE, ORANGE_PASTEL),
+        ("Agentic Loop", "多輪迭代",
+         "✓ 自己拆解問題\n✓ 多輪 + 結果驅動\n✓ Tool Use 完整版",
+         "成本最高、難 debug",
+         VIOLET, VIOLET_PASTEL),
+    ]
+    card_w = 3.95
+    for i, (name, subtitle, pros, cons, accent, fill) in enumerate(items):
+        x = 0.55 + i * (card_w + 0.20)
+        _rounded(s, x, 2.7, card_w, 4.0, fill, line_color=accent, line_w=2)
+        _text(s, x + 0.25, 2.9, card_w - 0.5, 0.55, name,
+              font=FONT_TITLE, size=22, color=accent, bold=True)
+        _text(s, x + 0.25, 3.55, card_w - 0.5, 0.4, subtitle,
+              font=FONT_BODY, size=13, color=MUTED, italic=True)
+        _text(s, x + 0.25, 4.15, card_w - 0.5, 1.5, pros,
+              font=FONT_BODY, size=13, color=INK)
+        _text(s, x + 0.25, 5.75, card_w - 0.5, 1.0, cons,
+              font=FONT_BODY, size=13,
+              color=(PINK_DEEP if i < 2 else MUTED))
+
+    callout_box(s, 0.85, 6.95, 12, 0.55,
+                "Agentic Loop 不取代 RAG —— RAG 可以當 Agentic Loop 的其中一個 tool",
+                accent=ORANGE, fill=ORANGE_PASTEL, icon="▶", size=14)
+    page_number(s, 17, TOTAL)
 
 
 def main():
     prs = make_presentation()
     build_cover(prs)                    # 1
     build_agenda(prs)                   # 2
-    build_traditional_vs_agentic(prs)   # 3
-    build_loop_diagram(prs)             # 4
-    build_stop_reasons(prs)             # 5
-    build_tool_use_block(prs)           # 6
-    build_tool_result(prs)              # 7
-    build_messages_growth(prs)          # 8
-    build_parallel_tools(prs)           # 9
-    build_core_loop_code(prs)           # 10
-    build_max_iter(prs)                 # 11
-    build_metadata_tracking(prs)        # 12
-    build_sse_streaming(prs)            # 13
-    build_demo_cue(prs)                 # 14
-    build_finale(prs)                   # 15
-    build_recap(prs)                    # 16
+    build_single_turn_pain(prs)         # 3 (NEW: A 補強 §1)
+    build_traditional_vs_agentic(prs)   # 4 (was 3)
+    build_agentic_walkthrough(prs)      # 5 (NEW: A 補強 §1)
+    build_loop_diagram(prs)             # 6 (was 4)
+    build_stop_reasons(prs)             # 7 (was 5)
+    build_tool_use_block(prs)           # 8 (was 6)
+    build_tool_result(prs)              # 9 (was 7)
+    build_messages_growth(prs)          # 10 (was 8)
+    build_parallel_tools(prs)           # 11 (was 9)
+    build_core_loop_code(prs)           # 12 (was 10)
+    build_max_iter(prs)                 # 13 (was 11)
+    build_engineering_footnotes(prs)    # 14 (NEW: 合併 12 metadata + 13 sse)
+    build_demo_cue(prs)                 # 15 (was 14)
+    build_finale(prs)                   # 16 (was 15)
+    build_strategy_callback(prs)        # 17 (NEW: D §5 收尾)
+    build_recap(prs)                    # 18 (was 16)
     prs.save(str(PPTX))
     print(f"saved → {PPTX.name} ({len(prs.slides)} slides)")
 
