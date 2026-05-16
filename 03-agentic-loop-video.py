@@ -244,9 +244,9 @@ class AgenticLoop(Scene):
                   run_time=0.6)
         self.wait(1.2)
 
-        complexity = Text("→ single-turn 解不了:得分兩步驟",
-                          font=CN_FONT, font_size=20,
-                          color=ORANGE, weight=BOLD).move_to(DOWN * 0.5)
+        complexity = Text("→ 兩個問題鏈在一起 · 後一個取決於前一個",
+                          font=CN_FONT, font_size=24,
+                          color=ORANGE, weight=BOLD).move_to(DOWN * 0.4)
         self.play(FadeIn(complexity, shift=UP * 0.15), run_time=0.6)
         self.wait(2.5)
 
@@ -305,10 +305,12 @@ class AgenticLoop(Scene):
                   run_time=0.4)
         self.play(FadeIn(r1_tool_badge, shift=LEFT * 0.10), run_time=0.3)
 
-        r1_tool_call = Text('search_courses(keyword="AI")',
-                            font=MONO_FONT, font_size=20,
-                            color=ORANGE, weight=BOLD).move_to(UP * 1.1)
-        self.play(FadeIn(r1_tool_call, shift=UP * 0.15), run_time=0.5)
+        # tool call as a pill (was floating bare text — felt homeless)
+        r1_tool_call = self._pill(
+            'search_courses(keyword="AI")', ORANGE, size=15
+        )
+        r1_tool_call.move_to(UP * 1.15)
+        self.play(FadeIn(r1_tool_call, scale=0.85), run_time=0.5)
         self.wait(1.2)
 
         # ----- Round 1 result back ---------------------------------
@@ -402,17 +404,22 @@ class AgenticLoop(Scene):
             r2_assistant_chip, r2_assistant_bub, r2_tool_badge,
             r2_result_chip, r2_result_bub,
         )
-        self.play(loop_so_far.animate.set_opacity(0.18), run_time=0.5)
+        # Dim the accumulated stack further (was 0.18 → still visually
+        # competed with the final bubble). 0.08 lets final stand out cleanly.
+        self.play(loop_so_far.animate.set_opacity(0.08), run_time=0.5)
         self.show_subtitle("Round 3 · LLM 整合 5 個結果 → 最終回覆")
 
         final_chip = self._role_chip("assistant", VIOLET)
+        final_chip.scale(1.15)
         final_bub = self._bubble(
             "「你下學期可修這 5 門,范教授論文最對胃口…」",
-            VIOLET, fill_opacity=0.42, stroke_width=3,
-            width=12.0, height=1.0, size=22,
+            VIOLET, fill_opacity=0.55, stroke_width=4,
+            width=12.5, height=1.2, size=24,
         )
-        final_chip.move_to(LEFT * 6.0 + DOWN * 0.3)
-        final_bub.move_to(RIGHT * 0.6 + DOWN * 0.3)
+        final_chip.move_to(LEFT * 6.2 + ORIGIN)
+        final_bub.move_to(RIGHT * 0.5 + ORIGIN)
+        final_chip.set_z_index(10)
+        final_bub.set_z_index(10)
 
         end_turn_box = RoundedRectangle(
             width=2.0, height=0.42, corner_radius=0.20,
