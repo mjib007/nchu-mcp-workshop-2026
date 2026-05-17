@@ -132,14 +132,9 @@ class MCPConnection(Scene):
     # ACT badge
     # ============================================================
     def _make_act_badge(self, text):
-        box = RoundedRectangle(width=1.6, height=0.55, corner_radius=0.10,
-                               stroke_color=ORANGE, stroke_width=2,
-                               fill_color=ORANGE, fill_opacity=0.20)
-        lbl = Text(text, font=MONO_FONT, font_size=22,
-                   color=ORANGE, weight=BOLD).move_to(box.get_center())
-        badge = VGroup(box, lbl).move_to([6.8, 3.9, 0])
-        badge.set_z_index(100)
-        return badge
+        # Disabled for final render — return empty VGroup so all existing
+        # FadeIn/FadeOut/VGroup-cleanup calls become no-ops without code edits.
+        return VGroup()
 
     # ============================================================
     # Helper: process box (header bar + drop shadow + content area)

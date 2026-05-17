@@ -125,14 +125,9 @@ class AgenticLoop(Scene):
     # Stage badge helper
     # ============================================================
     def _stage_badge(self, text, color=VIOLET):
-        box = RoundedRectangle(width=2.2, height=0.48, corner_radius=0.09,
-                               stroke_color=NEUTRAL, stroke_width=1.5,
-                               fill_color=color, fill_opacity=0.0)
-        lbl = Text(text, font=MONO_FONT, font_size=17,
-                   color=color, weight=BOLD).move_to(box.get_center())
-        badge = VGroup(box, lbl).move_to([6.7, 4.05, 0])
-        badge.set_z_index(100)
-        return badge
+        # Disabled for final render — return empty VGroup so all existing
+        # FadeIn/FadeOut/VGroup-cleanup calls become no-ops without code edits.
+        return VGroup()
 
     # ============================================================
     # Pill helper
