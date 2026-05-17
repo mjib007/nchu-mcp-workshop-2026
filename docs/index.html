@@ -382,6 +382,7 @@
     box-shadow: 0 10px 30px rgba(123,92,245,.15);
   }
   .video-wrap video { display: block; width: 100%; height: auto; }
+  .video-wrap iframe { display: block; width: 100%; aspect-ratio: 16/9; border: 0; }
   .video-caption {
     font-size: 13px; color: var(--muted);
     margin: 6px 0 0; font-style: italic;
@@ -727,10 +728,12 @@
       <p>從 LLM 擅長的事與天花板出發,介紹三種策略——RAG、Tool Use、MCP——並深入比較它們的差異與適用場景。最後引入興大 AI 學伴 33 工具案例。</p>
       <h4>3 分鐘概念影片</h4>
       <div class="video-wrap">
-        <video controls preload="metadata"
-               src="https://cdn.jsdelivr.net/gh/UDICatNCHU/nchu-mcp-workshop-2026@main/01-why-mcp-video-preview.mp4"></video>
+        <iframe src="https://www.youtube-nocookie.com/embed/i4uepJGIOSk?rel=0&modestbranding=1"
+                title="Why MCP · NAPAI · SIGAgent · MCP 工作坊"
+                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
       </div>
-      <p class="video-caption">Manim 渲染 · ~2:38 · 概念導論長片</p>
+      <p class="video-caption">YouTube · 1080p60 · ~2:35 · 概念導論長片</p>
       <div class="resources">
         <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/raw/main/01-why-mcp.pptx">投影片 <span class="ext">pptx · 21 張</span></a>
       </div>
