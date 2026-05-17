@@ -12,8 +12,11 @@
 
 set -euo pipefail
 
-SNAP=/user_data/.cache/huggingface/hub/models--google--gemma-4-31B-it/snapshots/439edf5652646a0d1bd8b46bfdc1d3645761a445
-VENV=/user_data/vllm-workshop/.venv
+# Adjust both paths to match your host setup.
+# SNAP   → local HuggingFace snapshot dir of google/gemma-4-31B-it
+# VENV   → vLLM virtualenv (created via `uv venv` etc.)
+SNAP="${SNAP:-$HOME/.cache/huggingface/hub/models--google--gemma-4-31B-it/snapshots/<SNAPSHOT_HASH>}"
+VENV="${VENV:-$HOME/vllm-workshop/.venv}"
 PORT=8000
 LOG=/tmp/vllm-serve.log
 

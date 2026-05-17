@@ -12,12 +12,12 @@
 
 ## 先決條件（一次性）
 
-此目錄中的路徑**對應 NCHU 主機**，他校請改路徑。
+下面以 `~/vllm-workshop` 為示範路徑，換成你主機適合的位置即可（`serve-*.sh` 走 `$VENV` 環境變數，可在外面覆蓋）。
 
 ```bash
 # 1. 建立獨立 vLLM venv（一次即可）
-mkdir -p /user_data/vllm-workshop
-cd /user_data/vllm-workshop
+mkdir -p ~/vllm-workshop
+cd ~/vllm-workshop
 uv venv --python 3.11 .venv
 source .venv/bin/activate
 uv pip install vllm   # 約 10 GB，~5 分鐘
@@ -66,10 +66,11 @@ curl http://localhost:8001/v1/models
 
 ## 路徑調整提示
 
-若你不在 NCHU 主機上重現此設定，`serve-*.sh` 裡的絕對路徑需改：
+`serve-*.sh` 內 `SNAP` / `VENV` 都吃 env var fallback，預設指到 `$HOME/...`。如果你的 HuggingFace cache 或 venv 不在 home 底下，啟動時 export 一下即可：
 
-- `SNAP=/user_data/.cache/huggingface/hub/...` → 改成你本機的 HF cache snapshot
-- `VENV=/user_data/vllm-workshop/.venv` → 改成你的 vLLM venv
+```bash
+SNAP=/path/to/your/hf/snapshot VENV=/path/to/your/venv ./serve-gemma.sh
+```
 
 其餘參數（`--tool-call-parser`、`--tensor-parallel-size`、`--max-model-len`）可保留。
 

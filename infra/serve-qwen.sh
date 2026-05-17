@@ -14,7 +14,8 @@
 set -euo pipefail
 
 MODEL_ID=Qwen/Qwen2.5-Coder-32B-Instruct
-VENV=/user_data/vllm-workshop/.venv
+# Adjust to match your host setup; VENV is the vLLM virtualenv.
+VENV="${VENV:-$HOME/vllm-workshop/.venv}"
 PORT=8001
 LOG=/tmp/vllm-qwen.log
 

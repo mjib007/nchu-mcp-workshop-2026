@@ -167,7 +167,7 @@ YouTube 看到這個格式會自動把章節點顯示在進度條上，學生可
 當前交付的是 1080p15 預覽（5.4 MB）。**正式發佈前**請本機 render 1080p60：
 
 ```bash
-cd /user_data/claude_projects/nchu-mcp-workshop-2026
+# 在 repo root 執行（cd 到你 clone 下來的位置）
 uv run --with manim manim -qh 01-why-mcp-video.py WhyMCP
 # 輸出在 media/videos/01-why-mcp-video/1080p60/WhyMCP.mp4
 ```

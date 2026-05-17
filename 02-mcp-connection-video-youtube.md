@@ -157,7 +157,7 @@ MCP Client 怎麼跟 MCP Server 講話？這支影片 2 分半帶你看完完整
 ## 本機 render 1080p60 指令
 
 ```bash
-cd /user_data/claude_projects/nchu-mcp-workshop-2026
+# 在 repo root 執行（cd 到你 clone 下來的位置）
 uv run --with manim manim -qh 02-mcp-connection-video.py MCPConnection
 # 輸出在 media/videos/02-mcp-connection-video/1080p60/MCPConnection.mp4
 ```
