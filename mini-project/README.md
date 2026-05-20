@@ -4,6 +4,16 @@
 
 **整份專案約 300 行程式碼**，可在一堂課內讀完並親手擴充成自己的應用。
 
+## ☁️ 最簡單：用 Colab 跑（零安裝，課堂推薦）
+
+不想在自己電腦裝 Node / uv？點下面用 Google Colab，瀏覽器裡一步步按 ▶ 就能跑起完整的 web 助理並完成 L1：
+
+**[▶ Open in Colab](https://colab.research.google.com/github/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/mini-project/colab/workshop.ipynb)**
+
+> 全部跑在雲端 Linux，Mac / Windows / 平板體驗一致，不會有「在我電腦上不能跑」的問題。需要一把講師發的 Claude API key。
+
+想在自己電腦裝完整版的，往下看 ↓
+
 ## 架構
 
 ```
