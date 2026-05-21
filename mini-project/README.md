@@ -49,6 +49,7 @@
 | `teachers_tool` | `teachers_tool.py` | 教師查詢（mock 資料） |
 | `weather_tool` | `weather_tool.py` | 天氣查詢 |
 | `library_tool` | `library_tool.py` | 圖書館館藏即時查詢（Ex Libris Primo，**免 API key**）— **L3 外部 API 範例** |
+| `course_tool` | `course_tool.py` | 中興 114-2 學期 **3018 門課**關鍵字搜尋 — **L4 大資料集範例** |
 | `arxiv_tool` | `arxiv_tool.py` | arXiv 論文搜尋 — **L3 練習 stub**，故意未註冊，學員依手冊自己加 |
 
 ## 快速啟動（4 步）

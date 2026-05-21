@@ -1,5 +1,5 @@
 {
-  "_comment": "L3 練習：arxiv_tool.py 故意未註冊,學員依 docs/labs/L3 自己加。library_tool.py 已註冊作為「外部 API」的可用示範(Primo 圖書館館藏,免 key)。",
+  "_comment": "arxiv_tool.py 故意未註冊(L3 練習,學員依手冊自己加)。library_tool=L3 外部 API 示範(Primo,免 key);course_tool=L4 大資料集示範(3018 門課)。",
   "mcpServers": {
     "hello_tool": {
       "command": "uv",
@@ -16,6 +16,10 @@
     "library_tool": {
       "command": "uv",
       "args": ["--directory", "mcp-server-py", "run", "python", "library_tool.py"]
+    },
+    "course_tool": {
+      "command": "uv",
+      "args": ["--directory", "mcp-server-py", "run", "python", "course_tool.py"]
     }
   }
 }

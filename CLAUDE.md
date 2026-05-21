@@ -134,7 +134,7 @@ repo root/
 │   └── sync-to-drive.sh               rclone 同步教材到 Google Drive
 ├── mini-project/                      學員端 hands-on 可跑 code
 │   ├── backend-node/                  Express + LLM client + MCP client
-│   ├── mcp-server-py/                 5 支 FastMCP 工具（hello/teachers/weather/library/arxiv）
+│   ├── mcp-server-py/                 6 支 FastMCP 工具（hello/teachers/weather/library/course/arxiv）
 │   ├── web/                           極簡 vanilla JS chat UI
 │   ├── colab/workshop.ipynb           零安裝 Colab 版
 │   ├── docs/labs/                     L1–L3 Lab 手冊

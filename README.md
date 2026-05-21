@@ -43,7 +43,7 @@
 
 ## 可跑的 hands-on：`mini-project/`
 
-學員在 Segment 4 跟著做的 demo：Express + Claude + FastMCP + 極簡 chat UI。4 支教學工具（hello / teachers / weather / library）+ 1 支 L3 練習 stub（arxiv）。`library` 即時查圖書館館藏（Ex Libris Primo，免 key），是「呼叫外部 API」的可用範例。
+學員在 Segment 4 跟著做的 demo：Express + Claude + FastMCP + 極簡 chat UI。5 支教學工具（hello / teachers / weather / library / course）+ 1 支 L3 練習 stub（arxiv）。`library` 即時查圖書館館藏（免 key 外部 API），`course` 查 3018 門真實課程（大資料集搜尋示範）。
 
 **最簡單：零安裝用 Colab**（課堂推薦）
 [▶ Open in Colab](https://colab.research.google.com/github/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/mini-project/colab/workshop.ipynb) — 瀏覽器裡一步步跑完整 3 層 + L1/L3，Mac/Windows 體驗一致。
