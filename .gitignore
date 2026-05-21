@@ -21,3 +21,7 @@ media/
 
 # Sibling repo — youtube-manim-animations is its own git repo, versioned independently
 youtube-manim-animations/
+
+# 已搬到 private repo,本機殘留勿再追蹤
+course-ta-agent/
+preview/

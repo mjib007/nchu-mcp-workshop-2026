@@ -18,29 +18,28 @@
 ## Repo 結構
 
 ```
-├── 01–03-*.pptx                       # 講課用投影片
-├── 01-why-mcp-video.mp4               # Segment 1 概念長片（3 min, Manim）
-├── 02-mcp-connection-video.mp4        # Segment 2 handshake 影片（2:17, Manim）
-├── 04-hands-on-lab.md / .pptx         # 第四段動手做 landing page + 講師開場 15 張
+├── 04-hands-on-lab.md                 # 第四段動手做 landing page（學員入口）
 ├── 05-practical-considerations.md     # 第五段收尾（規模／品質／模型／成本）
+├── haiku-alignment-report.md          # Haiku 優化報告（第五段延伸閱讀）
+│
+├── slides/                            # 所有講課投影片 .pptx（01–05 + haiku + sonnet）
+├── videos/                            # 影片生產檔（Manim *.py + *-preview.mp4 + *-youtube.md）
+├── scripts/                           # 講師用：live-demo 腳本 + 課堂筆記草稿
+│
 ├── mini-project/                      # 學員端 hands-on：Express + FastMCP + 極簡 UI
 │   ├── backend-node/, mcp-server-py/, web/
-│   ├── colab/workshop.ipynb           # 零安裝 Colab 版（雲端跑完整 3 層 + L1/L3）
+│   ├── colab/workshop.ipynb           # 零安裝 Colab 版（雲端跑完整 3 層 + L1/L2/L3）
 │   ├── docs/labs/                     # L1–L3 實作手冊
-│   ├── docs/benchmarks/               # 2026-04-24 Claude vs Gemma4 實驗記錄
-│   ├── scripts/                       # Claude vs 本地模型 對比腳本
 │   └── setup.sh                       # 環境預檢
 ├── infra/                             # 工作坊主辦端：vLLM 啟動腳本
-└── tools/
-    ├── lib_newstyle.py                # 共用設計系統（violet 色票、版面 primitives）
-    ├── build-0X-slides.py             # 各段 .pptx 程式化產生（皆 import lib_newstyle）
-    ├── build-haiku-slides.py          # haiku-alignment-report.pptx 產生
-    ├── build-sonnet-slides.py         # sonnet-running-example.pptx 產生
-    ├── extract-pptx-to-md.py          # 把 pptx 抽成 md（課程內容文字化）
-    └── sync-to-drive.sh               # rclone 同步教材到 Google Drive（需先 rclone config）
+├── docs/                              # GitHub Pages landing page
+└── tools/                             # 投影片生成腳本（共用 lib_newstyle.py 設計系統）
+    ├── lib_newstyle.py                # 設計系統（violet 色票、版面 primitives）
+    ├── build-0X-slides.py             # 各段 .pptx 程式化產生 → 寫入 slides/
+    └── sync-to-drive.sh               # rclone 同步教材到 Google Drive
 ```
 
-> **動畫展示**：早期版本以單檔 `*.html` 互動動畫呈現；目前改為 Manim 渲染的 `.mp4` 影片（更穩定、可重複播放、能直接上 YouTube）。HTML 動畫已全部移除。
+> **影片**：Manim 渲染的 `.mp4`（已上 YouTube）；早期的 `*.html` 互動動畫已全部移除。
 
 ## 可跑的 hands-on：`mini-project/`
 
@@ -59,19 +58,10 @@ cd backend-node && npm start           # → http://localhost:3000
 
 詳見 [`mini-project/README.md`](mini-project/README.md)。
 
-## 風格規範
+## 投影片怎麼產生
 
-- 配色：Violet primary `#7B5CF5` + Orange / Teal / Pink / Blue accents，搭配 pastel card 底色（`*_PASTEL`）；finale / transition 頁使用 Midnight `#0F1429`
-- 字型：Arial Black（重粗體標題）／ Calibri（內文，附 italic muted 副標）／ Consolas（程式碼，柔化的 syntax highlighting）
-- 設計系統集中於 `tools/lib_newstyle.py`（色票 + `metadata_bar` / `pastel_card` / `circle_number` / `code_block` / `callout_box` 等版面 primitives），各段 `tools/build-0X-slides.py` 共用
-- 動畫展示以 Manim 渲染為 `.mp4`（取代早期的 `.html` 互動動畫，已全數移除）
-- 第四、五段以 `.md` 產出；動手部分以可跑的 `mini-project/`（含 Colab 版）呈現
+所有 `.pptx` 由 `tools/build-0X-slides.py` 用 python-pptx 程式化生成（共用 `tools/lib_newstyle.py` 設計系統），輸出到 `slides/`。改投影片改腳本、重跑即可，不手動編輯 .pptx：
 
-## 目前進度
-
-- 第一段：`01-why-mcp.pptx`（21 張）+ Why MCP 概念長片（2:35 Manim → YouTube）
-- 第二段：`02-how-mcp-works.pptx`（**24 張**，含附錄 REST vs JSON-RPC）+ handshake 影片（2:14 → YouTube）
-- 第三段：`03-agentic-tool-loop.pptx`（8 張，A2 cut）+ Agentic Loop 影片（1:07 Manim → YouTube）
-- 第四段（動手做）：`04-hands-on-lab.pptx`（**12 張**，code-truth 對齊 mini-project）+ `04-hands-on-lab.md` + 完整可跑 `mini-project/`（含 Colab 版 + 三關 Lab 手冊）
-- 第五段（實務考量收尾）：`05-practical-considerations.md` 完成（四大支柱：規模／品質／模型／成本）
-- `infra/`：Gemma 4 / Qwen 2.5-Coder vLLM 啟動腳本完成
+```bash
+uv run --with python-pptx python3 tools/build-01-slides.py   # → slides/01-why-mcp.pptx
+```

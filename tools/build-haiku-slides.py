@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lib_newstyle import *  # noqa: E402,F401,F403
 
 REPO = Path(__file__).resolve().parent.parent
-PPTX = REPO / "haiku-alignment-report.pptx"
+PPTX = REPO / "slides" / "haiku-alignment-report.pptx"
 
 TOTAL = 9
 

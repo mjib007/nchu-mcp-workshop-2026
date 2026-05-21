@@ -148,7 +148,7 @@ MCP Client 怎麼跟 MCP Server 講話？這支影片 2 分半帶你看完完整
 - [ ] 縮圖製作（Ocean Gradient + 「MCP 握手」+ 父子盒 + JSON）
 - [ ] 確認**沒加** `#Shorts`
 - [ ] 置頂留言準備好（版本 A）
-- [ ] **影片渲染為 1080p60**：`uv run --with manim manim -qh 02-mcp-connection-video.py MCPConnection`
+- [ ] **影片渲染為 1080p60**：`uv run --with manim manim -qh videos/02-mcp-connection-video.py MCPConnection`
 - [ ] 字幕檔（中文 SRT — 從腳本 `show_subtitle` 抽出來）
 - [ ] 加入「MCP 工作坊」播放清單（接 #01 Why MCP）
 
@@ -158,7 +158,7 @@ MCP Client 怎麼跟 MCP Server 講話？這支影片 2 分半帶你看完完整
 
 ```bash
 # 在 repo root 執行（cd 到你 clone 下來的位置）
-uv run --with manim manim -qh 02-mcp-connection-video.py MCPConnection
+uv run --with manim manim -qh videos/02-mcp-connection-video.py MCPConnection
 # 輸出在 media/videos/02-mcp-connection-video/1080p60/MCPConnection.mp4
 ```
 

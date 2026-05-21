@@ -93,7 +93,7 @@ Workshop 現場可連 NCHU vLLM 端點（`infra/serve-*.sh` 提供 Gemma 4 / Qwe
 
 本 repo（public）只包含**工作坊教材**：投影片、md、mini-project hands-on、Manim 影片、landing page。
 
-線上課程小助教（TA 問答服務）是**另一個獨立的非公開專案**，不在本 repo，相關開發請在該專案進行。本 repo 的 `tools/extract-pptx-to-md.py` 可把投影片內容文字化，供該服務的知識庫使用。
+線上課程小助教（TA 問答服務）是**另一個獨立的非公開專案**，不在本 repo，相關開發請在該專案進行。
 
 ## 教材風格規範
 
@@ -105,46 +105,43 @@ Workshop 現場可連 NCHU vLLM 端點（`infra/serve-*.sh` 提供 Gemma 4 / Qwe
 - 每段至少 1 個來自 NCHU AI 學伴 repo 的具體案例（例如 33 工具分類、Haiku alignment、agentic loop）
 - 程式片段以說明「概念」為主，避免逐行解釋；複雜流程用動畫或圖示取代文字
 
-## 檔案命名慣例
+## 檔案命名慣例 + 目錄歸類
 
-- 簡報：`0X-主題.pptx`，直接放在 repo 根目錄
-- 動畫：以 Manim 渲染為 `.mp4`，放在 repo 根目錄（早期的 `*-animation.html` 已全數移除）
-- 教材 md：`0X-主題.md`（Segment 4、5 以 md 為主；Segment 4 另有配套 pptx 作為現場講師開場使用）
-- 投影片生成腳本：`tools/gen-0X-slides.py`（用 python-pptx 程式化生成，確保視覺風格統一且可重現）
-- 草稿 / 筆記：`course-notes-*.md`
-- 可跑 code：集中在 `mini-project/` 子目錄，保留階層結構；`setup.sh` 位於其 root
-- 工作坊主辦端 infra：集中在 `infra/`，學員端不需要碰
+頂層按產出類型分資料夾，root 只留少數入口 md：
+
+- **`slides/`**：所有講課投影片 `.pptx`（`0X-主題.pptx` + haiku + sonnet）。由 `tools/build-*-slides.py` 程式化產生並寫入此。
+- **`videos/`**：影片生產檔 —— Manim `*-video.py` + 渲染出的 `*-preview.mp4` + `*-youtube.md`（YouTube 發佈素材）
+- **`scripts/`**：講師用 —— `*-live-demo-script.md` + `course-notes-draft.md`（草稿）
+- **root 只留**：`04-hands-on-lab.md`、`05-practical-considerations.md`、`haiku-alignment-report.md`（學員/讀者入口）+ `README.md` / `CLAUDE.md`
+- **`mini-project/`**：學員端可跑 code（含 `colab/` 零安裝版）；`setup.sh` 在其 root
+- **`infra/`**：工作坊主辦端 vLLM，學員不碰
+- **`docs/`**：GitHub Pages landing page
 
 ## Repo 結構
 
 ```
 repo root/
-├── 01–03 *.pptx                       講課投影片（學員端）
-├── 01-why-mcp-video.mp4               Segment 1 Manim 長片
-├── 02-mcp-connection-video.mp4        Segment 2 Manim 長片
-├── 04-hands-on-lab.md                 第四段動手做 landing page（現場實作主場）
-├── 04-hands-on-lab.pptx               第四段講師開場投影片（12 張，由 tools/ 產出）
+├── 04-hands-on-lab.md                 第四段動手做 landing（學員入口）
 ├── 05-practical-considerations.md     第五段實務考量收尾
-├── haiku-alignment-*                  Haiku 優化報告（第五段 §4 引用）
-├── sonnet-*-example.*                 Sonnet 實例（第三段引用）
-├── course-notes-draft.md              個人筆記草稿
-├── tools/                             投影片生成腳本（共用 lib_newstyle.py 設計系統）
+├── haiku-alignment-report.md          Haiku 優化報告（第五段延伸閱讀）
+│
+├── slides/                            所有 .pptx（01–05 + haiku + sonnet,由 tools/ 產出）
+├── videos/                            Manim *.py + *-preview.mp4 + *-youtube.md
+├── scripts/                           *-live-demo-script.md + course-notes-draft.md
+│
+├── tools/                             投影片生成腳本（共用 lib_newstyle.py）
 │   ├── lib_newstyle.py                色票 + 版面 primitives（violet 主視覺）
-│   ├── build-0X-slides.py             各段 .pptx 程式化產生
-│   ├── build-haiku-slides.py          haiku-alignment-report.pptx 產生
-│   ├── build-sonnet-slides.py         sonnet-running-example.pptx 產生
-│   └── extract-pptx-to-md.py          抽 pptx 成 md（課程內容文字化）
+│   ├── build-0X-slides.py             各段 .pptx 程式化產生 → 寫入 slides/
+│   └── sync-to-drive.sh               rclone 同步教材到 Google Drive
 ├── mini-project/                      學員端 hands-on 可跑 code
 │   ├── backend-node/                  Express + LLM client + MCP client
-│   ├── mcp-server-py/                 4 支 FastMCP 工具（hello/teachers/weather/arxiv）
+│   ├── mcp-server-py/                 5 支 FastMCP 工具（hello/teachers/weather/library/arxiv）
 │   ├── web/                           極簡 vanilla JS chat UI
-│   ├── scripts/                       Claude vs 本地模型 對比腳本
+│   ├── colab/workshop.ipynb           零安裝 Colab 版
 │   ├── docs/labs/                     L1–L3 Lab 手冊
-│   ├── docs/benchmarks/               實驗記錄（2026-04-24）
 │   └── setup.sh                       環境預檢
-└── infra/                             工作坊主辦端 vLLM 啟動
-    ├── serve-gemma.sh                 Gemma 4 31B 端點（port 8000）
-    └── serve-qwen.sh                  Qwen 2.5-Coder 32B 端點（port 8001）
+├── infra/                             工作坊主辦端 vLLM 啟動（serve-gemma/qwen.sh）
+└── docs/                              GitHub Pages landing page
 ```
 
 ## 相關 repo

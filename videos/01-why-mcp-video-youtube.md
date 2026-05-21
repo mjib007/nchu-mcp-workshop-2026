@@ -156,7 +156,7 @@ YouTube 看到這個格式會自動把章節點顯示在進度條上，學生可
 - [ ] 章節時間軸格式正確（YouTube 自動偵測）
 - [ ] 確認**沒加 `#Shorts`**
 - [ ] 置頂留言準備好（版本 A）
-- [ ] 影片渲染為 1080p60（本機跑 `manim -qh 01-why-mcp-video.py WhyMCP`）
+- [ ] 影片渲染為 1080p60（本機跑 `manim -qh videos/01-why-mcp-video.py WhyMCP`）
 - [ ] 上字幕檔（中文 SRT — 從腳本內 `show_subtitle` 抽出來）
 - [ ] 設定播放清單（若做系列）
 
@@ -168,7 +168,7 @@ YouTube 看到這個格式會自動把章節點顯示在進度條上，學生可
 
 ```bash
 # 在 repo root 執行（cd 到你 clone 下來的位置）
-uv run --with manim manim -qh 01-why-mcp-video.py WhyMCP
+uv run --with manim manim -qh videos/01-why-mcp-video.py WhyMCP
 # 輸出在 media/videos/01-why-mcp-video/1080p60/WhyMCP.mp4
 ```
 

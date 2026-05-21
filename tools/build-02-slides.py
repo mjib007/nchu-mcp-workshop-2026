@@ -19,7 +19,7 @@ from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.util import Inches, Pt, Emu
 
 REPO = Path(__file__).resolve().parent.parent
-PPTX = REPO / "02-how-mcp-works.pptx"
+PPTX = REPO / "slides" / "02-how-mcp-works.pptx"
 
 # ── Palette ─────────────────────────────────────────────────────────
 VIOLET       = RGBColor(0x7B, 0x5C, 0xF5)

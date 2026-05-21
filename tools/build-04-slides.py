@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lib_newstyle import *  # noqa: E402,F401,F403
 
 REPO = Path(__file__).resolve().parent.parent
-PPTX = REPO / "04-hands-on-lab.pptx"
+PPTX = REPO / "slides" / "04-hands-on-lab.pptx"
 
 TOTAL = 13
 
