@@ -36,9 +36,18 @@
 三個模組，各自獨立可換：
 | 模組 | 語言 | 檔案 | 職責 |
 |------|------|------|------|
-| MCP 工具伺服器 | Python | `mcp-server-py/hello_tool.py` | 定義工具、回傳資料 |
+| MCP 工具伺服器 | Python | `mcp-server-py/*.py` | 定義工具、回傳資料 |
 | Web 後端 | Node.js | `backend-node/*.js` | 轉接 LLM、管理 MCP client |
 | 前端 | HTML + vanilla JS | `web/index.html` | 收發對話 |
+
+**內建工具**（`config.json` 已註冊前 4 支）：
+| 工具 | 檔案 | 說明 |
+|------|------|------|
+| `hello_tool` | `hello_tool.py` | 英文中心資訊（讀本機 JSON）— **L1 改造主例** |
+| `teachers_tool` | `teachers_tool.py` | 教師查詢（mock 資料） |
+| `weather_tool` | `weather_tool.py` | 天氣查詢 |
+| `library_tool` | `library_tool.py` | 圖書館館藏即時查詢（Ex Libris Primo，**免 API key**）— **L3 外部 API 範例** |
+| `arxiv_tool` | `arxiv_tool.py` | arXiv 論文搜尋 — **L3 練習 stub**，故意未註冊，學員依手冊自己加 |
 
 ## 快速啟動（4 步）
 
@@ -59,7 +68,9 @@ cp .env.example .env
 cd backend-node && npm start
 ```
 
-瀏覽器打開 `http://localhost:3000`，輸入 `英文中心幾點開門？` 試試。
+瀏覽器打開 `http://localhost:3000`，試問：
+- `英文中心幾點開門？`（→ 觸發 `hello_tool`，讀本機 JSON）
+- `圖書館有沒有原子習慣這本書？`（→ 觸發 `library_tool`，即時打外部圖書館 API）
 
 ### Windows 學員看這邊
 
