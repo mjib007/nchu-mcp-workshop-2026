@@ -11,7 +11,7 @@ from lib_newstyle import *  # noqa: E402,F401,F403
 REPO = Path(__file__).resolve().parent.parent
 PPTX = REPO / "slides" / "04-hands-on-lab.pptx"
 
-TOTAL = 13
+TOTAL = 16
 
 
 def build_cover(prs):
@@ -77,7 +77,7 @@ def build_schedule(prs):
     slide_subtitle(s, "講師 10 min 引導 + 60 min 巡場陪跑", y=1.85)
 
     rows = [
-        ("0–10",  "講師 demo + 學員同步 ./setup.sh",      "環境綠燈 5/5 ✅"),
+        ("0–10",  "講師 demo + 學員開 Colab(零安裝)",     "瀏覽器就緒"),
         ("10–25", "L1 Step 1–2:觀察現況 + 換自己 JSON",  "data/your.json"),
         ("25–45", "L1 Step 3–4:改 docstring + 重啟驗證", "問自己資料會答"),
         ("45–60", "交叉展示 + L2/L3 試玩 — 老師 demo 自己領域", "見識不同落地方式"),
@@ -117,7 +117,7 @@ def build_schedule(prs):
     callout_box(s, 0.85, 6.45, 12, 0.55,
                 "40 分鐘巡場預計 80% 在幫卡住的老師 — 開場預演越短,越多時間陪跑",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=13)
-    page_number(s, 3, TOTAL)
+    page_number(s, 4, TOTAL)
 
 
 def build_architecture(prs):
@@ -157,7 +157,7 @@ def build_architecture(prs):
     callout_box(s, 0.85, 6.4, 12, 0.55,
                 "Node ⟷ LLM 之間迭代「問 → tool_use → 跑 → 答 → 再問」直到 end_turn",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=13)
-    page_number(s, 4, TOTAL)
+    page_number(s, 5, TOTAL)
 
 
 def build_agent_loop_code(prs):
@@ -195,12 +195,12 @@ def build_agent_loop_code(prs):
     callout_box(s, 0.85, 6.65, 12, 0.4,
                 "△  maxIterations=5 是護欄;整個 agent 沒有 magic — 就是 for-loop + if-else",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="", size=12)
-    page_number(s, 5, TOTAL)
+    page_number(s, 6, TOTAL)
 
 
 def build_setup_steps(prs):
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "02", "P R E - W O R K S H O P", accent=TEAL)
+    metadata_bar(s, "附錄 A", "P R E - W O R K S H O P", accent=TEAL)
     slide_title(s, "行前準備(請於上課前完成)", y=0.95, size=32)
     slide_subtitle(s, "這幾步無關概念,但卡住會吃掉現場時間", y=1.85)
 
@@ -227,12 +227,12 @@ def build_setup_steps(prs):
                  "color": INK, "space_after": 2}
                 for line in code.split("\n")])
         y += 1.0
-    page_number(s, 6, TOTAL)
+    page_number(s, 13, TOTAL)
 
 
 def build_quick_start(prs):
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "02 · ①", "Q U I C K   S T A R T", accent=TEAL)
+    metadata_bar(s, "附錄 B", "Q U I C K   S T A R T", accent=TEAL)
     slide_title(s, "現場啟動 (5 分鐘)", y=0.95)
     slide_subtitle(s, "本機三條指令(零安裝可改用 Colab,見 README)+ 對照「該長什麼樣」", y=1.85)
 
@@ -263,7 +263,7 @@ def build_quick_start(prs):
           "★  5 支工具全 ✓ + URL → MCP server 都連上了",
           font=FONT_BODY, size=13, color=TEAL_DEEP, italic=True,
           align=PP_ALIGN.CENTER)
-    page_number(s, 7, TOTAL)
+    page_number(s, 14, TOTAL)
 
 
 def build_troubleshooting(prs):
@@ -271,7 +271,7 @@ def build_troubleshooting(prs):
     Inserted between quick_start (slide 7) and llm_routes (slide 9 was 8)
     to give 講師 + 學員 a single-screen reference when setup.sh fails."""
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "02 · !", "S E T U P · 卡住怎麼辦", accent=PINK)
+    metadata_bar(s, "附錄 C", "S E T U P · 卡住怎麼辦", accent=PINK)
     slide_title(s, "卡住了?5 個常見救援", y=0.95, size=32)
     slide_subtitle(s, "Setup 失敗 90% 是這 5 種,先看這頁再舉手", y=1.85)
 
@@ -332,12 +332,12 @@ def build_troubleshooting(prs):
     callout_box(s, 0.85, 6.85, 12, 0.45,
                 "Windows 學員建議用 Git Bash:Mac/Linux 指令一律可跑(setup.sh 也直接用)",
                 accent=BLUE, fill=BLUE_PASTEL, icon="i", size=12)
-    page_number(s, 8, TOTAL)
+    page_number(s, 15, TOTAL)
 
 
 def build_llm_routes(prs):
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "02 · ②", "L L M   R O U T E   ·   1   L I N E   T O   S W I T C H",
+    metadata_bar(s, "附錄 D", "L L M   R O U T E   ·   1   L I N E   T O   S W I T C H",
                  accent=TEAL)
     slide_title(s, "選你的 LLM 路線", y=0.95)
     slide_subtitle(s, ".env 一行切換 —— 因為 MCP 工具兩家都認", y=1.85)
@@ -371,7 +371,7 @@ def build_llm_routes(prs):
     callout_box(s, 0.85, 6.45, 12, 0.55,
                 "★  N+M 的甜蜜:你的工具一支不變,adapter 差別只在 mcp-client.js 幾行",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="", size=13)
-    page_number(s, 9, TOTAL)
+    page_number(s, 16, TOTAL)
 
 
 def build_l1_overview(prs):
@@ -403,7 +403,7 @@ def build_l1_overview(prs):
     callout_box(s, 0.85, 6.5, 12, 0.5,
                 "產出:你的 AI 助理會回答你自己放進去的資料 — 不是英文中心 demo 了",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=13)
-    page_number(s, 10, TOTAL)
+    page_number(s, 7, TOTAL)
 
 
 def build_l1_step12(prs):
@@ -456,7 +456,7 @@ def build_l1_step12(prs):
         {"text": "python3 -m json.tool data/xxx.json",
          "font": FONT_CODE, "size": 11, "color": PINK_DEEP, "space_after": 0},
     ])
-    page_number(s, 11, TOTAL)
+    page_number(s, 8, TOTAL)
 
 
 def build_l1_step3(prs):
@@ -501,61 +501,164 @@ def build_l1_step3(prs):
     callout_box(s, 0.85, 6.45, 12, 0.55,
                 "影響 LLM 行為的 3 元素:使用情境(該不該叫) / Args 描述(怎麼填) / 跨工具線索(呼叫順序)",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=13)
-    page_number(s, 12, TOTAL)
+    page_number(s, 9, TOTAL)
+
+
+def build_colab_journey(prs):
+    """主線脊椎:開 Colab → L1→L5 的旅程地圖。"""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "01", "C O L A B   J O U R N E Y", accent=VIOLET)
+    slide_title(s, "在 Colab 跑:L1 → L5 的旅程", y=0.95, size=32)
+    slide_subtitle(s, "零安裝,瀏覽器一步步按 ▶;想在自己電腦裝 → 見最後的附錄", y=1.85)
+
+    steps = [
+        ("L1", "換你的資料",   "0 行 Python", TEAL),
+        ("L2", "參數搜尋",     "LLM 填參數", VIOLET),
+        ("L3", "外部 API",     "免 key 圖書館", ORANGE),
+        ("L4", "大資料集",     "3018 門課", PINK),
+        ("L5", "給 AI 新能力", "造一支工具", VIOLET_DEEP),
+    ]
+    card_w = 2.3
+    gap = 0.13
+    for i, (lab, title, body, color) in enumerate(steps):
+        x = 0.55 + i * (card_w + gap)
+        _rounded(s, x, 2.9, card_w, 2.6, pastel_for(color), line_color=color, line_w=2)
+        _text(s, x, 3.05, card_w, 0.6, lab,
+              font=FONT_TITLE, size=26, color=color, bold=True, align=PP_ALIGN.CENTER)
+        _text(s, x + 0.15, 3.75, card_w - 0.3, 0.5, title,
+              font=FONT_TITLE, size=15, color=INK, bold=True, align=PP_ALIGN.CENTER)
+        _text(s, x + 0.15, 4.35, card_w - 0.3, 0.8, body,
+              font=FONT_BODY, size=12, color=INK_SOFT, align=PP_ALIGN.CENTER)
+        if i < len(steps) - 1:
+            _text(s, x + card_w, 2.9, gap + 0.1, 2.6, "→",
+                  font=FONT_TITLE, size=18, color=MUTED, bold=True,
+                  align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+
+    callout_box(s, 0.85, 6.2, 12, 0.6,
+                "Open in Colab(零安裝)→ github.com/UDICatNCHU/nchu-mcp-workshop-2026 的 README 有一鍵連結",
+                accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=14)
+    page_number(s, 3, TOTAL)
+
+
+def build_visible_loop(prs):
+    """看得見的 loop:對應 Colab 印 server log 的 tool_use 軌跡。"""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "04", "V I S I B L E   L O O P", accent=ORANGE)
+    slide_title(s, "看得見的 loop:LLM 自己在呼叫工具", y=0.95, size=32)
+    slide_subtitle(s, "在 Colab 問一句 → 印出 log,看 LLM 自己決定呼叫了哪幾支、跑幾輪", y=1.85)
+
+    _text(s, 0.85, 2.45, 12, 0.4, "問:「資工系深度學習的課,授課老師最近有什麼論文?」",
+          font=FONT_BODY, size=15, color=VIOLET, bold=True)
+    code_block(s, 0.85, 2.95, 12, 2.5, [
+        ("# server log (Colab 那格印出來的)",                  CODE_COMMENT),
+        ("  [tool_use] search_courses",                         CODE_STRING),
+        ("  [tool_use] search_arxiv",                           CODE_STRING),
+        ("  [tool_use] search_arxiv, search_arxiv  ← 同輪並行",  CODE_ORANGE),
+        ("  (stop_reason: end_turn → 整合回覆)",                CODE_COMMENT),
+    ], size=13)
+    callout_box(s, 0.85, 5.7, 12, 0.95,
+                "你只問了一句 —— 呼叫哪幾支工具、跑幾輪、要不要並行,全是 LLM 自己決定的。"
+                "這就是 Segment 3 的 agentic loop,現在在你自己畫面上發生。",
+                accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=14)
+    page_number(s, 10, TOTAL)
 
 
 def build_l2_l3_preview(prs):
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "★", "L 1 → L 4   L A B   P A T H S", accent=VIOLET)
-    slide_title(s, "L1 → L4 — 課堂試 + 帶回家寫", y=0.95, size=32)
-    slide_subtitle(s, "Colab 已內建 L1-L4 可現場試;手冊在 mini-project/docs/labs/", y=1.85)
+    metadata_bar(s, "05", "L 1 → L 5   L A B   P A T H S", accent=VIOLET)
+    slide_title(s, "L1 → L5 — Colab 一路試上去", y=0.95, size=32)
+    slide_subtitle(s, "L1 現場必做;L2-L5 Colab 都已內建可現場試,也可帶回家自己寫", y=1.85)
 
     items = [
-        ("L1", "換 JSON 做你領域的助理", "課堂必做\n0 行 Python", "現場做", TEAL,   TEAL_PASTEL),
-        ("L2", "有參數的搜尋工具",        "Colab 內建\nteachers_tool", "可現場試", VIOLET, VIOLET_PASTEL),
-        ("L3", "呼叫外部 API",            "Colab 內建\nlibrary_tool(免 key)", "可現場試", ORANGE, ORANGE_PASTEL),
-        ("L4", "大資料集搜尋",            "Colab 內建\ncourse 3018 門課", "可現場試", PINK,   PINK_PASTEL),
+        ("L1", "換你的資料",   "0 行 Python", "現場做", TEAL),
+        ("L2", "參數搜尋工具", "teachers_tool", "可試", VIOLET),
+        ("L3", "外部 API",     "library 免 key", "可試", ORANGE),
+        ("L4", "大資料集",     "course 3018 課", "可試", PINK),
+        ("L5", "給 AI 新能力", "造一支工具", "挑戰", VIOLET_DEEP),
     ]
-    card_w = 2.95
-    gap = 0.18
-    for i, (lab, title, body, badge, accent, fill) in enumerate(items):
+    card_w = 2.3
+    gap = 0.13
+    for i, (lab, title, body, badge, accent) in enumerate(items):
         x = 0.55 + i * (card_w + gap)
-        _rounded(s, x, 2.7, card_w, 3.7, fill, line_color=accent, line_w=2)
-        _text(s, x + 0.25, 2.85, 1.0, 0.5, lab,
-              font=FONT_TITLE, size=24, color=accent, bold=True)
-        _rounded(s, x + card_w - 1.05, 2.95, 0.85, 0.4, BG_WHITE,
+        _rounded(s, x, 2.7, card_w, 3.7, pastel_for(accent), line_color=accent, line_w=2)
+        _text(s, x + 0.2, 2.85, 1.0, 0.5, lab,
+              font=FONT_TITLE, size=22, color=accent, bold=True)
+        _rounded(s, x + card_w - 0.95, 2.92, 0.75, 0.38, BG_WHITE,
                  line_color=accent, line_w=1.5)
-        _text(s, x + card_w - 1.05, 2.95, 0.85, 0.4, badge,
+        _text(s, x + card_w - 0.95, 2.92, 0.75, 0.38, badge,
               font=FONT_CODE, size=10, color=accent, bold=True,
               align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
-        _text(s, x + 0.25, 3.55, card_w - 0.5, 0.6, title,
+        _text(s, x + 0.2, 3.5, card_w - 0.4, 0.9, title,
               font=FONT_TITLE, size=15, color=INK, bold=True)
-        _multi(s, x + 0.25, 4.3, card_w - 0.5, 2.0,
-               [{"text": line, "font": FONT_BODY, "size": 13,
-                 "color": INK_SOFT, "space_after": 6}
-                for line in body.split("\n")])
+        _text(s, x + 0.2, 4.5, card_w - 0.4, 1.5, body,
+              font=FONT_BODY, size=12, color=INK_SOFT)
 
     callout_box(s, 0.85, 6.5, 12, 0.5,
-                "Colab 一鍵開(零安裝)現場試 L1-L4;想自己寫工具 → 手冊 docs/labs/",
+                "L1-L5 都在 Colab 一格一格按下去;想自己寫工具的完整手冊 → docs/labs/",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=13)
-    page_number(s, 13, TOTAL)
+    page_number(s, 11, TOTAL)
+
+
+def build_l5_capability(prs):
+    """L5 收尾:能力缺口 before/after,收回 Segment 1 的開場問題。"""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "06", "L 5 · 給 A I 新 能 力", accent=VIOLET)
+    slide_title(s, "收尾:給 AI 一個它本來沒有的能力", y=0.95, size=32)
+    slide_subtitle(s, "L5 的 before / after —— 工具就是這麼一回事", y=1.85)
+
+    pastel_card(s, 0.85, 2.7, 5.95, 3.4, accent=PINK, fill=PINK_PASTEL,
+                title="① 先問(它辦不到)")
+    _multi(s, 1.1, 3.35, 5.5, 2.6, [
+        {"text": "問:「今天星期幾?」",
+         "font": FONT_BODY, "size": 16, "color": INK, "bold": True, "space_after": 8},
+        {"text": "✗  LLM 沒有「現在」的概念",
+         "font": FONT_BODY, "size": 14, "color": PINK_DEEP, "space_after": 4},
+        {"text": "✗  知識有截止日、也沒有時鐘",
+         "font": FONT_BODY, "size": 14, "color": PINK_DEEP, "space_after": 4},
+        {"text": "→  它說不知道,或亂猜一個日期",
+         "font": FONT_BODY, "size": 14, "color": INK, "italic": True, "space_after": 0},
+    ])
+
+    pastel_card(s, 7.05, 2.7, 5.85, 3.4, accent=TEAL, fill=TEAL_PASTEL,
+                title="② 給工具 → 再問")
+    _multi(s, 7.3, 3.35, 5.4, 2.6, [
+        {"text": "寫一支 get_today()(用 datetime)",
+         "font": FONT_BODY, "size": 16, "color": INK, "bold": True, "space_after": 8},
+        {"text": "✓  拿到「真的今天」—— LLM 辦不到的事",
+         "font": FONT_BODY, "size": 14, "color": TEAL_DEEP, "space_after": 4},
+        {"text": "✓  再問同題 → 答對了",
+         "font": FONT_BODY, "size": 14, "color": TEAL_DEEP, "space_after": 8},
+        {"text": "你剛給了 AI 一個新能力。",
+         "font": FONT_BODY, "size": 14, "color": INK, "italic": True, "space_after": 0},
+    ])
+
+    callout_box(s, 0.85, 6.4, 12, 0.6,
+                "工具 = 給 LLM 它本來沒有的能力。Segment 1 問「怎麼讓 LLM 連上真實世界」—— "
+                "答案就是你剛在 L5 親手做的這件事。",
+                accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=14)
+    page_number(s, 12, TOTAL)
 
 
 def main():
     prs = make_presentation()
+    # ── 主線:Colab 旅程 ──
     build_cover(prs)            # 1
     build_outcomes(prs)         # 2
-    build_schedule(prs)         # 3
-    build_architecture(prs)     # 4
-    build_agent_loop_code(prs)  # 5
-    build_setup_steps(prs)      # 6
-    build_quick_start(prs)      # 7
-    build_troubleshooting(prs)  # 8 (NEW: 卡住怎麼辦 5 個救援)
-    build_llm_routes(prs)       # 9
-    build_l1_overview(prs)      # 10
-    build_l1_step12(prs)        # 11
-    build_l1_step3(prs)         # 12
-    build_l2_l3_preview(prs)    # 13
+    build_colab_journey(prs)    # 3  NEW — Colab 旅程地圖(脊椎)
+    build_schedule(prs)         # 4
+    build_architecture(prs)     # 5
+    build_agent_loop_code(prs)  # 6
+    build_l1_overview(prs)      # 7  L1 主場
+    build_l1_step12(prs)        # 8
+    build_l1_step3(prs)         # 9
+    build_visible_loop(prs)     # 10 NEW — 看得見的 loop
+    build_l2_l3_preview(prs)    # 11 L1→L5 旅程
+    build_l5_capability(prs)    # 12 NEW — L5 能力缺口收尾
+    # ── 附錄:本機安裝(Colab 出狀況才用)──
+    build_setup_steps(prs)      # 13 附錄 A
+    build_quick_start(prs)      # 14 附錄 B
+    build_troubleshooting(prs)  # 15 附錄 C
+    build_llm_routes(prs)       # 16 附錄 D
     prs.save(str(PPTX))
     print(f"saved → {PPTX.name} ({len(prs.slides)} slides)")
 
