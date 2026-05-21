@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Build 02-how-mcp-works.pptx from scratch in the new visual style
-(matches tool_calling_intro_slides.pptx — violet primary + pastel cards
-+ heavy headings + minimal top metadata bar).
+(violet primary + pastel cards + heavy headings + minimal top metadata bar).
 
 Run:
     uv run --with python-pptx python3 tools/build-02-slides.py

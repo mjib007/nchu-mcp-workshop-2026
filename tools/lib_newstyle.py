@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 """Shared design system for the 2026 NCHU MCP Workshop slide deck.
 
-Modelled on `tool_calling_intro_slides.pptx` (violet primary + pastel cards
-+ heavy headings + minimal top metadata bar). Build scripts under tools/
-should import from this module rather than redeclaring constants/helpers.
+Visual language: violet primary + pastel cards + heavy headings + minimal
+top metadata bar. Build scripts under tools/ should import from this module
+rather than redeclaring constants/helpers.
 """
 
 from pptx import Presentation
