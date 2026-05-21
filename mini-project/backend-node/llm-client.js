@@ -19,7 +19,7 @@ export class LLMClient {
     this.maxTokens = maxTokens;
   }
 
-  async chat(messages, { maxIterations = 10 } = {}) {
+  async chat(messages, { maxIterations = 5 } = {}) {
     const history = [...messages];
 
     for (let i = 0; i < maxIterations; i++) {

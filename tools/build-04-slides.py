@@ -193,7 +193,7 @@ def build_agent_loop_code(prs):
     code_block(s, 0.85, 2.5, 12, 4.0, code_lines, size=11)
 
     callout_box(s, 0.85, 6.65, 12, 0.4,
-                "△  maxIterations=10 是護欄;整個 agent 沒有 magic — 就是 for-loop + if-else",
+                "△  maxIterations=5 是護欄;整個 agent 沒有 magic — 就是 for-loop + if-else",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="", size=12)
     page_number(s, 5, TOTAL)
 

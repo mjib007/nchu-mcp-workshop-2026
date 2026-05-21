@@ -63,7 +63,7 @@ export class OpenAILLMClient {
     });
   }
 
-  async chat(messages, { maxIterations = 10 } = {}) {
+  async chat(messages, { maxIterations = 5 } = {}) {
     const history = this._normalize(messages);
 
     for (let i = 0; i < maxIterations; i++) {
