@@ -194,7 +194,7 @@ if __name__ == "__main__":
 
 1. 為什麼 `docstring` 比參數名本身重要？（Hint：LLM 看不到你的變數命名美學）
 2. 如果兩個工具的 description 寫得太像（例如 `search_teachers` vs `find_teachers`），會發生什麼？
-3. 真實系統若有 **50 支工具**（像正式版 AiLearningMate 有 239 支），Claude 還能準確挑對嗎？有哪些解法？（→ Advanced topic: tool routing / retrieval）
+3. 真實系統若有 **50 支工具**（像中興 AI 學伴正式版有 239 支），Claude 還能準確挑對嗎？有哪些解法？（→ Advanced topic: tool routing / retrieval）
 4. 如果學生作業要交一個 5 工具 agent，你會怎麼設計 rubric？
    - 工具數量？docstring 品質？是否有 orchestration？錯誤處理？
 

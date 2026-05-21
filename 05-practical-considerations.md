@@ -39,7 +39,7 @@
 
 > **一句話重點**：3 工具 → 239 工具 **不是量變，是質變**，context 會先爆。
 
-今天做的 mini-project 有 **3 支工具**；正式版 AiLearningMate 有 **239 支工具**。
+今天做的 mini-project 有 **3 支工具**；中興 AI 學伴正式版有 **239 支工具**。
 
 ### 質變 1：Context 爆量
 
@@ -49,7 +49,7 @@ mini-project (3 tools):
   + 對話 5K + tool_result 2K = 8K 總 context
   → Gemma 4 max_model_len=16K 夠用
 
-AiLearningMate (239 tools):
+中興 AI 學伴 (239 tools):
   Tool schema 總量 ≈ 100K tokens
   → 直接超過 Gemma 16K context 6×
   → Claude 200K 才剛好塞進工具，對話空間所剩無幾

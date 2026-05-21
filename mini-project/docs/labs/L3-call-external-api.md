@@ -231,7 +231,7 @@ async def search_arxiv_cached(keyword: str, limit: int = 5) -> str:
 - 有靜態資料 → L1 模式
 - 有資料列表、需搜尋 → L2 模式
 - 要打外部 API → L3 模式
-- 組合以上 → 真實系統（例如 NCHU 正式版 AiLearningMate 用了 ~50 支各種模式的工具）
+- 組合以上 → 真實系統（例如中興 AI 學伴正式版用了 ~50 支各種模式的工具）
 
 **接下來的方向（自修）**：
 - **L4**：有副作用的 tool（寫檔、發 email、建 issue）+ 人類確認機制
