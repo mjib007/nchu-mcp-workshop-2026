@@ -11,7 +11,7 @@ from lib_newstyle import *  # noqa: E402,F401,F403
 REPO = Path(__file__).resolve().parent.parent
 PPTX = REPO / "slides" / "03-agentic-tool-loop.pptx"
 
-TOTAL = 8
+TOTAL = 11
 
 
 def build_cover(prs):
@@ -377,6 +377,118 @@ def build_core_loop_code(prs):
     page_number(s, 12, TOTAL)
 
 
+def build_loop_trace(prs):
+    """Concrete walk-through: one composite query through the rounds.
+    Makes the abstract loop_diagram tangible with real tool names + data."""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "01 · ②", "A G E N T I C   L O O P · 實 例 走 查", accent=ORANGE)
+    slide_title(s, "走一遍:一個查詢跑完整個 loop", y=0.95, size=32)
+    slide_subtitle(s, "「資工系深度學習的課,授課老師最近有什麼論文?」", y=1.85)
+
+    rounds = [
+        ("Round 1", VIOLET,
+         "「先查課」  + tool_use  search_courses(深度學習, 系所=資工)",
+         "→  tool_result:5 門課,授課老師:范、林、王…"),
+        ("Round 2", ORANGE,
+         "「查老師論文」  + tool_use  search_arxiv(范教授)",
+         "→  tool_result:近期 3 篇論文(LLM 評測、低資源生成…)"),
+        ("Round 3", TEAL,
+         "「整合 5 個結果」  ✓ stop_reason = end_turn",
+         "→  「你可修這門,范教授近期在做 LLM 評測,最對你胃口…」"),
+    ]
+    y0 = 2.55
+    rh = 1.25
+    for i, (label, color, action, result) in enumerate(rounds):
+        y = y0 + i * (rh + 0.18)
+        _rounded(s, 0.85, y, 12, rh, pastel_for(color), line_color=color, line_w=2)
+        # round label chip on the left
+        _rounded(s, 1.05, y + 0.20, 1.5, rh - 0.40, color, line_color=color)
+        _text(s, 1.05, y + 0.20, 1.5, rh - 0.40, label,
+              font=FONT_TITLE, size=15, color=BG_WHITE, bold=True,
+              align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+        _text(s, 2.8, y + 0.16, 9.9, 0.5, action,
+              font=FONT_BODY, size=15, color=INK, bold=True,
+              anchor=MSO_ANCHOR.MIDDLE)
+        _text(s, 2.8, y + 0.66, 9.9, 0.45, result,
+              font=FONT_BODY, size=13, color=INK_SOFT, italic=True,
+              anchor=MSO_ANCHOR.MIDDLE)
+    callout_box(s, 0.85, 6.95, 12, 0.4,
+                "每一輪 LLM 都看著上一輪的 tool_result,自己決定下一步 —— 你沒寫任何流程控制",
+                accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=13)
+    page_number(s, 6, TOTAL)
+
+
+def build_messages_growth(prs):
+    """The messages[] array accumulating across rounds — the loop's memory."""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "01 · ③", "M E S S A G E S   陣 列", accent=VIOLET)
+    slide_title(s, "messages 陣列怎麼長大", y=0.95)
+    slide_subtitle(s, "loop 的「記憶」就在這個一直變長的陣列 —— LLM 每輪都看到完整脈絡", y=1.85)
+
+    rows = [
+        ("[0]", "user",       "「資工系深度學習的課,老師論文?」", BLUE),
+        ("[1]", "assistant",  "tool_use  search_courses(...)",     VIOLET),
+        ("[2]", "user",       "tool_result  「5 門課,老師:范…」",  TEAL),
+        ("[3]", "assistant",  "tool_use  search_arxiv(范)",        VIOLET),
+        ("[4]", "user",       "tool_result  「3 篇論文…」",         TEAL),
+        ("[5]", "assistant",  "text  「你可修這門…」  ✓ end_turn",  ORANGE),
+    ]
+    y0 = 2.55
+    rh = 0.56
+    for i, (idx, role, content, color) in enumerate(rows):
+        y = y0 + i * (rh + 0.06)
+        _rounded(s, 0.85, y, 12, rh, pastel_for(color), line_color=color, line_w=1.5)
+        _text(s, 1.05, y, 0.9, rh, idx,
+              font=FONT_CODE, size=14, color=color, bold=True,
+              anchor=MSO_ANCHOR.MIDDLE)
+        _text(s, 2.0, y, 2.2, rh, role,
+              font=FONT_CODE, size=14, color=color, bold=True,
+              anchor=MSO_ANCHOR.MIDDLE)
+        _text(s, 4.3, y, 8.4, rh, content,
+              font=FONT_BODY, size=14, color=INK, anchor=MSO_ANCHOR.MIDDLE)
+
+    callout_box(s, 0.85, 6.95, 12, 0.4,
+                "每輪把上一輪結果接在後面 → 陣列越來越長 → 這就是「多輪記憶」的全部祕密",
+                accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=13)
+    page_number(s, 7, TOTAL)
+
+
+def build_parallel_calls(prs):
+    """Parallel tool calls — multiple tool_use in one turn, run concurrently."""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "01 · ④", "P A R A L L E L   T O O L   C A L L S", accent=TEAL)
+    slide_title(s, "一回合可以同時開多支工具", y=0.95)
+    slide_subtitle(s, "parallel tool calls —— 用 Promise.all 並行,不是一個接一個", y=1.85)
+
+    # assistant box (top)
+    _rounded(s, 4.5, 2.6, 4.3, 0.9, VIOLET_PASTEL, line_color=VIOLET, line_w=2)
+    _text(s, 4.5, 2.6, 4.3, 0.9, "assistant:一次吐 5 個 tool_use",
+          font=FONT_BODY, size=15, color=VIOLET, bold=True,
+          align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+
+    # 5 parallel tool boxes
+    names = ["arxiv(張)", "arxiv(李)", "arxiv(范)", "arxiv(林)", "arxiv(王)"]
+    bw = 2.2
+    for i, n in enumerate(names):
+        x = 0.65 + i * (bw + 0.18)
+        _rounded(s, x, 4.3, bw, 0.85, ORANGE_PASTEL, line_color=ORANGE, line_w=2)
+        _text(s, x, 4.3, bw, 0.85, n,
+              font=FONT_CODE, size=14, color=ORANGE, bold=True,
+              align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+        # connector
+        _text(s, x, 3.55, bw, 0.6, "↓",
+              font=FONT_TITLE, size=20, color=ORANGE, bold=True,
+              align=PP_ALIGN.CENTER)
+
+    _text(s, 0.85, 5.35, 12, 0.5, "5 個查詢 並行執行(Promise.all)",
+          font=FONT_BODY, size=16, color=TEAL_DEEP, bold=True,
+          align=PP_ALIGN.CENTER)
+    callout_box(s, 0.85, 6.4, 12, 0.55,
+                "並行 → 1 秒搞定 5 個查詢,不用等 5 倍時間;5 個 tool_result 一起回給 LLM",
+                accent=TEAL, fill=TEAL_PASTEL, icon="▶", size=14)
+    page_number(s, 8, TOTAL)
+
+
 def build_max_iter(prs):
     s = _blank_slide(prs, BG_WHITE)
     metadata_bar(s, "03 · ①", "M A X _ I T E R A T I O N S · 強制回覆", accent=TEAL)
@@ -418,7 +530,7 @@ def build_max_iter(prs):
          "font": FONT_BODY, "size": 13, "color": TEAL_DEEP,
          "italic": True, "space_after": 0},
     ])
-    page_number(s, 6, TOTAL)
+    page_number(s, 9, TOTAL)
 
 
 def build_metadata_tracking(prs):
@@ -582,7 +694,7 @@ def build_finale(prs):
          "font": FONT_BODY, "size": 14, "color": CODE_FG, "bold": True,
          "space_after": 0},
     ])
-    page_number(s, 16, TOTAL)
+    page_number(s, 10, TOTAL)
 
 
 def build_recap(prs):
@@ -791,7 +903,7 @@ def build_strategy_callback(prs):
     callout_box(s, 0.85, 6.95, 12, 0.55,
                 "從『單輪答話』到『多輪自主』 —— Segment 4 你會親手跑一個 mini-project",
                 accent=ORANGE, fill=ORANGE_PASTEL, icon="▶", size=14)
-    page_number(s, 8, TOTAL)
+    page_number(s, 11, TOTAL)
 
 
 def main():
@@ -809,10 +921,13 @@ def main():
     build_agenda(prs)                   # 2 — 3-section agenda
     build_single_turn_pain(prs)         # 3 — why agentic (problem)
     build_agentic_walkthrough(prs)      # 4 — agentic solution (4 steps)
-    build_loop_diagram(prs)             # 5 — loop mechanism + stop_reasons embedded
-    build_max_iter(prs)                 # 6 — safety valve
-    build_demo_cue(prs)                 # 7 — Live Demo + 5-question cheat sheet
-    build_strategy_callback(prs)        # 8 — RAG/ToolUse/Agentic + Segment 4 bridge
+    build_loop_diagram(prs)             # 5 — loop mechanism (abstract)
+    build_loop_trace(prs)               # 6 — NEW: 一個查詢走完整 loop (具體)
+    build_messages_growth(prs)          # 7 — NEW: messages 陣列累積 (記憶)
+    build_parallel_calls(prs)           # 8 — NEW: 並行呼叫多支工具
+    build_max_iter(prs)                 # 9 — safety valve
+    build_demo_cue(prs)                 # 10 — Live Demo + 5-question cheat sheet
+    build_strategy_callback(prs)        # 11 — RAG/ToolUse/Agentic + Segment 4 bridge
     prs.save(str(PPTX))
     print(f"saved → {PPTX.name} ({len(prs.slides)} slides)")
 
