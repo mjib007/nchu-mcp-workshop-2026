@@ -51,8 +51,8 @@ def build_outcomes(prs):
         ("Agent 資料流的脈動感",
          "工具選擇 → 參數綁定 → LLM 摘要\n在 terminal 看它一次跑通",
          TEAL, TEAL_PASTEL),
-        ("L2 / L3 挑戰路徑",
-         "帶回去繼續深入:加搜尋工具、呼叫外部 API",
+        ("L2–L4 進階關卡",
+         "Colab 現場可試:參數搜尋、外部 API、3018 課程大資料集",
          PINK, PINK_PASTEL),
     ]
     card_w = 2.95
@@ -234,7 +234,7 @@ def build_quick_start(prs):
     s = _blank_slide(prs, BG_WHITE)
     metadata_bar(s, "02 · ①", "Q U I C K   S T A R T", accent=TEAL)
     slide_title(s, "現場啟動 (5 分鐘)", y=0.95)
-    slide_subtitle(s, "三條指令 + 對照「該長什麼樣」", y=1.85)
+    slide_subtitle(s, "本機三條指令(零安裝可改用 Colab,見 README)+ 對照「該長什麼樣」", y=1.85)
 
     pastel_card(s, 0.85, 2.7, 12, 1.7, accent=TEAL, fill=TEAL_PASTEL,
                 title="▶  你輸入")
@@ -250,19 +250,17 @@ def build_quick_start(prs):
     pastel_card(s, 0.85, 4.55, 12, 2.3, accent=VIOLET, fill=VIOLET_PASTEL,
                 title="▶  你應該看到")
     code_block(s, 1.05, 5.15, 11.5, 1.65, [
-        ("> mini-assistant@1.0.0 start",                              CODE_COMMENT),
         ("> node server.js",                                          CODE_COMMENT),
-        ("",                                                          CODE_FG),
         ("✓ hello_tool → get_english_center_info",                    CODE_STRING),
         ("✓ teachers_tool → search_teachers, get_teacher_detail",     CODE_STRING),
         ("✓ weather_tool → get_weather",                              CODE_STRING),
+        ("✓ library_tool → search_library",                           CODE_STRING),
+        ("✓ course_tool → search_courses",                            CODE_STRING),
         ("→ Mini AI Assistant: http://localhost:3000",                CODE_ORANGE),
     ], size=10)
 
-    # Bottom callout — removed 🎉 emoji (renders as missing-glyph box on
-    # server-side LibreOffice converters; the text is celebratory enough).
     _text(s, 0.85, 7.05, 12, 0.3,
-          "★  三行 ✓ + URL → MCP server 都連上了",
+          "★  5 支工具全 ✓ + URL → MCP server 都連上了",
           font=FONT_BODY, size=13, color=TEAL_DEEP, italic=True,
           align=PP_ALIGN.CENTER)
     page_number(s, 7, TOTAL)
@@ -508,35 +506,37 @@ def build_l1_step3(prs):
 
 def build_l2_l3_preview(prs):
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "★", "L 2 / L 3   P R E V I E W", accent=VIOLET)
-    slide_title(s, "L2 / L3 — 帶回去繼續深入", y=0.95)
-    slide_subtitle(s, "課後自修,參考 mini-project/docs/labs/", y=1.85)
+    metadata_bar(s, "★", "L 1 → L 4   L A B   P A T H S", accent=VIOLET)
+    slide_title(s, "L1 → L4 — 課堂試 + 帶回家寫", y=0.95, size=32)
+    slide_subtitle(s, "Colab 已內建 L1-L4 可現場試;手冊在 mini-project/docs/labs/", y=1.85)
 
     items = [
-        ("L1", "換 JSON 做你領域的助理", "課堂現場必做\n0 行 Python", "完成", TEAL, TEAL_PASTEL),
-        ("L2", "加一支有參數的搜尋工具",  "課後自修\n寫一個 @mcp.tool()",  "+1 hr", ORANGE, ORANGE_PASTEL),
-        ("L3", "呼叫外部 API",            "課後自修\n串 arxiv/weather API", "+2 hr", PINK,   PINK_PASTEL),
+        ("L1", "換 JSON 做你領域的助理", "課堂必做\n0 行 Python", "現場做", TEAL,   TEAL_PASTEL),
+        ("L2", "有參數的搜尋工具",        "Colab 內建\nteachers_tool", "可現場試", VIOLET, VIOLET_PASTEL),
+        ("L3", "呼叫外部 API",            "Colab 內建\nlibrary_tool(免 key)", "可現場試", ORANGE, ORANGE_PASTEL),
+        ("L4", "大資料集搜尋",            "Colab 內建\ncourse 3018 門課", "可現場試", PINK,   PINK_PASTEL),
     ]
-    card_w = 3.95
+    card_w = 2.95
+    gap = 0.18
     for i, (lab, title, body, badge, accent, fill) in enumerate(items):
-        x = 0.55 + i * (card_w + 0.20)
+        x = 0.55 + i * (card_w + gap)
         _rounded(s, x, 2.7, card_w, 3.7, fill, line_color=accent, line_w=2)
         _text(s, x + 0.25, 2.85, 1.0, 0.5, lab,
               font=FONT_TITLE, size=24, color=accent, bold=True)
-        _rounded(s, x + card_w - 0.95, 2.95, 0.75, 0.4, BG_WHITE,
+        _rounded(s, x + card_w - 1.05, 2.95, 0.85, 0.4, BG_WHITE,
                  line_color=accent, line_w=1.5)
-        _text(s, x + card_w - 0.95, 2.95, 0.75, 0.4, badge,
+        _text(s, x + card_w - 1.05, 2.95, 0.85, 0.4, badge,
               font=FONT_CODE, size=10, color=accent, bold=True,
               align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
         _text(s, x + 0.25, 3.55, card_w - 0.5, 0.6, title,
               font=FONT_TITLE, size=15, color=INK, bold=True)
         _multi(s, x + 0.25, 4.3, card_w - 0.5, 2.0,
-               [{"text": line, "font": FONT_BODY, "size": 14,
+               [{"text": line, "font": FONT_BODY, "size": 13,
                  "color": INK_SOFT, "space_after": 6}
                 for line in body.split("\n")])
 
     callout_box(s, 0.85, 6.5, 12, 0.5,
-                "三關手冊:mini-project/docs/labs/L1-customize-your-data.md / L2 / L3",
+                "Colab 一鍵開(零安裝)現場試 L1-L4;想自己寫工具 → 手冊 docs/labs/",
                 accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=13)
     page_number(s, 13, TOTAL)
 
