@@ -1,5 +1,5 @@
 {
-  "_comment": "L3 練習：mcp-server-py/arxiv_tool.py 是已寫好的範例但故意未在此註冊；學員依 docs/labs/L3-call-external-api.md 自己加 entry。",
+  "_comment": "L3 練習：arxiv_tool.py 故意未註冊,學員依 docs/labs/L3 自己加。library_tool.py 已註冊作為「外部 API」的可用示範(Primo 圖書館館藏,免 key)。",
   "mcpServers": {
     "hello_tool": {
       "command": "uv",
@@ -12,6 +12,10 @@
     "weather_tool": {
       "command": "uv",
       "args": ["--directory", "mcp-server-py", "run", "python", "weather_tool.py"]
+    },
+    "library_tool": {
+      "command": "uv",
+      "args": ["--directory", "mcp-server-py", "run", "python", "library_tool.py"]
     }
   }
 }
