@@ -124,9 +124,9 @@ def build_traditional_vs_agentic(prs):
 
 def build_loop_diagram(prs):
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "01 · ①", "A G E N T I C   L O O P · 概念圖", accent=ORANGE)
+    metadata_bar(s, "02 · ①", "A G E N T I C   L O O P · 概念圖", accent=ORANGE)
     slide_title(s, "Agentic Tool Loop 概念圖", y=0.95)
-    slide_subtitle(s, "每一輪稱為一個 iteration,最多 maxIterations(預設 7)輪", y=1.85)
+    slide_subtitle(s, "每一輪稱為一個 iteration,最多 maxIterations(預設 5)輪", y=1.85)
 
     nodes = [
         ("User\nQuery",     VIOLET),
@@ -286,7 +286,7 @@ def build_tool_result(prs):
 
 def build_messages_growth(prs):
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "02 · ③", "M E S S A G E S   G R O W T H", accent=VIOLET)
+    metadata_bar(s, "02 · ④", "M E S S A G E S   G R O W T H", accent=VIOLET)
     slide_title(s, "Messages 陣列的成長過程", y=0.95)
     slide_subtitle(s, "每一輪迭代都追加 assistant + user(tool_result) —— 陣列持續增長", y=1.85)
 
@@ -381,7 +381,7 @@ def build_loop_trace(prs):
     """Concrete walk-through: one composite query through the rounds.
     Makes the abstract loop_diagram tangible with real tool names + data."""
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "01 · ②", "A G E N T I C   L O O P · 實 例 走 查", accent=ORANGE)
+    metadata_bar(s, "02 · ②", "A G E N T I C   L O O P · 實 例 走 查", accent=ORANGE)
     slide_title(s, "走一遍:一個查詢跑完整個 loop", y=0.95, size=32)
     slide_subtitle(s, "「資工系深度學習的課,授課老師最近有什麼論文?」", y=1.85)
 
@@ -422,7 +422,7 @@ def build_json_anatomy(prs):
     """What tool_use / tool_result literally look like — links Seg 2's
     'LLM only emits strings' to Seg 3's loop."""
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "01 · ②", "T O O L _ U S E   /   T O O L _ R E S U L T", accent=TEAL)
+    metadata_bar(s, "02 · ③", "T O O L _ U S E   /   T O O L _ R E S U L T", accent=TEAL)
     slide_title(s, "tool_use / tool_result 長什麼樣", y=0.95)
     slide_subtitle(s, "Segment 2 說「LLM 只吐字串」—— tool_use 就是那段字串,tool_result 是你塞回去的",
                    y=1.85, size=17)
@@ -451,7 +451,7 @@ def build_json_anatomy(prs):
 def build_loop_code(prs):
     """The 20-line loop — demystify 'agent = for-loop + if-else'."""
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "01 · ⑤", "A G E N T   =   2 0   行 迴 圈", accent=ORANGE)
+    metadata_bar(s, "02 · ⑥", "A G E N T   =   2 0   行 迴 圈", accent=ORANGE)
     slide_title(s, "拆穿魔法:agent 就是一個 while 迴圈", y=0.95, size=32)
     slide_subtitle(s, "llm-client.js 的核心 —— 沒有黑魔法,就是 for-loop + if-else", y=1.85)
 
@@ -481,7 +481,7 @@ def build_loop_code(prs):
 def build_messages_growth(prs):
     """The messages[] array accumulating across rounds — the loop's memory."""
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "01 · ③", "M E S S A G E S   陣 列", accent=VIOLET)
+    metadata_bar(s, "02 · ④", "M E S S A G E S   陣 列", accent=VIOLET)
     slide_title(s, "messages 陣列怎麼長大", y=0.95)
     slide_subtitle(s, "loop 的「記憶」就在這個一直變長的陣列 —— LLM 每輪都看到完整脈絡", y=1.85)
 
@@ -516,7 +516,7 @@ def build_messages_growth(prs):
 def build_parallel_calls(prs):
     """Parallel tool calls — multiple tool_use in one turn, run concurrently."""
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "01 · ④", "P A R A L L E L   T O O L   C A L L S", accent=TEAL)
+    metadata_bar(s, "02 · ⑤", "P A R A L L E L   T O O L   C A L L S", accent=TEAL)
     slide_title(s, "一回合可以同時開多支工具", y=0.95)
     slide_subtitle(s, "parallel tool calls —— 用 Promise.all 並行,不是一個接一個", y=1.85)
 
@@ -551,7 +551,7 @@ def build_parallel_calls(prs):
 
 def build_max_iter(prs):
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "03 · ①", "M A X _ I T E R A T I O N S · 強制回覆", accent=TEAL)
+    metadata_bar(s, "02 · ⑦", "M A X _ I T E R A T I O N S · 強制回覆", accent=TEAL)
     slide_title(s, "maxIterations 與強制回覆機制", y=0.95)
     slide_subtitle(s, "避免 LLM 無限呼叫工具 —— 設上限 + 最後一輪強制總結", y=1.85)
 
@@ -565,15 +565,21 @@ def build_max_iter(prs):
         {"text": "✗  回應時間過長",
          "font": FONT_BODY, "size": 14, "color": PINK_DEEP, "space_after": 6},
         {"text": "✗  使用者體驗極差",
-         "font": FONT_BODY, "size": 14, "color": PINK_DEEP, "space_after": 0},
+         "font": FONT_BODY, "size": 14, "color": PINK_DEEP, "space_after": 18},
+        {"text": "情境:LLM 一直查課 → 查老師 → 查論文 →",
+         "font": FONT_BODY, "size": 13, "color": INK_SOFT,
+         "italic": True, "space_after": 2},
+        {"text": "再查… 30 秒過去,使用者還沒等到任何回答。",
+         "font": FONT_BODY, "size": 13, "color": INK_SOFT,
+         "italic": True, "space_after": 0},
     ])
 
     pastel_card(s, 7.05, 2.7, 5.85, 4.0, accent=TEAL, fill=TEAL_PASTEL,
-                title="解法:maxIterations = 7")
+                title="解法:maxIterations = 5")
     _multi(s, 7.3, 3.3, 5.4, 3.3, [
         {"text": "✓  設定最大迭代次數上限",
          "font": FONT_BODY, "size": 14, "color": INK, "space_after": 6},
-        {"text": "✓  第 7 輪(最後一輪)時注入臨時",
+        {"text": "✓  第 5 輪(最後一輪)時注入臨時",
          "font": FONT_BODY, "size": 14, "color": INK, "space_after": 2},
         {"text": "    user message 強制模型停止使用",
          "font": FONT_BODY, "size": 14, "color": INK, "space_after": 2},
@@ -674,7 +680,7 @@ def build_demo_cue(prs):
     # default text color assumes light BG.)
     _oval(s, 0.85, 0.55, 0.20, ORANGE)
     _text(s, 1.2, 0.30, 12, 0.55,
-          "04   L I V E   D E M O",
+          "03   L I V E   D E M O",
           font=FONT_BODY, size=14, color=RGBColor(0xCB, 0xD5, 0xE1), bold=True,
           anchor=MSO_ANCHOR.MIDDLE)
 
@@ -829,21 +835,21 @@ def build_single_turn_pain(prs):
 def build_agentic_walkthrough(prs):
     """§1 · ③ — 4-step preview of how agentic resolves a composite query"""
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "01 · ③", "A G E N T I C · 解法預覽", accent=ORANGE)
-    slide_title(s, "Agentic 怎麼解 — 一個 query 的 4 步走法", y=0.95, size=30)
-    slide_subtitle(s, '範例:"找 AI 課程 + 看這些老師最近的論文"', y=1.85)
+    metadata_bar(s, "01 · ②", "A G E N T I C · 解法預覽", accent=ORANGE)
+    slide_title(s, "Agentic 怎麼解 — 4 步走法的骨架", y=0.95, size=30)
+    slide_subtitle(s, "不管什麼複合問題,都是這 4 步;具體走一遍見下一頁", y=1.85)
 
     steps = [
         ("STEP 1", "拆解",
-         "LLM 看問題 →\n想到要做兩件事:\n找課程 + 找論文",
+         "LLM 看問題 →\n拆成幾個子任務\n(自己想,你沒教)",
          "拆解能力 = 預訓練自帶",
          ORANGE),
         ("STEP 2", "第一輪 tool call",
-         "search_courses\n  (keyword='AI')\n→ 拿到 5 門課",
+         "呼叫第一個工具\n→ 拿到中間結果",
          'stop_reason = "tool_use"',
          VIOLET),
-        ("STEP 3", "第二輪 tool call",
-         "看到課的老師後:\nfor each 老師 →\narxiv_search (parallel)",
+        ("STEP 3", "下一輪 tool call",
+         "看上一輪結果\n→ 決定下一個工具\n(可多個並行)",
          "結果驅動的後續決定",
          TEAL),
         # STEP 4 was TEAL_DEEP (same family as STEP 3 TEAL) → cards looked
@@ -924,7 +930,7 @@ def build_engineering_footnotes(prs):
 def build_strategy_callback(prs):
     """§5 · ① — 回頭跟 Segment 1 的 RAG / Tool Use / Agentic Loop 比較"""
     s = _blank_slide(prs, BG_WHITE)
-    metadata_bar(s, "05 · ①", "S T R A T E G I E S · 回看", accent=VIOLET)
+    metadata_bar(s, "04 · ①", "S T R A T E G I E S · 回看", accent=VIOLET)
     slide_title(s, "回頭看三種策略 — Agentic Loop 站在哪", y=0.95, size=28)
     slide_subtitle(s, "Segment 1 介紹的三條路,Agentic Loop 是其中能力最完整的一條", y=1.85)
 
