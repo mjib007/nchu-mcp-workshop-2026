@@ -21,9 +21,9 @@ This file provides guidance to Claude Code / Claude Agent SDK clients when worki
 | 第一段 | 40 min | **Why MCP** | `01-why-mcp.pptx`、`01-why-mcp-video.mp4`（3 min Manim 長片） | ✅ 初稿完成（17 張 + v2 影片）|
 | 第二段 | 40 min | **How MCP Works** | `02-how-mcp-works.pptx`（22 張，含附錄）、`02-mcp-connection-video.mp4`（2:17 Manim 影片） | ✅ v3 完成（pptx 與影片已對齊）|
 | 休息 | 10 min | | | |
-| 第三段 | 35 min | **Agentic Tool Loop** | `03-agentic-tool-loop.pptx`（8 張，A2 cut）、`03-agentic-loop-video.mp4`（1:07 Manim 影片）、`sonnet-running-example.pptx` | ✅ pptx + 影片 D 方案完成 |
+| 第三段 | 35 min | **Agentic Tool Loop** | `03-agentic-tool-loop.pptx`（8 張，A2 cut）、`03-agentic-loop-video.mp4`（1:07 Manim 影片） | ✅ pptx + 影片 D 方案完成 |
 | 第四段 | 45 min | **動手做（mini-project 實作）** | `04-hands-on-lab.pptx`（12 張）、`04-hands-on-lab.md` + `mini-project/` + `infra/` | ✅ 完成 |
-| 第五段 | 10 min | **實務考量（收尾）** | `05-practical-considerations.md`、`haiku-alignment-report.pptx` | ✅ 完成（md 版本，HTML 動畫已移除） |
+| 第五段 | 10 min | **實務考量（收尾）** | `05-practical-considerations.md`、`haiku-alignment-report.md` | ✅ 完成（md 版本，HTML 動畫已移除） |
 
 ## 各段內容規劃
 
@@ -54,7 +54,6 @@ This file provides guidance to Claude Code / Claude Agent SDK clients when worki
 - LLM 自主選工具（`tool_use` block → `tool_result` → 多輪迭代）
 - `maxIterations` 限制與最後一輪強制回覆機制
 - Live Demo：現場操作系統
-- 搭配素材：`sonnet-running-example.pptx`（HTML 動畫已移除，預計改 Manim 影片）
 
 ### 第四段：動手做（45 min，hands-on 主場）
 
@@ -87,7 +86,7 @@ Workshop 現場可連 NCHU vLLM 端點（`infra/serve-*.sh` 提供 Gemma 4 / Qwe
 
 **10 分鐘塞不下四支柱**。講師於現場依聽眾屬性**擇一深入 ~7 min**，其餘三節各一句帶過，最後 ~2 min Q&A。md 保留完整四節供課後閱讀。
 
-搭配素材：`haiku-alignment-report.pptx`（可作為 §4 成本中 Haiku alignment 的延伸閱讀；HTML 動畫已移除）。
+搭配素材：`haiku-alignment-report.md`（§4 成本中 Haiku alignment 的延伸閱讀）。
 
 ## 範圍：本 repo 只含教材
 
@@ -109,7 +108,7 @@ Workshop 現場可連 NCHU vLLM 端點（`infra/serve-*.sh` 提供 Gemma 4 / Qwe
 
 頂層按產出類型分資料夾，root 只留少數入口 md：
 
-- **`slides/`**：所有講課投影片 `.pptx`（`0X-主題.pptx` + haiku + sonnet）。由 `tools/build-*-slides.py` 程式化產生並寫入此。
+- **`slides/`**：所有講課投影片 `.pptx`（`0X-主題.pptx`）。由 `tools/build-*-slides.py` 程式化產生並寫入此。
 - **`videos/`**：影片生產檔 —— Manim `*-video.py` + 渲染出的 `*-preview.mp4` + `*-youtube.md`（YouTube 發佈素材）
 - **`scripts/`**：講師用 —— `*-live-demo-script.md` + `course-notes-draft.md`（草稿）
 - **root 只留**：`04-hands-on-lab.md`、`05-practical-considerations.md`、`haiku-alignment-report.md`（學員/讀者入口）+ `README.md` / `CLAUDE.md`
@@ -125,7 +124,7 @@ repo root/
 ├── 05-practical-considerations.md     第五段實務考量收尾
 ├── haiku-alignment-report.md          Haiku 優化報告（第五段延伸閱讀）
 │
-├── slides/                            所有 .pptx（01–05 + haiku + sonnet,由 tools/ 產出）
+├── slides/                            所有 .pptx（01–05,由 tools/ 產出）
 ├── videos/                            Manim *.py + *-preview.mp4 + *-youtube.md
 ├── scripts/                           *-live-demo-script.md + course-notes-draft.md
 │

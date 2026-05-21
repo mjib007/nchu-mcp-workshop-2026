@@ -13,7 +13,7 @@
 | — | 10 min | 休息 | |
 | 3 | 35 min | Agentic Tool Loop | `03-agentic-tool-loop.pptx`（8 張，A2 cut）+ Agentic Loop 影片（1:07, YouTube） |
 | 4 | 45 min | 動手做（mini-project 實作） | `04-hands-on-lab.pptx`（12 張）+ `04-hands-on-lab.md` + `mini-project/`（含 Colab）+ `infra/` |
-| 5 | 10 min | 實務考量（收尾） | `05-practical-considerations.md` + `haiku-alignment-report.pptx` |
+| 5 | 10 min | 實務考量（收尾） | `05-practical-considerations.md` + `haiku-alignment-report.md` |
 
 ## Repo 結構
 
@@ -22,7 +22,7 @@
 ├── 05-practical-considerations.md     # 第五段收尾（規模／品質／模型／成本）
 ├── haiku-alignment-report.md          # Haiku 優化報告（第五段延伸閱讀）
 │
-├── slides/                            # 所有講課投影片 .pptx（01–05 + haiku + sonnet）
+├── slides/                            # 所有講課投影片 .pptx（01–05）
 ├── videos/                            # 影片生產檔（Manim *.py + *-preview.mp4 + *-youtube.md）
 ├── scripts/                           # 講師用：live-demo 腳本 + 課堂筆記草稿
 │
