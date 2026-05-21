@@ -1,8 +1,10 @@
-# Mini AI Assistant — 教學範例
+# Mini AI Assistant — MCP 教學範例
 
-這是 **中興大學 AiLearningMate** 正式版的極簡抽取版，用來教學「LLM + MCP tool-calling + Web UI」的最小整合模式。
+一個約 **300 行、一堂課讀得完** 的最小 AI 助理，讓你看懂三件事怎麼串起來：**LLM + MCP 工具呼叫 + Web 介面**。
 
-**整份專案約 300 行程式碼**，可在一堂課內讀完並親手擴充成自己的應用。
+工作坊 Segment 4 你會親手把它改成自己領域的助理（換資料、加工具）。
+
+> 這是從中興大學「AI 學伴」（正式版 ~239 個工具）抽出來的最小骨架，只留核心、方便理解。
 
 ## ☁️ 最簡單：用 Colab 跑（零安裝，課堂推薦）
 
@@ -156,14 +158,8 @@ cp mcp-server-py/hello_tool.py mcp-server-py/my_tool.py
 
 ---
 
-## 參考：去掉了什麼？
+## 這是教學最小版
 
-本教學版相較於正式版，**刻意砍掉**：
-- SSE 串流、Markdown 渲染、語音輸入
-- MongoDB 持久化對話
-- 多模型 fallback（Gemini / ChatGPT / Ollama / OpenRouter）
-- SSO、速率限制、Turnstile、admin dashboard
-- PM2 cluster、Redis 快取、i18n、Chrome extension
-- 其餘 40 支 MCP server、~238 支工具
+為了「一堂課讀得完」，本範例只保留 MCP 串接的**核心**。真實上線的系統還會再加上對話持久化、多模型備援、速率限制與身份驗證、快取與部署等 —— 但這些都**不影響你理解 MCP 怎麼運作**。
 
-這些在正式版 `claude-mcp-project/` + `library/` 都可以看到；**本教學版的目的只是給你最短的入門路徑**。
+想看一個真的上線、串了 ~239 個工具的完整版 → [claude-mcp-project（中興 AI 學伴）](https://github.com/UDICatNCHU/claude-mcp-project)。
