@@ -170,31 +170,80 @@ def build_loop_trace(prs):
 
 def build_json_anatomy(prs):
     """What tool_use / tool_result literally look like — links Seg 2's
-    'LLM only emits strings' to Seg 3's loop."""
+    'LLM only emits strings' to Seg 3's loop. Three-card journey:
+    LLM 吐 tool_use → 你的程式跑 → 塞 tool_result 回去 = 一輪 loop。"""
     s = _blank_slide(prs, BG_WHITE)
     metadata_bar(s, "02 · ③", "T O O L _ U S E   /   T O O L _ R E S U L T", accent=TEAL)
     slide_title(s, "tool_use / tool_result 長什麼樣", y=0.95)
-    slide_subtitle(s, "Segment 2 說「LLM 只吐字串」—— tool_use 就是那段字串,tool_result 是你塞回去的",
+    slide_subtitle(s, "Segment 2 說「LLM 只吐字串」—— 跟著一輪 loop 走一次:LLM 吐 → 你跑 → 塞回去",
                    y=1.85, size=17)
 
-    _text(s, 0.85, 2.45, 12, 0.4, "①  LLM 吐出（assistant 的 content 裡）",
-          font=FONT_BODY, size=15, color=VIOLET, bold=True)
-    code_block(s, 0.85, 2.9, 12, 1.55, [
-        ('{ "type": "tool_use", "id": "toolu_01",',                       CODE_FG),
-        ('  "name": "search_courses",',                                   CODE_STRING),
-        ('  "input": { "keyword": "深度學習", "department": "資工" } }',  CODE_FG),
-    ], size=14)
+    cw, gap, cy, ch = 3.5, 0.65, 2.55, 3.15
+    c1x = 0.85
+    c2x = c1x + cw + gap
+    c3x = c2x + cw + gap
 
-    _text(s, 0.85, 4.7, 12, 0.4, "②  你執行完,把結果塞回去（下一則 user 訊息）",
-          font=FONT_BODY, size=15, color=TEAL_DEEP, bold=True)
-    code_block(s, 0.85, 5.15, 12, 1.3, [
-        ('{ "type": "tool_result", "tool_use_id": "toolu_01",',           CODE_FG),
-        ('  "content": "5 門課,授課老師:范、林、王…" }',                  CODE_STRING),
-    ], size=14)
+    def card_body(x, lines):
+        paras = []
+        for txt, col, bold in lines:
+            paras.append({"text": txt if txt else " ", "font": FONT_CODE,
+                          "size": 12.5, "color": col, "bold": bold,
+                          "space_after": 3})
+        _multi(s, x + 0.28, cy + 1.0, cw - 0.5, ch - 1.2, paras)
 
-    callout_box(s, 0.85, 6.65, 12, 0.4,
-                "靠 id ↔ tool_use_id 配對,LLM 才知道這個結果是回應哪一次呼叫",
-                accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=13)
+    # ① LLM 吐出 (assistant content) — VIOLET
+    pastel_card(s, c1x, cy, cw, ch, accent=VIOLET, fill=VIOLET_PASTEL,
+                title="① LLM 吐出", title_size=20)
+    _text(s, c1x + 0.28, cy + 0.62, cw - 0.5, 0.35, "assistant 的 content",
+          font=FONT_BODY, size=12, color=MUTED, italic=True)
+    card_body(c1x, [
+        ('type: tool_use',        INK_SOFT, False),
+        ('id: "toolu_01"',        PINK,     True),
+        ('name:',                 INK_SOFT, False),
+        ('  search_courses',      INK,      False),
+        ('input:',                INK_SOFT, False),
+        ('  {keyword:"深度學習"}', INK,      False),
+    ])
+
+    # ② 你的程式執行 — ORANGE
+    pastel_card(s, c2x, cy, cw, ch, accent=ORANGE, fill=ORANGE_PASTEL,
+                title="② 你的程式跑", title_size=20)
+    _text(s, c2x + 0.28, cy + 0.62, cw - 0.5, 0.35, "harness / 你的 code",
+          font=FONT_BODY, size=12, color=MUTED, italic=True)
+    card_body(c2x, [
+        ('讀 name + input', INK_SOFT, False),
+        ('↓ 真的去呼叫',    MUTED,    False),
+        ('search_courses(', INK_SOFT, False),
+        ('  "深度學習")',    INK,      False),
+        ('↓',               MUTED,    False),
+        ('查資料庫 / API',  INK_SOFT, False),
+    ])
+
+    # ③ 塞回去 (next user message) — TEAL
+    pastel_card(s, c3x, cy, cw, ch, accent=TEAL, fill=TEAL_PASTEL,
+                title="③ 塞回去", title_size=20)
+    _text(s, c3x + 0.28, cy + 0.62, cw - 0.5, 0.35, "下一則 user 訊息",
+          font=FONT_BODY, size=12, color=MUTED, italic=True)
+    card_body(c3x, [
+        ('type:',                   INK_SOFT, False),
+        ('  tool_result',           INK,      False),
+        ('tool_use_id: "toolu_01"', PINK,     True),
+        ('content:',                INK_SOFT, False),
+        ('  "5 門課,范、林…"',       INK,      False),
+    ])
+
+    # arrows between cards (vertical centre of cards)
+    ay = cy + ch / 2 - 0.28
+    _text(s, c1x + cw - 0.05, ay, gap + 0.1, 0.55, "▶",
+          font=FONT_BODY, size=26, color=ORANGE, bold=True,
+          align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+    _text(s, c2x + cw - 0.05, ay, gap + 0.1, 0.55, "▶",
+          font=FONT_BODY, size=26, color=ORANGE, bold=True,
+          align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+
+    callout_box(s, 0.85, 6.5, 12, 0.55,
+                "① 的 id 和 ③ 的 tool_use_id 必須相同 —— LLM 靠這個配對,才知道結果是回應哪一次呼叫",
+                accent=PINK, fill=PINK_PASTEL, icon="▶", size=14)
     page_number(s, 7, TOTAL)
 
 
