@@ -4,15 +4,15 @@
 
 所有內容以 [NCHU AI 學伴](https://github.com/UDICatNCHU/claude-mcp-project) 作為實際案例。
 
-## 課程結構（180 min = 3 小時）
+## 課程結構（總 160 min；安排在 3 小時時段）
 
 | 段落 | 時間 | 主題 | 檔案 |
 |------|------|------|------|
-| 1 | 40 min | Why MCP | `01-why-mcp.pptx`（21 張）+ Why MCP 概念長片（2:35, Manim → YouTube） |
-| 2 | 40 min | How MCP Works | `02-how-mcp-works.pptx`（24 張，附錄含 REST vs JSON-RPC）+ handshake 影片（2:14, YouTube）|
+| 1 | 20 min | Why MCP | `01-why-mcp.pptx`（21 張）+ Why MCP 概念長片（2:35, Manim → YouTube） |
+| 2 | 20 min | How MCP Works | `02-how-mcp-works.pptx`（24 張，附錄含 REST vs JSON-RPC）+ handshake 影片（2:14, YouTube）|
 | — | 10 min | 休息 | |
-| 3 | 35 min | Agentic Tool Loop | `03-agentic-tool-loop.pptx`（8 張，A2 cut）+ Agentic Loop 影片（1:07, YouTube） |
-| 4 | 45 min | 動手做（mini-project 實作） | `04-hands-on-lab.pptx`（12 張）+ `04-hands-on-lab.md` + `mini-project/`（含 Colab）+ `infra/` |
+| 3 | 30 min | Agentic Tool Loop | `03-agentic-tool-loop.pptx`（8 張，A2 cut）+ Agentic Loop 影片（1:07, YouTube） |
+| 4 | 70 min | 動手做（mini-project 實作） | `04-hands-on-lab.pptx`（12 張）+ `04-hands-on-lab.md` + `mini-project/`（含 Colab）+ `infra/` |
 | 5 | 10 min | 實務考量（收尾） | `05-practical-considerations.md` + `haiku-alignment-report.md` |
 
 ## Repo 結構

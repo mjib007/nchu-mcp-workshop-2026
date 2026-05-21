@@ -22,7 +22,7 @@ def build_cover(prs):
     _text(s, 0.85, 2.0, 12, 1.6, "動手做",
           font=FONT_TITLE, size=84, color=INK, bold=True)
     _text(s, 0.85, 3.5, 12, 0.7,
-          "Hands-on Lab  ·  45 minutes",
+          "Hands-on Lab  ·  70 minutes",
           font=FONT_BODY, size=26, color=VIOLET, bold=True)
     _text(s, 0.85, 4.3, 12, 0.5,
           "mini-project 實作主場 — 現場跑起你自己領域的 AI agent",
@@ -39,7 +39,7 @@ def build_outcomes(prs):
     s = _blank_slide(prs, BG_WHITE)
     metadata_bar(s, "00", "O U T C O M E S", accent=VIOLET)
     slide_title(s, "本節產出物", y=0.95)
-    slide_subtitle(s, "45 分鐘後,你將親手擁有", y=1.85)
+    slide_subtitle(s, "70 分鐘後,你將親手擁有", y=1.85)
 
     items = [
         ("跑起來的 MCP agent",
@@ -73,15 +73,15 @@ def build_outcomes(prs):
 def build_schedule(prs):
     s = _blank_slide(prs, BG_WHITE)
     metadata_bar(s, "00 · ②", "S C H E D U L E", accent=VIOLET)
-    slide_title(s, "45 分鐘時間配置", y=0.95)
-    slide_subtitle(s, "講師 8 min 引導 + 37 min 巡場陪跑", y=1.85)
+    slide_title(s, "70 分鐘時間配置", y=0.95)
+    slide_subtitle(s, "講師 10 min 引導 + 60 min 巡場陪跑", y=1.85)
 
     rows = [
-        ("0–8",   "講師 demo + 學員同步 ./setup.sh",      "環境綠燈 5/5 ✅"),
-        ("8–18",  "L1 Step 1–2:觀察現況 + 換自己 JSON",  "data/your.json"),
-        ("18–32", "L1 Step 3–4:改 docstring + 重啟驗證", "問自己資料會答"),
-        ("32–40", "交叉展示 — 3–4 位老師 demo 自己領域",   "見識不同落地方式"),
-        ("40–45", "Q&A + 為 L2/L3 與 Segment 5 鋪陳",     "清楚下一步"),
+        ("0–10",  "講師 demo + 學員同步 ./setup.sh",      "環境綠燈 5/5 ✅"),
+        ("10–25", "L1 Step 1–2:觀察現況 + 換自己 JSON",  "data/your.json"),
+        ("25–45", "L1 Step 3–4:改 docstring + 重啟驗證", "問自己資料會答"),
+        ("45–60", "交叉展示 + L2/L3 試玩 — 老師 demo 自己領域", "見識不同落地方式"),
+        ("60–70", "Q&A + 為 L2/L3 與 Segment 5 鋪陳",     "清楚下一步"),
     ]
 
     # Header
