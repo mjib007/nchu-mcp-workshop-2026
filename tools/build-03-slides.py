@@ -11,7 +11,7 @@ from lib_newstyle import *  # noqa: E402,F401,F403
 REPO = Path(__file__).resolve().parent.parent
 PPTX = REPO / "slides" / "03-agentic-tool-loop.pptx"
 
-TOTAL = 11
+TOTAL = 13
 
 
 def build_cover(prs):
@@ -316,7 +316,7 @@ def build_messages_growth(prs):
         if i == 4:
             _text(s, 11.6, y + 0.3, 1.3, 0.4, "第 2 輪",
                   font=FONT_BODY, size=12, color=ORANGE, italic=True, bold=True)
-    page_number(s, 10, TOTAL)
+    page_number(s, 8, TOTAL)
 
 
 def build_parallel_tools(prs):
@@ -418,6 +418,66 @@ def build_loop_trace(prs):
     page_number(s, 6, TOTAL)
 
 
+def build_json_anatomy(prs):
+    """What tool_use / tool_result literally look like — links Seg 2's
+    'LLM only emits strings' to Seg 3's loop."""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "01 · ②", "T O O L _ U S E   /   T O O L _ R E S U L T", accent=TEAL)
+    slide_title(s, "tool_use / tool_result 長什麼樣", y=0.95)
+    slide_subtitle(s, "Segment 2 說「LLM 只吐字串」—— tool_use 就是那段字串,tool_result 是你塞回去的",
+                   y=1.85, size=17)
+
+    _text(s, 0.85, 2.45, 12, 0.4, "①  LLM 吐出（assistant 的 content 裡）",
+          font=FONT_BODY, size=15, color=VIOLET, bold=True)
+    code_block(s, 0.85, 2.9, 12, 1.55, [
+        ('{ "type": "tool_use", "id": "toolu_01",',                       CODE_FG),
+        ('  "name": "search_courses",',                                   CODE_STRING),
+        ('  "input": { "keyword": "深度學習", "department": "資工" } }',  CODE_FG),
+    ], size=14)
+
+    _text(s, 0.85, 4.7, 12, 0.4, "②  你執行完,把結果塞回去（下一則 user 訊息）",
+          font=FONT_BODY, size=15, color=TEAL_DEEP, bold=True)
+    code_block(s, 0.85, 5.15, 12, 1.3, [
+        ('{ "type": "tool_result", "tool_use_id": "toolu_01",',           CODE_FG),
+        ('  "content": "5 門課,授課老師:范、林、王…" }',                  CODE_STRING),
+    ], size=14)
+
+    callout_box(s, 0.85, 6.65, 12, 0.4,
+                "靠 id ↔ tool_use_id 配對,LLM 才知道這個結果是回應哪一次呼叫",
+                accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=13)
+    page_number(s, 7, TOTAL)
+
+
+def build_loop_code(prs):
+    """The 20-line loop — demystify 'agent = for-loop + if-else'."""
+    s = _blank_slide(prs, BG_WHITE)
+    metadata_bar(s, "01 · ⑤", "A G E N T   =   2 0   行 迴 圈", accent=ORANGE)
+    slide_title(s, "拆穿魔法:agent 就是一個 while 迴圈", y=0.95, size=32)
+    slide_subtitle(s, "llm-client.js 的核心 —— 沒有黑魔法,就是 for-loop + if-else", y=1.85)
+
+    code_block(s, 0.85, 2.5, 12, 3.8, [
+        ("for (let i = 0; i < maxIterations; i++) {        // ← 護欄",       CODE_ORANGE),
+        ("  const resp = await llm.create({ messages, tools });",            CODE_FG),
+        ("",                                                                 CODE_FG),
+        ("  // 沒有要呼叫工具 → 收工,回最終文字",                            CODE_COMMENT),
+        ("  if (resp.stop_reason !== 'tool_use') return resp.text;",         CODE_FG),
+        ("",                                                                 CODE_FG),
+        ("  // 有 tool_use → 全部並行執行",                                  CODE_COMMENT),
+        ("  const toolUses = resp.content.filter(b => b.type==='tool_use');", CODE_FG),
+        ("  const results = await Promise.all(",                             CODE_FG),
+        ("    toolUses.map(t => callTool(t.name, t.input)));",               CODE_FG),
+        ("",                                                                 CODE_FG),
+        ("  // 結果接回 messages → 下一輪 LLM 看得到",                       CODE_COMMENT),
+        ("  messages.push(assistantMsg, { role:'user', content: results });", CODE_FG),
+        ("}",                                                                CODE_FG),
+    ], size=13)
+
+    callout_box(s, 0.85, 6.5, 12, 0.5,
+                "整個「自主 agent」= for-loop + if-else + 一個一直長大的 messages 陣列",
+                accent=VIOLET, fill=VIOLET_PASTEL, icon="▶", size=14)
+    page_number(s, 10, TOTAL)
+
+
 def build_messages_growth(prs):
     """The messages[] array accumulating across rounds — the loop's memory."""
     s = _blank_slide(prs, BG_WHITE)
@@ -486,7 +546,7 @@ def build_parallel_calls(prs):
     callout_box(s, 0.85, 6.4, 12, 0.55,
                 "並行 → 1 秒搞定 5 個查詢,不用等 5 倍時間;5 個 tool_result 一起回給 LLM",
                 accent=TEAL, fill=TEAL_PASTEL, icon="▶", size=14)
-    page_number(s, 8, TOTAL)
+    page_number(s, 9, TOTAL)
 
 
 def build_max_iter(prs):
@@ -530,7 +590,7 @@ def build_max_iter(prs):
          "font": FONT_BODY, "size": 13, "color": TEAL_DEEP,
          "italic": True, "space_after": 0},
     ])
-    page_number(s, 9, TOTAL)
+    page_number(s, 11, TOTAL)
 
 
 def build_metadata_tracking(prs):
@@ -667,7 +727,7 @@ def build_demo_cue(prs):
 
     # Manual page number with light color so it doesn't disappear into the
     # midnight BG (lib's default uses MUTED which is ~3:1 here — WCAG fail).
-    _text(s, 11.0, 7.0, 2.0, 0.4, "7 / 8",
+    _text(s, 11.0, 7.0, 2.0, 0.4, "12 / 13",
           font=FONT_CODE, size=12, color=RGBColor(0xCB, 0xD5, 0xE1),
           align=PP_ALIGN.RIGHT)
 
@@ -903,7 +963,7 @@ def build_strategy_callback(prs):
     callout_box(s, 0.85, 6.95, 12, 0.55,
                 "從『單輪答話』到『多輪自主』 —— Segment 4 你會親手跑一個 mini-project",
                 accent=ORANGE, fill=ORANGE_PASTEL, icon="▶", size=14)
-    page_number(s, 11, TOTAL)
+    page_number(s, 13, TOTAL)
 
 
 def main():
@@ -922,12 +982,14 @@ def main():
     build_single_turn_pain(prs)         # 3 — why agentic (problem)
     build_agentic_walkthrough(prs)      # 4 — agentic solution (4 steps)
     build_loop_diagram(prs)             # 5 — loop mechanism (abstract)
-    build_loop_trace(prs)               # 6 — NEW: 一個查詢走完整 loop (具體)
-    build_messages_growth(prs)          # 7 — NEW: messages 陣列累積 (記憶)
-    build_parallel_calls(prs)           # 8 — NEW: 並行呼叫多支工具
-    build_max_iter(prs)                 # 9 — safety valve
-    build_demo_cue(prs)                 # 10 — Live Demo + 5-question cheat sheet
-    build_strategy_callback(prs)        # 11 — RAG/ToolUse/Agentic + Segment 4 bridge
+    build_loop_trace(prs)               # 6 — 一個查詢走完整 loop (具體)
+    build_json_anatomy(prs)             # 7 — NEW: tool_use / tool_result JSON 長相
+    build_messages_growth(prs)          # 8 — messages 陣列累積 (記憶)
+    build_parallel_calls(prs)           # 9 — 並行呼叫多支工具
+    build_loop_code(prs)                # 10 — NEW: 20 行 while 迴圈揭密
+    build_max_iter(prs)                 # 11 — safety valve
+    build_demo_cue(prs)                 # 12 — Live Demo + 5-question cheat sheet
+    build_strategy_callback(prs)        # 13 — RAG/ToolUse/Agentic + Segment 4 bridge
     prs.save(str(PPTX))
     print(f"saved → {PPTX.name} ({len(prs.slides)} slides)")
 
