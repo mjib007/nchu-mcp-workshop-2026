@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MCP 入門工作坊 · 國立中興大學</title>
-<meta name="description" content="三小時 MCP 入門工作坊教材,受眾為大專院校教師。以興大 AI 學伴為實例,含投影片、Manim 動畫影片、可跑 mini-project 與 course TA agent。由 NAPAI 計畫 SIGAgent group 支持。">
+<meta name="description" content="三小時 MCP 入門工作坊教材,受眾為大專院校教師。以興大 AI 學伴為實例,含投影片、Manim 動畫影片、可跑的 mini-project hands-on(支援 Colab 零安裝)。由 NAPAI 計畫 SIGAgent group 支持。">
 
 <!-- ── Favicon (inline violet dot) ────────────────────────── -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='42' fill='%237B5CF5'/%3E%3Ccircle cx='50' cy='50' r='42' fill='none' stroke='%239D85F7' stroke-width='4' opacity='0.5'/%3E%3C/svg%3E">
@@ -856,38 +856,25 @@
 
   <section id="hands-on">
     <p class="section-kicker">Code · 動手做</p>
-    <h2 class="serif">兩個可跑的子專案</h2>
+    <h2 class="serif">可跑的 hands-on：mini-project</h2>
     <span class="h2-accent"></span>
-    <p class="lead-p">學員 hands-on 練習用的 <code>mini-project/</code>,以及現場小助教 <code>course-ta-agent/</code>。架構刻意 mirror,看完一個就懂另一個。</p>
+    <p class="lead-p">學員在 Segment 4 跟著做的 demo：Express + Claude + FastMCP + 極簡 chat UI。改資料、加工具,就變成你領域的助理。</p>
 
-    <div class="grid-2">
-      <div class="card">
-        <h3 class="serif">mini-project/</h3>
-        <p class="desc">Express + Claude + FastMCP + 極簡 chat UI。3 支教學工具 (hello / teachers / weather) + 1 支 L3 練習 stub (arxiv)。</p>
-<pre><code>cd mini-project
+    <div class="card">
+      <h3 class="serif">mini-project/</h3>
+      <p class="desc">4 支教學工具 (hello / teachers / weather / library) + 1 支 L3 練習 stub (arxiv)。<code>library</code> 即時查圖書館館藏 (Ex Libris Primo,免 key),是「呼叫外部 API」的可用範例。</p>
+<pre><code># 零安裝:用 Colab(課堂推薦)— 見下方連結
+# 或在自己電腦跑:
+cd mini-project
 cp .env.example .env
 vim .env       # 填 ANTHROPIC_API_KEY
 ./setup.sh                 # 5/5 ✅
 cd backend-node && npm start
 # → http://localhost:3000</code></pre>
-        <div class="resources">
-          <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/tree/main/mini-project">原始碼 <span class="ext">code</span></a>
-          <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/mini-project/README.md">README <span class="ext">md</span></a>
-        </div>
-      </div>
-      <div class="card">
-        <h3 class="serif">course-ta-agent/</h3>
-        <p class="desc">學員現場開 URL 直接問問題的 web bot。架構刻意 mirror mini-project;4 支 MCP tool。</p>
-<pre><code>cd course-ta-agent
-cp .env.example .env
-vim .env       # 填 ANTHROPIC_API_KEY
-./setup.sh
-cd backend-node && npm start
-# → http://localhost:3001</code></pre>
-        <div class="resources">
-          <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/tree/main/course-ta-agent">原始碼 <span class="ext">code</span></a>
-          <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/course-ta-agent/README.md">README <span class="ext">md</span></a>
-        </div>
+      <div class="resources">
+        <a class="chip" href="https://colab.research.google.com/github/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/mini-project/colab/workshop.ipynb">Open in Colab <span class="ext">零安裝</span></a>
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/tree/main/mini-project">原始碼 <span class="ext">code</span></a>
+        <a class="chip" href="https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/mini-project/README.md">README <span class="ext">md</span></a>
       </div>
     </div>
   </section>

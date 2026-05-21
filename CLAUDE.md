@@ -89,20 +89,11 @@ Workshop 現場可連 NCHU vLLM 端點（`infra/serve-*.sh` 提供 Gemma 4 / Qwe
 
 搭配素材：`haiku-alignment-report.pptx`（可作為 §4 成本中 Haiku alignment 的延伸閱讀；HTML 動畫已移除）。
 
-## 工作流：教材（public）vs TA agent（private）拆兩個 repo
+## 範圍：本 repo 只含教材
 
-教材與 TA agent 拆成**兩個獨立 repo**，因為 GitHub 的 private 是 repo 等級（branch 無法單獨私有），TA agent 不需要公開：
+本 repo（public）只包含**工作坊教材**：投影片、md、mini-project hands-on、Manim 影片、landing page。
 
-| 用途 | Repo | 可見性 |
-|------|------|--------|
-| 教材製作（投影片 / md / mini-project / 動畫 / landing page）| [`UDICatNCHU/nchu-mcp-workshop-2026`](https://github.com/UDICatNCHU/nchu-mcp-workshop-2026)（本 repo）| public |
-| Course TA agent（線上服務、安全防護、prompt 調校）| `UDICatNCHU/nchu-mcp-ta-agent` | **private** |
-
-TA agent 預計部署到 **Google Cloud Run**（Node Express + Python MCP via subprocess，需 Dockerfile 同時帶 Node + uv）。
-
-當教材更新、想讓 TA agent 知識庫吃到新內容：在 ta-agent repo 內重新從本 repo 抽 md（`tools/extract-pptx-to-md.py`）餵進 agent 的 `data/`，再重新部署。
-
-> 歷史備註：course-ta-agent 原本是本 repo main 內的子目錄 + 一條 stale branch，於 2026-05-21 用 `git subtree split` 連歷史搬到獨立 private repo，並從 public 移除（未做 history rewrite，舊版仍在 git 歷史中）。`.env` 備份在 `~/ta-agent-env-backup/`。
+線上課程小助教（TA 問答服務）是**另一個獨立的非公開專案**，不在本 repo，相關開發請在該專案進行。本 repo 的 `tools/extract-pptx-to-md.py` 可把投影片內容文字化，供該服務的知識庫使用。
 
 ## 教材風格規範
 
@@ -142,7 +133,7 @@ repo root/
 │   ├── build-0X-slides.py             各段 .pptx 程式化產生
 │   ├── build-haiku-slides.py          haiku-alignment-report.pptx 產生
 │   ├── build-sonnet-slides.py         sonnet-running-example.pptx 產生
-│   └── extract-pptx-to-md.py          抽 pptx 成 md 餵 course-ta-agent
+│   └── extract-pptx-to-md.py          抽 pptx 成 md（課程內容文字化）
 ├── mini-project/                      學員端 hands-on 可跑 code
 │   ├── backend-node/                  Express + LLM client + MCP client
 │   ├── mcp-server-py/                 4 支 FastMCP 工具（hello/teachers/weather/arxiv）

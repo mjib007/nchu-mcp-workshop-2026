@@ -36,11 +36,9 @@
     ├── build-0X-slides.py             # 各段 .pptx 程式化產生（皆 import lib_newstyle）
     ├── build-haiku-slides.py          # haiku-alignment-report.pptx 產生
     ├── build-sonnet-slides.py         # sonnet-running-example.pptx 產生
-    ├── extract-pptx-to-md.py          # 把 pptx 抽成 md，餵 TA agent（private repo）
+    ├── extract-pptx-to-md.py          # 把 pptx 抽成 md（課程內容文字化）
     └── sync-to-drive.sh               # rclone 同步教材到 Google Drive（需先 rclone config）
 ```
-
-> **課程 TA agent** 已獨立成 private repo `UDICatNCHU/nchu-mcp-ta-agent`（線上問答 bot，不公開）。本 repo 只含教材。
 
 > **動畫展示**：早期版本以單檔 `*.html` 互動動畫呈現；目前改為 Manim 渲染的 `.mp4` 影片（更穩定、可重複播放、能直接上 YouTube）。HTML 動畫已全部移除。
 
@@ -61,10 +59,6 @@ cd backend-node && npm start           # → http://localhost:3000
 
 詳見 [`mini-project/README.md`](mini-project/README.md)。
 
-## 課程 TA agent（獨立 private repo）
-
-工作坊現場讓學員直接問問題的線上 bot（「Segment 2 在講什麼？」「L1 Step 3 怎麼改 docstring？」）已搬到 private repo **`UDICatNCHU/nchu-mcp-ta-agent`**，架構刻意 mirror `mini-project/`。不公開，預計部署 Google Cloud Run。本教材 repo 不含其程式碼。
-
 ## 風格規範
 
 - 配色：Violet primary `#7B5CF5` + Orange / Teal / Pink / Blue accents，搭配 pastel card 底色（`*_PASTEL`）；finale / transition 頁使用 Midnight `#0F1429`
@@ -80,5 +74,4 @@ cd backend-node && npm start           # → http://localhost:3000
 - 第三段：`03-agentic-tool-loop.pptx`（8 張，A2 cut）+ Agentic Loop 影片（1:07 Manim → YouTube）
 - 第四段（動手做）：`04-hands-on-lab.pptx`（**12 張**，code-truth 對齊 mini-project）+ `04-hands-on-lab.md` + 完整可跑 `mini-project/`（含 Colab 版 + 三關 Lab 手冊）
 - 第五段（實務考量收尾）：`05-practical-considerations.md` 完成（四大支柱：規模／品質／模型／成本）
-- **TA agent**：已獨立成 private repo `nchu-mcp-ta-agent`，待部署 Cloud Run
 - `infra/`：Gemma 4 / Qwen 2.5-Coder vLLM 啟動腳本完成
