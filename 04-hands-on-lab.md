@@ -115,10 +115,7 @@ OPENAI_MODEL=gemma-4
                           data/*.json
 ```
 
-對應 Segment 2/3 的動畫：
-- [mcp-architecture-animation.html](./mcp-architecture-animation.html)
-- [mcp-connection-animation.html](./mcp-connection-animation.html)
-- [sonnet-flow-running-example.html](./sonnet-flow-running-example.html)
+Segment 2/3 的機制動畫已改成 Manim 影片（見課程 landing page 各段的嵌入影片）。
 
 ---
 

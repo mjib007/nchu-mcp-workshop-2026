@@ -1,8 +1,8 @@
 """
 02-mcp-connection-video.py
 
-3-min long video adapted from mcp-connection-animation.html.
-Topic: MCP handshake — how parent (Node.js) and child (Python MCP server) talk.
+Long-form Manim video on the MCP handshake.
+Topic: how parent (Node.js) and child (Python MCP server) talk.
 
 Three phases:
   Act 1: spawn — fork child process + stdio pipe + env substitution
