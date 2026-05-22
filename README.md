@@ -2,7 +2,7 @@
 
 三小時 MCP 入門工作坊教材，受眾為大專院校教師（非必要為資工背景）。
 
-所有內容以 [NCHU AI 學伴](https://github.com/UDICatNCHU/claude-mcp-project) 作為實際案例。
+所有內容以 [NCHU AI 學伴](https://eduxplore.nlpnchu.org) 作為實際案例。
 
 ## 課程結構（總 160 min；安排在 3 小時時段）
 

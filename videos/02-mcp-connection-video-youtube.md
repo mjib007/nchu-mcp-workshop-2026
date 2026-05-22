@@ -44,7 +44,7 @@ MCP Client 怎麼跟 MCP Server 講話？這支影片 2 分半帶你看完完整
 
 ▌ 延伸閱讀
 ・MCP 官方規格：https://modelcontextprotocol.io
-・興大 AI 學伴原始碼：https://github.com/UDICatNCHU/claude-mcp-project
+・興大 AI 學伴（線上版）：https://eduxplore.nlpnchu.org
 ・前一集 — Why MCP：（補上連結）
 
 —
@@ -104,10 +104,8 @@ MCP Client 怎麼跟 MCP Server 講話？這支影片 2 分半帶你看完完整
 > 「三小時 MCP 工作坊」系列第 2 集。下一集會講 Agentic Tool Loop（LLM 怎麼自主選工具、串多輪迭代），訂閱看續集。
 
 **版本 C — 教學補充型**：
-> 影片裡所有 JSON-RPC 訊息範例都來自中興大學 AI 學伴的 raw-mcp-client，原始碼公開在：
-> https://github.com/UDICatNCHU/claude-mcp-project
->
-> 看 `MCPServerConnection.js` 對照影片流程，30 分鐘可以實作出自己的 MCP Client。
+> 影片裡的 JSON-RPC 訊息範例，對照本工作坊 mini-project 的 `mcp-client.js` 看流程，30 分鐘可以實作出自己的 MCP Client：
+> https://github.com/UDICatNCHU/nchu-mcp-workshop-2026/blob/main/mini-project/backend-node/mcp-client.js
 
 **推薦版本 A** — 互動率最高。
 

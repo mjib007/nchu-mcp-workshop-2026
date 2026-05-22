@@ -217,7 +217,7 @@ Turn 4: LLM 分析 → 整合回覆「最對胃口的是范教授,因為他做 L
    → 可以,設 `tool_choice = "none"`。或者就不要在 API call 裡放 tools 清單。
 
 5. **「興大這套系統的程式碼可以看嗎?」**
-   → 可以,GitHub `UDICatNCHU/claude-mcp-project`。我們 Segment 4 hands-on 跑的 `mini-project/` 是它的精簡版。
+   → 原始碼是私有的,但線上版可以玩(eduxplore.nlpnchu.org)。我們 Segment 4 hands-on 跑的 `mini-project/` 就是它的公開精簡版,可以自由改。
 
 ---
 

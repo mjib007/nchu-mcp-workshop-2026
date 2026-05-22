@@ -4,7 +4,7 @@ This file provides guidance to Claude Code / Claude Agent SDK clients when worki
 
 ## 本 repo 目的
 
-這是一份「三小時 MCP 入門工作坊」的教材集散地，受眾為大專院校教師（非必要為資工背景）。所有內容以 [NCHU AI 學伴（UDICatNCHU/claude-mcp-project）](https://github.com/UDICatNCHU/claude-mcp-project) 作為實際案例。
+這是一份「三小時 MCP 入門工作坊」的教材集散地，受眾為大專院校教師（非必要為資工背景）。所有內容以 [NCHU AI 學伴](https://eduxplore.nlpnchu.org) 作為實際案例（原始碼 repo `UDICatNCHU/claude-mcp-project` 為私有）。
 
 原始素材於 2026-04-24 從 `claude-mcp-project/teaching-materials/` 搬出、獨立成本 repo，便於獨立版控與分享。
 
@@ -145,7 +145,7 @@ repo root/
 
 ## 相關 repo
 
-- 原始應用：[UDICatNCHU/claude-mcp-project](https://github.com/UDICatNCHU/claude-mcp-project) — 興大 AI 學伴（Claude + MCP 的 web chat 介面，~239 個 MCP 工具）
+- 原始應用：[興大 AI 學伴（線上版）](https://eduxplore.nlpnchu.org) — Claude + MCP 的 web chat 介面，~239 個 MCP 工具（原始碼 repo `UDICatNCHU/claude-mcp-project` 為私有）
 
 ## 其他 CLAUDE.md（本機同步維護參考）
 

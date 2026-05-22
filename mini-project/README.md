@@ -163,4 +163,4 @@ cp mcp-server-py/hello_tool.py mcp-server-py/my_tool.py
 
 為了「一堂課讀得完」，本範例只保留 MCP 串接的**核心**。真實上線的系統還會再加上對話持久化、多模型備援、速率限制與身份驗證、快取與部署等 —— 但這些都**不影響你理解 MCP 怎麼運作**。
 
-想看一個真的上線、串了 ~239 個工具的完整版 → [claude-mcp-project（中興 AI 學伴）](https://github.com/UDICatNCHU/claude-mcp-project)。
+想看一個真的上線、串了 ~239 個工具的完整版 → [中興 AI 學伴（線上版）](https://eduxplore.nlpnchu.org)。

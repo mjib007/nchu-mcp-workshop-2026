@@ -45,7 +45,7 @@ LLM 很強，但有些事它做不到。MCP（Model Context Protocol）就是為
 
 ▌ 延伸閱讀
 ・MCP 官方規格：https://modelcontextprotocol.io
-・興大 AI 學伴 mini-project：https://github.com/UDICatNCHU/claude-mcp-project
+・興大 AI 學伴（線上版）：https://eduxplore.nlpnchu.org
 ・後續工作坊段落會帶你動手做一個 MCP server
 
 —
@@ -105,10 +105,10 @@ YouTube 看到這個格式會自動把章節點顯示在進度條上，學生可
 > 完整課程資料：https://github.com/...
 
 **版本 C — 教學補充型**：
-> 影片裡的「33 工具」案例是中興大學 AI 學伴系統，原始碼公開在 GitHub：
-> https://github.com/UDICatNCHU/claude-mcp-project
+> 影片裡的「33 工具」案例是中興大學 AI 學伴系統（線上版：https://eduxplore.nlpnchu.org）。
 >
-> 如果你也想做一個自己學校 / 領域的 MCP 助理，可以從這個 repo 開始改。
+> 如果你也想做一個自己學校 / 領域的 MCP 助理，可以從本工作坊的 mini-project 開始改：
+> https://github.com/UDICatNCHU/nchu-mcp-workshop-2026
 
 **推薦版本 A** — 互動率最高，能帶起留言區討論。
 
